@@ -66,6 +66,7 @@ void MainGS(point VS_DATA vertex[1], inout TriangleStream<GS_DATA> triStream)
 	triStream.Append(dummyData); //The geometry shader needs to emit something, see what happens if it doesn't emit anything.
 	//< STOP REMOVING
 
+<<<<<<< Updated upstream
 	//Create a Quad using the character information of the given vertex
 	//Note that the Vertex.CharSize is in screenspace, TextureCoordinates aren't ;) [Range 0 > 1]
 
@@ -80,6 +81,40 @@ void MainGS(point VS_DATA vertex[1], inout TriangleStream<GS_DATA> triStream)
 
 	//4. Vertex Right-Bottom
 	//...
+=======
+	texCoord.x = vertex[0].TexCoord.x;
+	texCoord.y = vertex[0].TexCoord.y;
+	
+	CreateVertex(triStream, vertexPosition, vertex[0].Color, texCoord, vertex[0].Channel);
+
+	//2. Vertex Right-Top
+	vertexPosition = vertex[0].Position;
+	vertexPosition.x += vertex[0].CharSize.x;
+	
+	texCoord.x = vertex[0].TexCoord.x + vertex[0].CharSize.x / gTextureSize.x;
+	texCoord.y = vertex[0].TexCoord.y;
+	
+	CreateVertex(triStream, vertexPosition, vertex[0].Color, texCoord, vertex[0].Channel);
+
+	//3. Vertex Left-Bottom
+	vertexPosition = vertex[0].Position;
+	vertexPosition.y += vertex[0].CharSize.y;
+	
+	texCoord.x = vertex[0].TexCoord.x;
+	texCoord.y = vertex[0].TexCoord.y + vertex[0].CharSize.y / gTextureSize.y;
+	
+	CreateVertex(triStream, vertexPosition, vertex[0].Color, texCoord, vertex[0].Channel);
+
+	//4. Vertex Right-Bottom
+	vertexPosition = vertex[0].Position;
+	vertexPosition.x += vertex[0].CharSize.x;
+	vertexPosition.y += vertex[0].CharSize.y;
+	
+	texCoord.x = vertex[0].TexCoord.x + vertex[0].CharSize.x / gTextureSize.x;
+	texCoord.y = vertex[0].TexCoord.y + vertex[0].CharSize.y / gTextureSize.y;
+	
+	CreateVertex(triStream, vertexPosition, vertex[0].Color, texCoord, vertex[0].Channel);
+>>>>>>> Stashed changes
 }
 
 //PIXEL SHADER
