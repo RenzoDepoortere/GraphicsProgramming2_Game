@@ -26,7 +26,7 @@ SpriteFont* SpriteFontLoader::LoadContent(const ContentLoadInfo& loadInfo)
 	if (fileId != L"BMF")
 	{
 		// Log Error (SpriteFontLoader::LoadContent > Not a valid .fnt font) &
-		std::cout << "SpriteFontLoader::LoadContent > Not a valid .fnt font" << std::endl;
+		Logger::LogError(L"SpriteFontLoader::LoadContent > Not a valid .fnt font");
 
 		// return nullptr
 		return nullptr;
@@ -37,8 +37,8 @@ SpriteFont* SpriteFontLoader::LoadContent(const ContentLoadInfo& loadInfo)
 	if (static_cast<int>(pReader->Read<char>()) < 3)
 	{
 		//Log Error (SpriteFontLoader::LoadContent > Only .fnt version 3 is supported)
-		std::cout << "SpriteFontLoader::LoadContent > Only .fnt version 3 is supported" << std::endl;
-	
+		Logger::LogError(L"SpriteFontLoader::LoadContent > Only .fnt version 3 is supported");
+
 		//return nullptr
 		return nullptr;
 	}
@@ -57,10 +57,10 @@ SpriteFont* SpriteFontLoader::LoadContent(const ContentLoadInfo& loadInfo)
 	int blockSize = pReader->Read<int>();
 
 	//Retrieve the FontSize [fontDesc.fontSize]
-	fontDesc.fontSize = static_cast<short>(pReader->Read<int>());
+	fontDesc.fontSize = static_cast<short>(pReader->Read<short int>());
 	
 	//Move the binreader to the start of the FontName [BinaryReader::MoveBufferPosition(...) or you can set its position using BinaryReader::SetBufferPosition(...))
-	pReader->MoveBufferPosition(10);
+	pReader->MoveBufferPosition(12);
 
 	//Retrieve the FontName [fontDesc.fontName]
 	fontDesc.fontName = pReader->ReadNullString();
@@ -86,7 +86,7 @@ SpriteFont* SpriteFontLoader::LoadContent(const ContentLoadInfo& loadInfo)
 	if (pageCount > 1)
 	{
 		//	> Log Error (Only one texture per font is allowed!)
-		std::cout << "Only one texture per font is allowed!" << std::endl;
+		Logger::LogError(L"Only one texture per font is allowed!");
 	}
 
 	//Advance to Block2 (Move Reader)
