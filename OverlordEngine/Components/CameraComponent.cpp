@@ -63,8 +63,51 @@ void CameraComponent::SetActive(bool active)
 	pScene->SetActiveCamera(active?this:nullptr); //Switch to default camera if active==false
 }
 
-GameObject* CameraComponent::Pick(CollisionGroup /*ignoreGroups*/) const
+GameObject* CameraComponent::Pick(CollisionGroup ignoreGroups) const
 {
-	TODO_W7(L"Implement Picking Logic")
+	// Get windowVariables
+	const SceneContext& sceneContext{ m_pScene->GetSceneContext() };
+
+	const float windowWidth{ sceneContext.windowWidth };
+	const float windowHeight{ sceneContext.windowHeight };
+
+	const int halfWidth{ static_cast<int>(windowWidth / 2.f) };
+	const int halfHeight{ static_cast<int>(windowHeight / 2.f) };
+
+	// Convert to NDC space
+	POINT mousePos{ InputManager::GetMousePosition() };
+	mousePos.x = (mousePos.x - halfWidth) / halfWidth;
+	mousePos.y = (halfHeight - mousePos.y) / halfHeight;
+	
+	// Get nearPoint and farPoint
+	const XMFLOAT4 nearFloat4{ mousePos.x, mousePos.y, 0, 0 };
+	const XMFLOAT4 farFloat4{ mousePos.x, mousePos.y, 1, 0 };
+
+	const XMMATRIX inversedViewProjectionMatrix{ XMLoadFloat4x4(&m_ViewProjectionInverse) };
+
+	const XMVECTOR nearPointVector = XMVector4Transform(XMLoadFloat4(&nearFloat4), inversedViewProjectionMatrix);
+	const XMVECTOR farPointVector = XMVector4Transform(XMLoadFloat4(&farFloat4), inversedViewProjectionMatrix);
+
+	XMFLOAT4 nearPoint{};
+	XMStoreFloat4(&nearPoint, nearPointVector);
+	XMFLOAT4 farPoint{};
+	XMStoreFloat4(&farPoint, farPointVector);
+
+	// Raycast
+	const PxVec3 raycastStart{ nearPoint.x, nearPoint.y, nearPoint.z };
+	const PxVec3 raycastDir{ farPoint.x, farPoint.y, farPoint.z };
+
+	PxQueryFilterData filterData{};
+	filterData.data.word0 = ~UINT(ignoreGroups);
+
+	PxRaycastBuffer hit{};
+	if (m_pScene->GetPhysxProxy()->Raycast(raycastStart, raycastDir, PX_MAX_F32, hit, PxHitFlag::eDEFAULT, filterData))
+	{
+		PxRigidActor* pHitActor{ hit.block.actor };
+		pHitActor->getOwnerClient();
+		m_pScene->GetPhysxProxy()->GetPhysxScene().get
+	}
+
+	// Return
 	return nullptr;
 }
