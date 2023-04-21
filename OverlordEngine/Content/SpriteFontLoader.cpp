@@ -128,7 +128,7 @@ SpriteFont* SpriteFontLoader::LoadContent(const ContentLoadInfo& loadInfo)
 	for (int idx{}; idx < nrChars; ++idx)
 	{
 		//> Retrieve CharacterId (store Local) and cast to a 'wchar_t'
-		wchar_t characterId = std::to_wstring(pReader->Read<int>())[0];
+		wchar_t characterId = static_cast<wchar_t>(pReader->Read<int>());
 
 		//> Create instance of FontMetric (struct)
 		FontMetric fontStruct{};
@@ -156,13 +156,30 @@ SpriteFont* SpriteFontLoader::LoadContent(const ContentLoadInfo& loadInfo)
 
 		//	> Retrieve & Set Page [FontMetric::page]
 		fontStruct.advanceX = pReader->Read<short int>();
-
-		auto value = pReader->Read<char>();
-		fontStruct.page = static_cast<unsigned char>(value);
+		fontStruct.page = static_cast<unsigned char>(pReader->Read<char>());
 
 		//	> Retrieve Channel (BITFIELD!!!) 
 			//		> See documentation for BitField meaning [FontMetrix::channel]
-		fontStruct.channel = static_cast<unsigned char>(pReader->Read<char>());
+		char channel = pReader->Read<char>();
+		switch (channel)
+		{
+		case 1:
+			fontStruct.channel = 2;
+			break;
+
+		case 2:
+			fontStruct.channel = 1;
+			break;
+
+		case 4:
+			fontStruct.channel = 0;
+			break;
+
+		case 8:
+			fontStruct.channel = 3;
+			break;
+		}
+		
 
 		//	> Calculate Texture Coordinates using Xposition, Yposition, fontDesc.TextureWidth & fontDesc.TextureHeight [FontMetric::texCoord]
 		fontStruct.texCoord.x = xPos / static_cast<float>(fontDesc.textureWidth);
