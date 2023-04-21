@@ -163,18 +163,19 @@ SpriteFont* SpriteFontLoader::LoadContent(const ContentLoadInfo& loadInfo)
 		char channel = pReader->Read<char>();
 		switch (channel)
 		{
+			// blue
 		case 1:
 			fontStruct.channel = 2;
 			break;
-
+			// green
 		case 2:
 			fontStruct.channel = 1;
 			break;
-
+			// red
 		case 4:
 			fontStruct.channel = 0;
 			break;
-
+			// alpha
 		case 8:
 			fontStruct.channel = 3;
 			break;
