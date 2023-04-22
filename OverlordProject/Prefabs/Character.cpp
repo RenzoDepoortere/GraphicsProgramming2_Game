@@ -15,79 +15,158 @@ void Character::Initialize(const SceneContext& /*sceneContext*/)
 	//Camera
 	const auto pCamera = AddChild(new FixedCamera());
 	m_pCameraComponent = pCamera->GetComponent<CameraComponent>();
-	//m_pCameraComponent->SetActive(true); //Uncomment to make this camera the active camera
+	m_pCameraComponent->SetActive(true); //Uncomment to make this camera the active camera
 
 	pCamera->GetTransform()->Translate(0.f, m_CharacterDesc.controller.height * .5f, 0.f);
 }
 
-void Character::Update(const SceneContext& /*sceneContext*/)
+void Character::Update(const SceneContext& sceneContext)
 {
 	if (m_pCameraComponent->IsActive())
 	{
-		//constexpr float epsilon{ 0.01f }; //Constant that can be used to compare if a float is near zero
+		constexpr float epsilon{ 0.01f }; //Constant that can be used to compare if a float is near zero
+		InputManager* pInputManager{ sceneContext.pInput };
+		const float elapsedTime{ sceneContext.pGameTime->GetElapsed() };
 
 		//***************
 		//HANDLE INPUT
 
 		//## Input Gathering (move)
-		//XMFLOAT2 move; //Uncomment
+		XMFLOAT2 move{};
+		const XMFLOAT2 leftThumbStickPosition{ InputManager::GetThumbstickPosition() };
+		
+		const bool forwardInput{ pInputManager->IsActionTriggered(m_CharacterDesc.actionId_MoveForward) };
+		const bool backwardInput{ pInputManager->IsActionTriggered(m_CharacterDesc.actionId_MoveBackward) };
+		const bool rightInput{ pInputManager->IsActionTriggered(m_CharacterDesc.actionId_MoveRight) };
+		const bool leftInput{ pInputManager->IsActionTriggered(m_CharacterDesc.actionId_MoveLeft) };
+
+		const bool isInput{ forwardInput || backwardInput || rightInput || leftInput };
+
 		//move.y should contain a 1 (Forward) or -1 (Backward) based on the active input (check corresponding actionId in m_CharacterDesc)
+		if		(forwardInput)	move.y = 1;
+		else if (backwardInput) move.y = -1;
 		//Optional: if move.y is near zero (abs(move.y) < epsilon), you could use the ThumbStickPosition.y for movement
+		if (abs(move.y) < epsilon) move.y = leftThumbStickPosition.y;
 
 		//move.x should contain a 1 (Right) or -1 (Left) based on the active input (check corresponding actionId in m_CharacterDesc)
+		if		(rightInput) move.x = 1;
+		else if (leftInput)	 move.x = -1;
 		//Optional: if move.x is near zero (abs(move.x) < epsilon), you could use the Left ThumbStickPosition.x for movement
+		if (abs(move.x) < epsilon) move.x = leftThumbStickPosition.x;
 
 		//## Input Gathering (look)
-		//XMFLOAT2 look{ 0.f, 0.f }; //Uncomment
+		XMFLOAT2 look{ 0.f, 0.f };
+		
 		//Only if the Left Mouse Button is Down >
+		if (InputManager::IsMouseButton(InputState::down, VK_LBUTTON))
+		{
 			// Store the MouseMovement in the local 'look' variable (cast is required)
+			const POINT& mouseMovement{ InputManager::GetMouseMovement() };
+			look = XMFLOAT2{ static_cast<float>(mouseMovement.x), static_cast<float>(mouseMovement.y) };
+		}
 		//Optional: in case look.x AND look.y are near zero, you could use the Right ThumbStickPosition for look
+		if (abs(look.x) < epsilon && abs(look.y) < epsilon)
+		{
+			const XMFLOAT2 rightThumbStickPosition{ InputManager::GetThumbstickPosition(false) };
+			look.x = rightThumbStickPosition.x;
+			look.y = rightThumbStickPosition.y;
+		}
+
 
 		//************************
 		//GATHERING TRANSFORM INFO
 
 		//Retrieve the TransformComponent
+		TransformComponent* pTransformComponent{ GetTransform() };
 		//Retrieve the forward & right vector (as XMVECTOR) from the TransformComponent
+		XMVECTOR forwardVector{ XMLoadFloat3(&pTransformComponent->GetForward()) };
+		XMVECTOR rightVector{ XMLoadFloat3(&pTransformComponent->GetRight()) };
+
 
 		//***************
 		//CAMERA ROTATION
 
 		//Adjust the TotalYaw (m_TotalYaw) & TotalPitch (m_TotalPitch) based on the local 'look' variable
-		//Make sure this calculated on a framerate independent way and uses CharacterDesc::rotationSpeed.
+		//Make sure this is calculated on a framerate independent way and uses CharacterDesc::rotationSpeed.
+		m_TotalYaw += look.x * m_CharacterDesc.rotationSpeed * elapsedTime;
+		m_TotalPitch += look.y * m_CharacterDesc.rotationSpeed * elapsedTime;		
 		//Rotate this character based on the TotalPitch (X) and TotalYaw (Y)
+		pTransformComponent->Rotate(m_TotalPitch, m_TotalYaw, 0.f);
+
 
 		//********
 		//MOVEMENT
 
 		//## Horizontal Velocity (Forward/Backward/Right/Left)
 		//Calculate the current move acceleration for this frame (m_MoveAcceleration * ElapsedTime)
+		const float moveAcceleration{ m_MoveAcceleration * elapsedTime };
+		
 		//If the character is moving (= input is pressed)
+		if (isInput)
+		{
 			//Calculate & Store the current direction (m_CurrentDirection) >> based on the forward/right vectors and the pressed input
+			forwardVector = XMLoadFloat3(&pTransformComponent->GetForward());
+			rightVector = XMLoadFloat3(&pTransformComponent->GetRight());
+			const XMVECTOR currentDir{ XMVectorAdd(XMVectorScale(forwardVector, move.y), XMVectorScale(rightVector, move.x)) };
+			XMStoreFloat3(&m_CurrentDirection, currentDir);
+			
 			//Increase the current MoveSpeed with the current Acceleration (m_MoveSpeed)
+			m_MoveSpeed += moveAcceleration;
 			//Make sure the current MoveSpeed stays below the maximum MoveSpeed (CharacterDesc::maxMoveSpeed)
+			if (m_CharacterDesc.maxMoveSpeed < m_MoveSpeed) m_MoveSpeed = m_CharacterDesc.maxMoveSpeed;
+		}
 		//Else (character is not moving, or stopped moving)
-			//Decrease the current MoveSpeed with the current Acceleration (m_MoveSpeed)
-			//Make sure the current MoveSpeed doesn't get smaller than zero
+		else
+		{
+			// Decrease the current MoveSpeed with the current Acceleration (m_MoveSpeed)
+			m_MoveSpeed -= moveAcceleration;
+			// Make sure the current MoveSpeed doesn't get smaller than zero
+			if (m_MoveSpeed < 0) m_MoveSpeed = 0;
+		}
 
 		//Now we can calculate the Horizontal Velocity which should be stored in m_TotalVelocity.xz
 		//Calculate the horizontal velocity (m_CurrentDirection * MoveSpeed)
+		const XMVECTOR currentDir{ XMLoadFloat3(&m_CurrentDirection) };
+		XMFLOAT3 horizontalVelocity{};
+		XMStoreFloat3(&horizontalVelocity, XMVectorScale(currentDir, m_MoveSpeed));
 		//Set the x/z component of m_TotalVelocity (horizontal_velocity x/z)
 		//It's important that you don't overwrite the y component of m_TotalVelocity (contains the vertical velocity)
+		m_TotalVelocity.x = horizontalVelocity.x;
+		m_TotalVelocity.z = horizontalVelocity.z;
 
 		//## Vertical Movement (Jump/Fall)
 		//If the Controller Component is NOT grounded (= freefall)
+		if (m_pControllerComponent->GetCollisionFlags() ^ PxControllerCollisionFlag::eCOLLISION_DOWN)
+		{
 			//Decrease the y component of m_TotalVelocity with a fraction (ElapsedTime) of the Fall Acceleration (m_FallAcceleration)
+			m_TotalVelocity.y -= m_FallAcceleration * elapsedTime;
 			//Make sure that the minimum speed stays above -CharacterDesc::maxFallSpeed (negative!)
+			if (m_TotalVelocity.y < -m_CharacterDesc.maxFallSpeed) m_TotalVelocity.y = -m_CharacterDesc.maxFallSpeed;
+		}
 		//Else If the jump action is triggered
+		else if (pInputManager->IsActionTriggered(m_CharacterDesc.actionId_Jump))
+		{
 			//Set m_TotalVelocity.y equal to CharacterDesc::JumpSpeed
+			m_TotalVelocity.y = m_CharacterDesc.JumpSpeed;
+		}
 		//Else (=Character is grounded, no input pressed)
+		else
+		{
 			//m_TotalVelocity.y is zero
+			m_TotalVelocity.y = 0;
+		}
+
 
 		//************
 		//DISPLACEMENT
 
 		//The displacement required to move the Character Controller (ControllerComponent::Move) can be calculated using our TotalVelocity (m/s)
 		//Calculate the displacement (m) for the current frame and move the ControllerComponent
+		const XMVECTOR totalVelocity{ XMLoadFloat3(&m_TotalVelocity) };
+		XMFLOAT3 totalDisplacement{};
+		XMStoreFloat3(&totalDisplacement, XMVectorScale(totalVelocity, elapsedTime));
+
+		m_pControllerComponent->Move(totalDisplacement);
 
 		//The above is a simple implementation of Movement Dynamics, adjust the code to further improve the movement logic and behaviour.
 		//Also, it can be usefull to use a seperate RayCast to check if the character is grounded (more responsive)
