@@ -71,17 +71,18 @@ GameObject* CameraComponent::Pick(CollisionGroup ignoreGroups) const
 	const float windowWidth{ sceneContext.windowWidth };
 	const float windowHeight{ sceneContext.windowHeight };
 
-	const int halfWidth{ static_cast<int>(windowWidth / 2.f) };
-	const int halfHeight{ static_cast<int>(windowHeight / 2.f) };
+	const float halfWidth{ windowWidth / 2.f };
+	const float halfHeight{ windowHeight / 2.f };
 
 	// Convert to NDC space
 	POINT mousePos{ InputManager::GetMousePosition() };
-	mousePos.x = (mousePos.x - halfWidth) / halfWidth;
-	mousePos.y = (halfHeight - mousePos.y) / halfHeight;
+	XMFLOAT2 convertedMousePos{};
+	convertedMousePos.x = (mousePos.x - halfWidth) / halfWidth;
+	convertedMousePos.y = (halfHeight - mousePos.y) / halfHeight;
 	
 	// Get nearPoint and farPoint
-	const XMFLOAT4 nearFloat4{ mousePos.x, mousePos.y, 0, 0 };
-	const XMFLOAT4 farFloat4{ mousePos.x, mousePos.y, 1, 0 };
+	const XMFLOAT4 nearFloat4{ static_cast<float>(convertedMousePos.x), static_cast<float>(convertedMousePos.y), 0, 0 };
+	const XMFLOAT4 farFloat4{ static_cast<float>(convertedMousePos.x), static_cast<float>(convertedMousePos.y), 1, 0 };
 
 	const XMMATRIX inversedViewProjectionMatrix{ XMLoadFloat4x4(&m_ViewProjectionInverse) };
 
@@ -95,19 +96,20 @@ GameObject* CameraComponent::Pick(CollisionGroup ignoreGroups) const
 
 	// Raycast
 	const PxVec3 raycastStart{ nearPoint.x, nearPoint.y, nearPoint.z };
-	const PxVec3 raycastDir{ farPoint.x, farPoint.y, farPoint.z };
+	PxVec3 raycastDir{ PxVec3{farPoint.x, farPoint.y, farPoint.z} - raycastStart };
+	raycastDir.normalize();
 
 	PxQueryFilterData filterData{};
 	filterData.data.word0 = ~UINT(ignoreGroups);
 
 	PxRaycastBuffer hit{};
+	GameObject* pHitGameObject{ nullptr };
 	if (m_pScene->GetPhysxProxy()->Raycast(raycastStart, raycastDir, PX_MAX_F32, hit, PxHitFlag::eDEFAULT, filterData))
 	{
 		PxRigidActor* pHitActor{ hit.block.actor };
-		pHitActor->getOwnerClient();
-		m_pScene->GetPhysxProxy()->GetPhysxScene().get
+		pHitGameObject = reinterpret_cast<BaseComponent*>(pHitActor->userData)->GetGameObject();
 	}
 
 	// Return
-	return nullptr;
+	return pHitGameObject;
 }
