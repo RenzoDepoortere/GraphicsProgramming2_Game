@@ -118,8 +118,8 @@ void MainGame::Initialize()
 
 #ifdef W7
 	//SceneManager::Get()->AddGameScene(new FontTestScene());
-	//SceneManager::Get()->AddGameScene(new PickingScene());
-	SceneManager::Get()->AddGameScene(new CharacterScene());
+	SceneManager::Get()->AddGameScene(new PickingScene());
+	//SceneManager::Get()->AddGameScene(new CharacterScene());
 #endif
 
 #ifdef W8

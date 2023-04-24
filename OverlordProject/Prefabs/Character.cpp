@@ -32,7 +32,7 @@ void Character::Update(const SceneContext& sceneContext)
 		//HANDLE INPUT
 
 		//## Input Gathering (move)
-		XMFLOAT2 move{};
+		XMFLOAT2 move{ 0.f, 0.f };
 		const XMFLOAT2 leftThumbStickPosition{ InputManager::GetThumbstickPosition() };
 		
 		const bool forwardInput{ pInputManager->IsActionTriggered(m_CharacterDesc.actionId_MoveForward) };
@@ -153,7 +153,7 @@ void Character::Update(const SceneContext& sceneContext)
 		else
 		{
 			//m_TotalVelocity.y is zero
-			m_TotalVelocity.y = 0;
+			m_TotalVelocity.y = -0.1f;
 		}
 
 

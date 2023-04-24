@@ -94,11 +94,15 @@ GameObject* CameraComponent::Pick(CollisionGroup ignoreGroups) const
 	XMFLOAT4 farPoint{};
 	XMStoreFloat4(&farPoint, farPointVector);
 
-	// Raycast
-	const PxVec3 raycastStart{ nearPoint.x, nearPoint.y, nearPoint.z };
-	PxVec3 raycastDir{ PxVec3{farPoint.x, farPoint.y, farPoint.z} - raycastStart };
-	raycastDir.normalize();
+	XMFLOAT3 rayDirection = XMFLOAT3(farPoint.x - nearPoint.x, farPoint.y - nearPoint.y, farPoint.z - nearPoint.z);
+	XMVECTOR rayDirectionVector = XMVector3Normalize(XMLoadFloat3(&rayDirection));
+	XMStoreFloat3(&rayDirection, rayDirectionVector);
 
+	const XMFLOAT3 cameraPos{ m_pScene->GetActiveCamera()->GetTransform()->GetWorldPosition() };
+	const PxVec3 raycastStart{ cameraPos.x, cameraPos.y, cameraPos.z };
+	const PxVec3 raycastDir{ rayDirection.x, rayDirection.y ,rayDirection.z };
+
+	// Raycast
 	PxQueryFilterData filterData{};
 	filterData.data.word0 = ~UINT(ignoreGroups);
 
