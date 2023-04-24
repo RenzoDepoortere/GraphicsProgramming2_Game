@@ -39,12 +39,16 @@ void CameraComponent::Update(const SceneContext& sceneContext)
 
 	const XMMATRIX view = XMMatrixLookAtLH(worldPosition, worldPosition + lookAt, upVec);
 	const XMMATRIX viewInv = XMMatrixInverse(nullptr, view);
-	const XMMATRIX viewProjectionInv = XMMatrixInverse(nullptr, view * projection);
+
+	const XMMATRIX viewProject = XMMatrixMultiply(view, projection);
+	const XMMATRIX viewProjectionInv = XMMatrixInverse(nullptr, viewProject);
+
+
 
 	XMStoreFloat4x4(&m_Projection, projection);
 	XMStoreFloat4x4(&m_View, view);
 	XMStoreFloat4x4(&m_ViewInverse, viewInv);
-	XMStoreFloat4x4(&m_ViewProjection, view * projection);
+	XMStoreFloat4x4(&m_ViewProjection, viewProject);
 	XMStoreFloat4x4(&m_ViewProjectionInverse, viewProjectionInv);
 }
 
@@ -80,14 +84,20 @@ GameObject* CameraComponent::Pick(CollisionGroup ignoreGroups) const
 	convertedMousePos.x = (mousePos.x - halfWidth) / halfWidth;
 	convertedMousePos.y = (halfHeight - mousePos.y) / halfHeight;
 	
+	if (convertedMousePos.x < -1 || 1 < convertedMousePos.x || convertedMousePos.y < -1 || 1 < convertedMousePos.y)
+	{
+		Logger::LogWarning(L"ConvertedMousePos isn't in NDC space");
+		return nullptr;
+	}
+
 	// Get nearPoint and farPoint
 	const XMFLOAT4 nearFloat4{ static_cast<float>(convertedMousePos.x), static_cast<float>(convertedMousePos.y), 0, 0 };
 	const XMFLOAT4 farFloat4{ static_cast<float>(convertedMousePos.x), static_cast<float>(convertedMousePos.y), 1, 0 };
 
 	const XMMATRIX inversedViewProjectionMatrix{ XMLoadFloat4x4(&m_ViewProjectionInverse) };
 
-	const XMVECTOR nearPointVector = XMVector4Transform(XMLoadFloat4(&nearFloat4), inversedViewProjectionMatrix);
-	const XMVECTOR farPointVector = XMVector4Transform(XMLoadFloat4(&farFloat4), inversedViewProjectionMatrix);
+	const XMVECTOR nearPointVector = XMVector3TransformCoord(XMLoadFloat4(&nearFloat4), inversedViewProjectionMatrix);
+	const XMVECTOR farPointVector = XMVector3TransformCoord(XMLoadFloat4(&farFloat4), inversedViewProjectionMatrix);
 
 	XMFLOAT4 nearPoint{};
 	XMStoreFloat4(&nearPoint, nearPointVector);
