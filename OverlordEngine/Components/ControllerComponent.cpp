@@ -8,9 +8,22 @@ ControllerComponent::ControllerComponent(const PxCapsuleControllerDesc& controll
 
 void ControllerComponent::Initialize(const SceneContext& /*sceneContext*/)
 {
-	if(!m_IsInitialized)
+	if (!m_IsInitialized)
 	{
-		TODO_W7(L"Complete the ControllerComponent Intialization")
+		// Controller desc
+		const XMFLOAT3 objectPosition{ GetGameObject()->GetTransform()->GetPosition() };
+		m_ControllerDesc.position = PxExtendedVec3{ objectPosition.x, objectPosition.y, objectPosition.z };
+		m_ControllerDesc.userData = this;
+
+		// Controller manager
+		PxControllerManager* pControllerManager{ m_pScene->GetPhysxProxy()->GetControllerManager() };
+		m_pController = pControllerManager->createController(m_ControllerDesc);
+		ASSERT_NULL(m_pController, L"Controller was a nullptr");
+		m_pController->getActor()->userData = this;
+
+		// Collision
+		SetCollisionGroup(static_cast<CollisionGroup>(m_CollisionGroups.word0));
+		SetCollisionIgnoreGroup(static_cast<CollisionGroup>(m_CollisionGroups.word1));
 	}
 }
 

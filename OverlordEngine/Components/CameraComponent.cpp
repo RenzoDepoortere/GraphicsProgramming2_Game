@@ -39,12 +39,16 @@ void CameraComponent::Update(const SceneContext& sceneContext)
 
 	const XMMATRIX view = XMMatrixLookAtLH(worldPosition, worldPosition + lookAt, upVec);
 	const XMMATRIX viewInv = XMMatrixInverse(nullptr, view);
-	const XMMATRIX viewProjectionInv = XMMatrixInverse(nullptr, view * projection);
+
+	const XMMATRIX viewProject = XMMatrixMultiply(view, projection);
+	const XMMATRIX viewProjectionInv = XMMatrixInverse(nullptr, viewProject);
+
+
 
 	XMStoreFloat4x4(&m_Projection, projection);
 	XMStoreFloat4x4(&m_View, view);
 	XMStoreFloat4x4(&m_ViewInverse, viewInv);
-	XMStoreFloat4x4(&m_ViewProjection, view * projection);
+	XMStoreFloat4x4(&m_ViewProjection, viewProject);
 	XMStoreFloat4x4(&m_ViewProjectionInverse, viewProjectionInv);
 }
 
@@ -63,8 +67,63 @@ void CameraComponent::SetActive(bool active)
 	pScene->SetActiveCamera(active?this:nullptr); //Switch to default camera if active==false
 }
 
-GameObject* CameraComponent::Pick(CollisionGroup /*ignoreGroups*/) const
+GameObject* CameraComponent::Pick(CollisionGroup ignoreGroups) const
 {
-	TODO_W7(L"Implement Picking Logic")
-	return nullptr;
+	// Get windowVariables
+	const SceneContext& sceneContext{ m_pScene->GetSceneContext() };
+
+	const float windowWidth{ sceneContext.windowWidth };
+	const float windowHeight{ sceneContext.windowHeight };
+
+	const float halfWidth{ windowWidth / 2.f };
+	const float halfHeight{ windowHeight / 2.f };
+
+	// Convert to NDC space
+	POINT mousePos{ InputManager::GetMousePosition() };
+	XMFLOAT2 convertedMousePos{};
+	convertedMousePos.x = (mousePos.x - halfWidth) / halfWidth;
+	convertedMousePos.y = (halfHeight - mousePos.y) / halfHeight;
+	
+	if (convertedMousePos.x < -1 || 1 < convertedMousePos.x || convertedMousePos.y < -1 || 1 < convertedMousePos.y)
+	{
+		Logger::LogWarning(L"ConvertedMousePos isn't in NDC space");
+		return nullptr;
+	}
+
+	// Get nearPoint and farPoint
+	const XMFLOAT4 nearFloat4{ static_cast<float>(convertedMousePos.x), static_cast<float>(convertedMousePos.y), 0, 0 };
+	const XMFLOAT4 farFloat4{ static_cast<float>(convertedMousePos.x), static_cast<float>(convertedMousePos.y), 1, 0 };
+
+	const XMMATRIX inversedViewProjectionMatrix{ XMLoadFloat4x4(&m_ViewProjectionInverse) };
+
+	const XMVECTOR nearPointVector = XMVector3TransformCoord(XMLoadFloat4(&nearFloat4), inversedViewProjectionMatrix);
+	const XMVECTOR farPointVector = XMVector3TransformCoord(XMLoadFloat4(&farFloat4), inversedViewProjectionMatrix);
+
+	XMFLOAT4 nearPoint{};
+	XMStoreFloat4(&nearPoint, nearPointVector);
+	XMFLOAT4 farPoint{};
+	XMStoreFloat4(&farPoint, farPointVector);
+
+	XMFLOAT3 rayDirection = XMFLOAT3(farPoint.x - nearPoint.x, farPoint.y - nearPoint.y, farPoint.z - nearPoint.z);
+	XMVECTOR rayDirectionVector = XMVector3Normalize(XMLoadFloat3(&rayDirection));
+	XMStoreFloat3(&rayDirection, rayDirectionVector);
+
+	const XMFLOAT3 cameraPos{ m_pScene->GetActiveCamera()->GetTransform()->GetWorldPosition() };
+	const PxVec3 raycastStart{ cameraPos.x, cameraPos.y, cameraPos.z };
+	const PxVec3 raycastDir{ rayDirection.x, rayDirection.y ,rayDirection.z };
+
+	// Raycast
+	PxQueryFilterData filterData{};
+	filterData.data.word0 = ~UINT(ignoreGroups);
+
+	PxRaycastBuffer hit{};
+	GameObject* pHitGameObject{ nullptr };
+	if (m_pScene->GetPhysxProxy()->Raycast(raycastStart, raycastDir, PX_MAX_F32, hit, PxHitFlag::eDEFAULT, filterData))
+	{
+		PxRigidActor* pHitActor{ hit.block.actor };
+		pHitGameObject = reinterpret_cast<BaseComponent*>(pHitActor->userData)->GetGameObject();
+	}
+
+	// Return
+	return pHitGameObject;
 }
