@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "MainGame.h"
-#include "GameScene.h"
+#include "Scenes/HarryPotterScene.h"
 
 //Game is preparing
 void MainGame::OnGamePreparing(GameContext& /*gameContext*/)
@@ -16,7 +16,7 @@ void MainGame::OnGamePreparing(GameContext& /*gameContext*/)
 
 void MainGame::Initialize()
 {
-	SceneManager::Get()->AddGameScene(new GameScene());
+	SceneManager::Get()->AddGameScene(new HarryPotterScene());
 }
 
 LRESULT MainGame::WindowProcedureHook(HWND /*hWnd*/, UINT message, WPARAM wParam, LPARAM lParam)
