@@ -1,10 +1,10 @@
 #include "stdafx.h"
 #include "TextureContainerLoader.h"
 
-TextureData** TextureContainerLoader::LoadContent(const ContentLoadInfo& loadInfo)
+std::vector<TextureData*>* TextureContainerLoader::LoadContent(const ContentLoadInfo& loadInfo)
 {
-	// Clear vector
-	m_CreatedTextures.clear();
+	// Create vector
+	std::vector<TextureData*>* pTextureVector{ new std::vector<TextureData*>{} };
 
 	//Find Extension
 	const auto& assetPath = loadInfo.assetFullPath;
@@ -14,19 +14,19 @@ TextureData** TextureContainerLoader::LoadContent(const ContentLoadInfo& loadInf
 	// Check if is .mtl file
 	if (extension == L".mtl")
 	{
-		ASSERT_IF(ReadMtlFile(loadInfo, assetPath), L"Failed to read .mtl file!\nPath: {}", assetPath.wstring())
+		ASSERT_IF(ReadMtlFile(pTextureVector, assetPath), L"Failed to read .mtl file!\nPath: {}", assetPath.wstring())
 	}
 
 	// Return
-	return m_CreatedTextures.data();
+	return pTextureVector;
 }
 
-void TextureContainerLoader::Destroy(TextureData** objToDestroy)
+void TextureContainerLoader::Destroy(std::vector<TextureData*>* objToDestroy)
 {
 	SafeDelete(objToDestroy);
 }
 
-bool TextureContainerLoader::ReadMtlFile(const ContentLoadInfo&, const std::filesystem::path& assetFile)
+bool TextureContainerLoader::ReadMtlFile(std::vector<TextureData*>* pTextureVector, const std::filesystem::path& assetFile)
 {
 	// ---------------------------------------------------------------------------------------------
 	// Currently ignoring different material-attributes since they are all the same in this use case
@@ -76,7 +76,7 @@ bool TextureContainerLoader::ReadMtlFile(const ContentLoadInfo&, const std::file
 				HANDLE_ERROR(CreateShaderResourceView(m_GameContext.d3dContext.pDevice, image->GetImages(), image->GetImageCount(), image->GetMetadata(), &pShaderResourceView));
 
 				// Create textureData and push back
-				m_CreatedTextures.push_back(new TextureData(pTexture, pShaderResourceView, assetSubPath));
+				pTextureVector->push_back(new TextureData(pTexture, pShaderResourceView, assetSubPath));
 			}
 		}
 	}

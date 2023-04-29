@@ -1,6 +1,6 @@
 #pragma once
 
-class TextureContainerLoader : public ContentLoader<TextureData*>
+class TextureContainerLoader : public ContentLoader<std::vector<TextureData*>>
 {
 public:
 	TextureContainerLoader() = default;
@@ -12,14 +12,11 @@ public:
 	TextureContainerLoader& operator=(TextureContainerLoader&& other) noexcept = delete;
 
 protected:
-	TextureData** LoadContent(const ContentLoadInfo& loadInfo) override;
-	void Destroy(TextureData** objToDestroy) override;
+	std::vector<TextureData*>* LoadContent(const ContentLoadInfo& loadInfo) override;
+	void Destroy(std::vector<TextureData*>* objToDestroy) override;
 
 private:
-	// Variables
-	std::vector<TextureData*> m_CreatedTextures{};
-
 	// Functions
-	bool ReadMtlFile(const ContentLoadInfo& loadInfo, const std::filesystem::path& assetFile);
+	bool ReadMtlFile(std::vector<TextureData*>* pTextureVector, const std::filesystem::path& assetFile);
 };
 

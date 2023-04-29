@@ -15,6 +15,14 @@ void DiffuseMaterial::SetDiffuseTexture(const std::wstring& assetFile)
 	// Set variables
 	SetVariable_Texture(L"gDiffuseMap", m_pDiffuseTexture);
 }
+void DiffuseMaterial::SetDiffuseTexture(TextureData* pTextureData)
+{
+	// Set texture
+	m_pDiffuseTexture = pTextureData;
+
+	// Set variables
+	SetVariable_Texture(L"gDiffuseMap", m_pDiffuseTexture);
+}
 
 void DiffuseMaterial::InitializeEffectVariables()
 {

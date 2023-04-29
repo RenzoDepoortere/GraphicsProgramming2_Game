@@ -18,8 +18,20 @@ void HarryPotterScene::Initialize()
 
 	// Level mesh
 	ModelComponent* pLevelMesh = pLevelObject->AddComponent(new ModelComponent(L"Meshes/Level.ovm"));
-	pLevelMesh->SetMaterial(MaterialManager::Get()->CreateMaterial<ColorMaterial>());
-	//ContentManager::Load<TextureData*>(L"Textures/Map/1_LevelTexture.mtl");
+	//pLevelMesh->SetMaterial(MaterialManager::Get()->CreateMaterial<ColorMaterial>());
+	
+	const auto pLevelMaterials{ ContentManager::Load<std::vector<TextureData*>>(L"Textures/Map/1_LevelTexture.mtl") };
+	DiffuseMaterial* pDiffuseMaterial{ nullptr };
+	for (size_t idx{}; idx < pLevelMaterials->size(); ++idx)
+	{
+		// Create diffuseMaterials
+		pDiffuseMaterial = MaterialManager::Get()->CreateMaterial<DiffuseMaterial>();
+		pDiffuseMaterial->SetDiffuseTexture(pLevelMaterials->at(idx));
+
+		// Set material
+		pLevelMesh->SetMaterial(pDiffuseMaterial, static_cast<UINT8>(idx));
+	}
+
 
 	// Level Collision
 	RigidBodyComponent* pLevelActor = pLevelObject->AddComponent(new RigidBodyComponent(true));
