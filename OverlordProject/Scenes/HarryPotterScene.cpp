@@ -20,7 +20,7 @@ void HarryPotterScene::Initialize()
 	ModelComponent* pLevelMesh = pLevelObject->AddComponent(new ModelComponent(L"Meshes/Level.ovm"));
 	//pLevelMesh->SetMaterial(MaterialManager::Get()->CreateMaterial<ColorMaterial>());
 	
-	const auto pLevelMaterials{ ContentManager::Load<std::vector<TextureData*>>(L"Textures/Map/1_LevelTexture.mtl") };
+	auto pLevelMaterials{ ContentManager::Load<std::vector<TextureData*>>(L"Textures/Map/1_LevelTexture.mtl") };
 	DiffuseMaterial* pDiffuseMaterial{ nullptr };
 	for (size_t idx{}; idx < pLevelMaterials->size(); ++idx)
 	{
@@ -29,7 +29,7 @@ void HarryPotterScene::Initialize()
 		pDiffuseMaterial->SetDiffuseTexture(pLevelMaterials->at(idx));
 
 		// Set material
-		pLevelMesh->SetMaterial(pDiffuseMaterial, static_cast<UINT8>(idx));
+		pLevelMesh->SetMaterial(pDiffuseMaterial, static_cast<UINT8>((pLevelMaterials->size() - 1) - idx));
 	}
 
 

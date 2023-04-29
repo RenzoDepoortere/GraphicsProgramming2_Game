@@ -23,6 +23,13 @@ std::vector<TextureData*>* TextureContainerLoader::LoadContent(const ContentLoad
 
 void TextureContainerLoader::Destroy(std::vector<TextureData*>* objToDestroy)
 {
+	// Delete contents
+	for (size_t idx{}; idx < objToDestroy->size(); ++idx)
+	{
+		SafeDelete((*objToDestroy)[idx]);
+	}
+
+	// Delete vector
 	SafeDelete(objToDestroy);
 }
 
