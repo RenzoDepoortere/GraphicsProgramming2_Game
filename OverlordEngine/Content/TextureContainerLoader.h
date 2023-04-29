@@ -20,6 +20,6 @@ private:
 	std::vector<TextureData*> m_CreatedTextures{};
 
 	// Functions
-	bool ReadMtlFile(const std::filesystem::path& assetFile);
+	bool ReadMtlFile(const ContentLoadInfo& loadInfo, const std::filesystem::path& assetFile);
 };
 
