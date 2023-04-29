@@ -57,16 +57,22 @@ ContentLoader<T>::ContentLoader()
 template <class T>
 T* ContentLoader<T>::GetContent(const ContentLoadInfo& loadInfo)
 {
+	// Get hash to path
 	size_t pathHash = fs::hash_value(loadInfo.assetSubPath);
+	
+	// Check if already loaded
 	auto it = m_ContentReferences.find(pathHash);
-	if(it != m_ContentReferences.end())
+	if (it != m_ContentReferences.end())
 	{
-		return (* it).second;
+		// Return if loaded already
+		return (*it).second;
 	}
 
+	// Load content, and put in hash if isn't null
 	T* content = LoadContent(loadInfo);
-	if (content != nullptr)m_ContentReferences.insert(std::pair<size_t, T*>(pathHash, content));
+	if (content != nullptr) m_ContentReferences.insert(std::pair<size_t, T*>(pathHash, content));
 
+	// Return content
 	return content;
 }
 
@@ -75,15 +81,19 @@ T* ContentLoader<T>::GetContent(const ContentLoadInfo& loadInfo)
 template <class T>
 void ContentLoader<T>::Unload()
 {
+	// Lower loaderReferences
 	--m_LoaderReferences;
 
+	// If is 0 or less
 	if (m_LoaderReferences <= 0)
 	{
+		// Destroy all the loaders
 		for (std::pair<size_t, T*> kvp : m_ContentReferences)
 		{
 			Destroy(kvp.second);
 		}
 
+		// Clear container
 		m_ContentReferences.clear();
 	}
 }
