@@ -14,18 +14,18 @@ void HarryPotterScene::Initialize()
 	// Level Creation
 	// --------------
 	GameObject* pLevelObject = AddChild(new GameObject());
-	const float levelScale{ 0.1f };
+	const float levelScale{ 0.05f };
 
 	// Level mesh
-	ModelComponent* pLevelMesh = pLevelObject->AddComponent(new ModelComponent(L"Meshes/Level.ovm"));
-	//pLevelMesh->SetMaterial(MaterialManager::Get()->CreateMaterial<ColorMaterial>());
-	DiffuseMaterial* pDiffuseTexture{ MaterialManager::Get()->CreateMaterial<DiffuseMaterial>() };
-	pDiffuseTexture->SetDiffuseTexture(L"Textures/LevelTexture.mtl");
-	pLevelMesh->SetMaterial(pDiffuseTexture);
+	ModelComponent* pLevelMesh = pLevelObject->AddComponent(new ModelComponent(L"Meshes/HarryLevel.ovm"));
+	pLevelMesh->SetMaterial(MaterialManager::Get()->CreateMaterial<ColorMaterial>());
+	//DiffuseMaterial* pDiffuseTexture{ MaterialManager::Get()->CreateMaterial<DiffuseMaterial>() };
+	//pDiffuseTexture->SetDiffuseTexture(L"Textures/Map/1_LevelTexture.mtl");
+	//pLevelMesh->SetMaterial(pDiffuseTexture);
 
 	// Level Collision
 	RigidBodyComponent* pLevelActor = pLevelObject->AddComponent(new RigidBodyComponent(true));
-	PxTriangleMesh* pPxTriangleMesh = ContentManager::Load<PxTriangleMesh>(L"Meshes/Level.ovpt");
+	PxTriangleMesh* pPxTriangleMesh = ContentManager::Load<PxTriangleMesh>(L"Meshes/HarryLevel.ovpt");
 	pLevelActor->AddCollider(PxTriangleMeshGeometry(pPxTriangleMesh, PxMeshScale(levelScale)), *pDefaultMaterial);
 	
 	// Transform

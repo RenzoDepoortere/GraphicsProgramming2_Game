@@ -18,11 +18,14 @@ void ContentManager::Release()
 
 void ContentManager::Initialize(const GameContext& gameContext)
 {
-	if(!m_IsInitialized)
+	// If not init yet
+	if (!m_IsInitialized)
 	{
+		// Init variables
 		m_GameContext = gameContext;
 		m_IsInitialized = true;
 
+		// Add loaders
 		AddLoader(new EffectLoader);
 		AddLoader(new MeshFilterLoader);
 		AddLoader(new PxConvexMeshLoader);
@@ -34,15 +37,17 @@ void ContentManager::Initialize(const GameContext& gameContext)
 
 void ContentManager::AddLoader(BaseLoader* loader)
 { 
-	for(const BaseLoader *ldr:m_Loaders)
-	{	
-		if(ldr->GetType()==loader->GetType())
+	// If was already in container, delete old one
+	for (const BaseLoader* ldr : m_Loaders)
+	{
+		if (ldr->GetType() == loader->GetType())
 		{
 			SafeDelete(loader);
 			break;
 		}
 	}
 
+	// Push in container and init
 	m_Loaders.push_back(loader);
 	loader->Initialize(m_GameContext);
 }

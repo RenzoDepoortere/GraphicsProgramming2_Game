@@ -16,15 +16,19 @@ public:
 	template<class T> 
 	static T* Load(const std::wstring& assetFile, void* pUserData = nullptr, const std::source_location& location = std::source_location::current())
 	{
+		// Get given type
 		const type_info& ti = typeid(T);
-		for(BaseLoader* loader:m_Loaders)
+		for (BaseLoader* loader : m_Loaders)
 		{
+			// If loader exists
 			const type_info& loadertype = loader->GetType();
-			if(loadertype == ti)
+			if (loadertype == ti)
 			{
+				// Get full path
 				const auto fullPath = GetFullAssetPath(assetFile);
 				ASSERT_IF(!fs::exists(fullPath), LogString(L"File not found!\n\nAsset: {}\n\nFull Path: {}", location), assetFile, fullPath.wstring())
 
+				// Use loader to get content
 				return (static_cast<ContentLoader<T>*>(loader))->GetContent({ fullPath, assetFile, pUserData });
 			}
 		}

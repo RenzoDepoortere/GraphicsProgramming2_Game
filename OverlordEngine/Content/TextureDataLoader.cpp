@@ -3,16 +3,17 @@
 
 TextureData* TextureDataLoader::LoadContent(const ContentLoadInfo& loadInfo)
 {
+	// Init variables
 	ID3D11Resource* pTexture{};
 	ID3D11ShaderResourceView* pShaderResourceView{};
 	TexMetadata info{};
 
+	// Create scratchImage
 	auto image = new ScratchImage();
 	const auto& assetPath = loadInfo.assetFullPath;
 
 	//Find Extension
 	ASSERT_IF(!assetPath.has_extension(), L"Invalid File Extensions!\nPath: {}", assetPath.wstring())
-
 	const auto extension = assetPath.extension().wstring();
 
 	if (extension == L".dds")

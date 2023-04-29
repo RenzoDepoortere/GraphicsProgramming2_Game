@@ -57,8 +57,10 @@ template <typename T>
 std::enable_if<std::is_base_of_v<BaseMaterial, T>, T>::type*
 MaterialManager::CreateMaterial()
 {
+	// Create material
 	auto pMaterial = new T();
 
+	// Try to get free ID
 	UINT newMaterialId{ UINT_MAX};
 	for (size_t i{ 0 }; i < m_Materials.size(); ++i)
 	{
@@ -69,16 +71,21 @@ MaterialManager::CreateMaterial()
 		}
 	}
 
+	// If didn't find free ID
 	if (newMaterialId == UINT_MAX)
 	{
+		// ID is the last one
 		newMaterialId = UINT(m_Materials.size());
 		m_Materials.push_back(pMaterial);
 	}
+	// Else use found ID
 	else m_Materials[newMaterialId] = pMaterial;
 
+	// Init material
 	pMaterial->SetMaterialName(StringUtil::utf8_decode(typeid(T).name()));
 	pMaterial->Initialize(m_GameContext.d3dContext, newMaterialId);
 
+	// Return
 	return pMaterial;
 }
 
