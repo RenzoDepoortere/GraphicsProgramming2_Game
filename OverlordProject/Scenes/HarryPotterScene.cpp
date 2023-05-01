@@ -3,10 +3,12 @@
 
 #include "Materials/ColorMaterial.h"
 #include "Materials/DiffuseMaterial.h"
+#include "Materials/UberMaterial.h"
 
 void HarryPotterScene::Initialize()
 {
 	m_SceneContext.settings.drawGrid = false;
+	m_SceneContext.settings.drawPhysXDebug = false;
 
 	// Physics
 	PxMaterial* pDefaultMaterial = PxGetPhysics().createMaterial(0.5f, 0.5f, 0.5f);
@@ -14,7 +16,7 @@ void HarryPotterScene::Initialize()
 	// Level Creation
 	// --------------
 	GameObject* pLevelObject = AddChild(new GameObject());
-	const float levelScale{ 0.1f };
+	const float levelScale{ 0.25f };
 
 	// Level mesh
 	ModelComponent* pLevelMesh = pLevelObject->AddComponent(new ModelComponent(L"Meshes/Level.ovm"));
@@ -24,7 +26,7 @@ void HarryPotterScene::Initialize()
 	DiffuseMaterial* pDiffuseMaterial{ nullptr };
 	for (size_t idx{}; idx < pLevelMaterials->size(); ++idx)
 	{
-		// Create diffuseMaterials
+		// Create materials
 		pDiffuseMaterial = MaterialManager::Get()->CreateMaterial<DiffuseMaterial>();
 		pDiffuseMaterial->SetDiffuseTexture(pLevelMaterials->at(idx));
 

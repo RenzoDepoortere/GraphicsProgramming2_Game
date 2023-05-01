@@ -11,6 +11,7 @@ public:
 	UberMaterial& operator=(UberMaterial&& other) noexcept = delete;
 
 	void SetDiffuseTexture(const std::wstring& assetFile);
+	void SetDiffuseTexture(TextureData* pTextureData);
 	void SetSpecularLevelTexture(const std::wstring& assetFile);
 	void SetNormalTexture(const std::wstring& assetFile);
 	void SetEnvironmentCubeTexture(const std::wstring& assetFile);
