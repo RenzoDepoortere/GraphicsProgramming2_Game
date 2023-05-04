@@ -58,7 +58,7 @@ void Character::Update(const SceneContext& sceneContext)
 		XMFLOAT2 look{ 0.f, 0.f };
 		
 		//Only if the Left Mouse Button is Down >
-		if (InputManager::IsMouseButton(InputState::down, VK_LBUTTON))
+		if (true /*InputManager::IsMouseButton(InputState::down, VK_LBUTTON)*/)
 		{
 			// Store the MouseMovement in the local 'look' variable (cast is required)
 			const POINT& mouseMovement{ InputManager::GetMouseMovement() };
@@ -96,13 +96,15 @@ void Character::Update(const SceneContext& sceneContext)
 
 		//********
 		//MOVEMENT
+		const bool isInAir{ m_pControllerComponent->GetCollisionFlags() ^ PxControllerCollisionFlag::eCOLLISION_DOWN };
+		const bool isHuggingWall{ m_pControllerComponent->GetCollisionFlags() & PxControllerCollisionFlag::eCOLLISION_SIDES };
 
 		//## Horizontal Velocity (Forward/Backward/Right/Left)
 		//Calculate the current move acceleration for this frame (m_MoveAcceleration * ElapsedTime)
 		const float moveAcceleration{ m_MoveAcceleration * elapsedTime };
 		
 		//If the character is moving (= input is pressed)
-		if (isInput)
+		if (isInput && isInAir == false)
 		{
 			//Calculate & Store the current direction (m_CurrentDirection) >> based on the forward/right vectors and the pressed input
 			forwardVector = XMLoadFloat3(&pTransformComponent->GetForward());
@@ -115,8 +117,8 @@ void Character::Update(const SceneContext& sceneContext)
 			//Make sure the current MoveSpeed stays below the maximum MoveSpeed (CharacterDesc::maxMoveSpeed)
 			if (m_CharacterDesc.maxMoveSpeed < m_MoveSpeed) m_MoveSpeed = m_CharacterDesc.maxMoveSpeed;
 		}
-		//Else (character is not moving, or stopped moving)
-		else
+		//Else (character is not moving, or stopped moving) (keep momentum in air)
+		else if (isInAir == false || (isInAir == true && isHuggingWall == true))
 		{
 			// Decrease the current MoveSpeed with the current Acceleration (m_MoveSpeed)
 			m_MoveSpeed -= moveAcceleration;
@@ -136,7 +138,7 @@ void Character::Update(const SceneContext& sceneContext)
 
 		//## Vertical Movement (Jump/Fall)
 		//If the Controller Component is NOT grounded (= freefall)
-		if (m_pControllerComponent->GetCollisionFlags() ^ PxControllerCollisionFlag::eCOLLISION_DOWN)
+		if (isInAir)
 		{
 			//Decrease the y component of m_TotalVelocity with a fraction (ElapsedTime) of the Fall Acceleration (m_FallAcceleration)
 			m_TotalVelocity.y -= m_FallAcceleration * elapsedTime;
