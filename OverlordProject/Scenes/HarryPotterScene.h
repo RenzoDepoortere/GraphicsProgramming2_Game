@@ -1,4 +1,5 @@
 #pragma once
+class Character;
 
 class HarryPotterScene final : public GameScene
 {
@@ -12,10 +13,25 @@ public:
 	HarryPotterScene& operator=(HarryPotterScene&& other) noexcept = delete;
 
 private:
+	// Enums
+	enum InputIds
+	{
+		CharacterMoveLeft,
+		CharacterMoveRight,
+		CharacterMoveForward,
+		CharacterMoveBackward,
+		CharacterJump
+	};
+
 	// Variables
+	Character* m_pCharacter{};
 
 	// Functions
 	void Initialize() override;
 	void Update() override;
+	void OnGUI() override;
+
+	void InitMap();
+	void InitPlayer();
 };
 
