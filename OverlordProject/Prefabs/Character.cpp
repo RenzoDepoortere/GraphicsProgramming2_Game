@@ -89,7 +89,14 @@ void Character::Update(const SceneContext& sceneContext)
 		//Adjust the TotalYaw (m_TotalYaw) & TotalPitch (m_TotalPitch) based on the local 'look' variable
 		//Make sure this is calculated on a framerate independent way and uses CharacterDesc::rotationSpeed.
 		m_TotalYaw += look.x * m_CharacterDesc.rotationSpeed * elapsedTime;
-		m_TotalPitch += look.y * m_CharacterDesc.rotationSpeed * elapsedTime;		
+		m_TotalPitch += look.y * m_CharacterDesc.rotationSpeed * elapsedTime;	
+
+		// Lock pitch
+		const float minPitch{ -60.f };
+		const float maxPatch{ 60.f };
+		if (m_TotalPitch < minPitch) m_TotalPitch = minPitch;
+		if (maxPatch < m_TotalPitch) m_TotalPitch = maxPatch;
+
 		//Rotate this character based on the TotalPitch (X) and TotalYaw (Y)
 		pTransformComponent->Rotate(m_TotalPitch, m_TotalYaw, 0.f);
 
