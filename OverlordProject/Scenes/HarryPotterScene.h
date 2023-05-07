@@ -25,6 +25,7 @@ private:
 
 	// Variables
 	Character* m_pCharacter{};
+	float m_GeneralScale{};
 
 	// Functions
 	void Initialize() override;

@@ -13,6 +13,8 @@ void HarryPotterScene::Initialize()
 	m_SceneContext.settings.drawPhysXDebug = false;
 	m_SceneContext.settings.enableOnGUI = true;
 
+	m_GeneralScale = 0.025f;
+
 	InitMap();
 	InitPlayer();
 }
@@ -35,7 +37,6 @@ void HarryPotterScene::InitMap()
 	// Level Creation
 	// --------------
 	GameObject* pLevelObject = AddChild(new GameObject());
-	const float levelScale{ 0.025f };
 
 	// Level mesh
 	ModelComponent* pLevelMesh = pLevelObject->AddComponent(new ModelComponent(L"Meshes/Level.ovm"));
@@ -57,10 +58,10 @@ void HarryPotterScene::InitMap()
 	// Level Collision
 	RigidBodyComponent* pLevelActor = pLevelObject->AddComponent(new RigidBodyComponent(true));
 	PxTriangleMesh* pPxTriangleMesh = ContentManager::Load<PxTriangleMesh>(L"Meshes/Level.ovpt");
-	pLevelActor->AddCollider(PxTriangleMeshGeometry(pPxTriangleMesh, PxMeshScale(levelScale)), *pDefaultMaterial);
+	pLevelActor->AddCollider(PxTriangleMeshGeometry(pPxTriangleMesh, PxMeshScale(m_GeneralScale)), *pDefaultMaterial);
 
 	// Transform
-	pLevelObject->GetTransform()->Scale(levelScale);
+	pLevelObject->GetTransform()->Scale(m_GeneralScale);
 }
 void HarryPotterScene::InitPlayer()
 {
@@ -87,7 +88,13 @@ void HarryPotterScene::InitPlayer()
 	m_pCharacter = AddChild(new Character(characterDesc));
 	m_pCharacter->GetTransform()->Translate(-5.f, -6.f, -79.f);
 
+	// Mesh
+	GameObject* pMeshObject = new GameObject;
+	ModelComponent* pModel = pMeshObject->AddComponent(new ModelComponent(L"Meshes/Harry.ovm"));
+	pModel->SetMaterial(MaterialManager::Get()->CreateMaterial<ColorMaterial>());
 
+	m_pCharacter->AddChild(pMeshObject);
+	pMeshObject->GetTransform()->Scale(m_GeneralScale);
 
 	//Input
 	auto inputAction = InputAction(CharacterMoveLeft, InputState::down, 'A');

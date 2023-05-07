@@ -17,7 +17,7 @@ void Character::Initialize(const SceneContext& /*sceneContext*/)
 	m_pCameraComponent = pCamera->GetComponent<CameraComponent>();
 	m_pCameraComponent->SetActive(true); //Uncomment to make this camera the active camera
 
-	pCamera->GetTransform()->Translate(0.f, m_CharacterDesc.controller.height * .5f, 0.f);
+	pCamera->GetTransform()->Translate(0.f, m_CharacterDesc.controller.height * 0.5f, -2.5f);
 }
 
 void Character::Update(const SceneContext& sceneContext)
@@ -92,7 +92,7 @@ void Character::Update(const SceneContext& sceneContext)
 		m_TotalPitch += look.y * m_CharacterDesc.rotationSpeed * elapsedTime;	
 
 		// Lock pitch
-		const float minPitch{ -60.f };
+		const float minPitch{ -30.f };
 		const float maxPatch{ 60.f };
 		if (m_TotalPitch < minPitch) m_TotalPitch = minPitch;
 		if (maxPatch < m_TotalPitch) m_TotalPitch = maxPatch;
