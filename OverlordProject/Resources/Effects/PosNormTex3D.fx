@@ -43,6 +43,13 @@ BlendState NoBlending
 	BlendEnable[0] = FALSE;
 };
 
+BlendState gBS_EnableBlending 
+{     
+	BlendEnable[0] = TRUE;
+	SrcBlend = SRC_ALPHA;
+    DestBlend = INV_SRC_ALPHA;
+};
+
 //--------------------------------------------------------------------------------------
 // Vertex Shader
 //--------------------------------------------------------------------------------------
@@ -80,13 +87,13 @@ float4 PS(VS_OUTPUT input) : SV_TARGET{
 //--------------------------------------------------------------------------------------
 // Technique
 //--------------------------------------------------------------------------------------
-technique11 Default
+technique10 Default
 {
     pass P0
     {
 		SetRasterizerState(NoCulling);
 		SetDepthStencilState(EnableDepth, 0);
-		SetBlendState(NoBlending, float4(0.0f, 0.0f, 0.0f, 0.0f), 0xFFFFFFFF);
+		SetBlendState(gBS_EnableBlending,float4(0.0f, 0.0f, 0.0f, 0.0f), 0xFFFFFFFF);
 
 		SetVertexShader( CompileShader( vs_4_0, VS() ) );
 		SetGeometryShader( NULL );
