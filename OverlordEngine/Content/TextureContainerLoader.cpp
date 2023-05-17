@@ -14,7 +14,7 @@ std::vector<TextureData*>* TextureContainerLoader::LoadContent(const ContentLoad
 	// Check if is .mtl file
 	if (extension == L".mtl")
 	{
-		ASSERT_IF(ReadMtlFile(pTextureVector, assetPath), L"Failed to read .mtl file!\nPath: {}", assetPath.wstring())
+		ASSERT_IF(ReadMtlFile(pTextureVector, assetPath, loadInfo.assetSubPath), L"Failed to read .mtl file!\nPath: {}", assetPath.wstring())
 	}
 
 	// Return
@@ -33,7 +33,7 @@ void TextureContainerLoader::Destroy(std::vector<TextureData*>* objToDestroy)
 	SafeDelete(objToDestroy);
 }
 
-bool TextureContainerLoader::ReadMtlFile(std::vector<TextureData*>* pTextureVector, const std::filesystem::path& assetFile)
+bool TextureContainerLoader::ReadMtlFile(std::vector<TextureData*>* pTextureVector, const std::filesystem::path& assetFile, const std::wstring& assetSub)
 {
 	// ---------------------------------------------------------------------------------------------
 	// Currently ignoring different material-attributes since they are all the same in this use case
@@ -60,9 +60,11 @@ bool TextureContainerLoader::ReadMtlFile(std::vector<TextureData*>* pTextureVect
 		const std::wstring diffuseMap{ L"map_Kd" };
 
 		// Init strings
+		const auto lastStripe{ assetSub.find_last_of(L'/')};
+		std::wstring assetSubPathBegin{ assetSub.substr(0, lastStripe) + L'/'};
+
 		std::wstring readString{};
 		std::wstring textureName{};
-		std::wstring assetSubPathBegin{ L"Textures/Map/" };
 		std::wstring assetSubPath{};
 		std::wstring assetFullPath{};
 

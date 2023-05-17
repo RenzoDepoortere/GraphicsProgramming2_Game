@@ -43,6 +43,8 @@ public:
 	Character& operator=(Character&& other) noexcept = delete;
 
 	void DrawImGui();
+	ControllerComponent* GetController() const { return m_pControllerComponent; }
+	float GetTotalYaw() const { return m_TotalYaw; }
 
 protected:
 	void Initialize(const SceneContext&) override;

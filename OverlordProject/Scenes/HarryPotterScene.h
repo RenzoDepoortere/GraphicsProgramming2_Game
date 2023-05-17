@@ -25,7 +25,10 @@ private:
 
 	// Variables
 	Character* m_pCharacter{};
+	GameObject* m_pCharacterMesh{};
+
 	float m_GeneralScale{};
+	float m_ControllerHeight{};
 
 	// Functions
 	void Initialize() override;
@@ -34,5 +37,7 @@ private:
 
 	void InitMap();
 	void InitPlayer();
+
+	void HandleMeshTransform();
 };
 

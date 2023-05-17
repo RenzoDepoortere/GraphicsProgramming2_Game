@@ -17,6 +17,6 @@ protected:
 
 private:
 	// Functions
-	bool ReadMtlFile(std::vector<TextureData*>* pTextureVector, const std::filesystem::path& assetFile);
+	bool ReadMtlFile(std::vector<TextureData*>* pTextureVector, const std::filesystem::path& assetFile, const std::wstring& assetSub);
 };
 

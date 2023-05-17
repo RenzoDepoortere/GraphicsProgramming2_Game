@@ -100,7 +100,6 @@ void Character::Update(const SceneContext& sceneContext)
 		//Rotate this character based on the TotalPitch (X) and TotalYaw (Y)
 		pTransformComponent->Rotate(m_TotalPitch, m_TotalYaw, 0.f);
 
-
 		//********
 		//MOVEMENT
 		const bool isInAir{ m_pControllerComponent->GetCollisionFlags() ^ PxControllerCollisionFlag::eCOLLISION_DOWN };

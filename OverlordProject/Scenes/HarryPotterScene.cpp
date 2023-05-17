@@ -21,7 +21,11 @@ void HarryPotterScene::Initialize()
 
 void HarryPotterScene::Update()
 {
+	// Hide and set mouse
+	//m_SceneContext.pInput->ForceMouseToCenter(true);
+	//m_SceneContext.pInput->CursorVisible(false);
 
+	HandleMeshTransform();
 }
 
 void HarryPotterScene::OnGUI()
@@ -77,7 +81,8 @@ void HarryPotterScene::InitPlayer()
 	characterDesc.actionId_Jump = CharacterJump;
 	
 	characterDesc.controller.height *= 0.6f;
-	
+	m_ControllerHeight = characterDesc.controller.height;
+
 	characterDesc.maxMoveSpeed = 6.0f;
 	characterDesc.moveAccelerationTime = 0.3f;
 	characterDesc.maxFallSpeed = 17.5f;
@@ -89,12 +94,24 @@ void HarryPotterScene::InitPlayer()
 	m_pCharacter->GetTransform()->Translate(-5.f, -6.f, -79.f);
 
 	// Mesh
-	GameObject* pMeshObject = new GameObject;
-	ModelComponent* pModel = pMeshObject->AddComponent(new ModelComponent(L"Meshes/Harry.ovm"));
-	pModel->SetMaterial(MaterialManager::Get()->CreateMaterial<ColorMaterial>());
+	m_pCharacterMesh = new GameObject;
+	ModelComponent* pModel = m_pCharacterMesh->AddComponent(new ModelComponent(L"Meshes/Harry.ovm"));
+	//pModel->SetMaterial(MaterialManager::Get()->CreateMaterial<ColorMaterial>());
 
-	m_pCharacter->AddChild(pMeshObject);
-	pMeshObject->GetTransform()->Scale(m_GeneralScale);
+	auto pLevelMaterials{ ContentManager::Load<std::vector<TextureData*>>(L"Textures/Character/skharrymesh.mtl") };
+	DiffuseMaterial* pDiffuseMaterial{ nullptr };
+	for (size_t idx{}; idx < pLevelMaterials->size(); ++idx)
+	{
+		// Create materials
+		pDiffuseMaterial = MaterialManager::Get()->CreateMaterial<DiffuseMaterial>();
+		pDiffuseMaterial->SetDiffuseTexture(pLevelMaterials->at(idx));
+
+		// Set material
+		pModel->SetMaterial(pDiffuseMaterial, static_cast<UINT8>(idx));
+	}
+
+	AddChild(m_pCharacterMesh);
+	m_pCharacterMesh->GetTransform()->Scale(m_GeneralScale);
 
 	//Input
 	auto inputAction = InputAction(CharacterMoveLeft, InputState::down, 'A');
@@ -111,4 +128,17 @@ void HarryPotterScene::InitPlayer()
 
 	inputAction = InputAction(CharacterJump, InputState::pressed, VK_SPACE, -1, XINPUT_GAMEPAD_A);
 	m_SceneContext.pInput->AddInputAction(inputAction);
+}
+
+void HarryPotterScene::HandleMeshTransform()
+{
+	// Correctly transform model
+	TransformComponent* pControllerTransform{ m_pCharacter->GetController()->GetTransform() };
+	const XMFLOAT3 controllerPosition{ pControllerTransform->GetWorldPosition() };
+	const float characterBuffer{ 0.5f };
+	const float totalYaw{ m_pCharacter->GetTotalYaw() };
+	const float angleBuffer{ 90.0f };
+
+	m_pCharacterMesh->GetTransform()->Translate(controllerPosition.x, controllerPosition.y - m_ControllerHeight / 2.f - characterBuffer, controllerPosition.z);
+	m_pCharacterMesh->GetTransform()->Rotate(0.f, totalYaw + angleBuffer, 0.f);
 }
