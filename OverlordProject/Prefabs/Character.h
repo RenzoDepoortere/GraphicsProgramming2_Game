@@ -47,6 +47,7 @@ public:
 	
 	bool IsJumping() const { return m_IsJumping; }
 	float GetTotalYaw() const { return m_TotalYaw; }
+	const XMFLOAT3& GetCurrentDirection() const { return m_CurrentDirection; }
 
 protected:
 	void Initialize(const SceneContext&) override;

@@ -26,8 +26,14 @@ void HarryPotterScene::Update()
 	//m_SceneContext.pInput->ForceMouseToCenter(true);
 	//m_SceneContext.pInput->CursorVisible(false);
 
-	HandleMeshTransform();
-	HandleAnimations();
+	// Actions
+	const bool isForward{ m_SceneContext.pInput->IsActionTriggered(CharacterMoveForward) };
+	const bool isBackward{ m_SceneContext.pInput->IsActionTriggered(CharacterMoveBackward) };
+	const bool isLeft{ m_SceneContext.pInput->IsActionTriggered(CharacterMoveLeft) };
+	const bool isRight{ m_SceneContext.pInput->IsActionTriggered(CharacterMoveRight) };
+
+	HandleMeshTransform(isForward, isBackward, isLeft, isRight);
+	HandleAnimations(isForward, isBackward, isLeft, isRight);
 }
 
 void HarryPotterScene::OnGUI()
@@ -118,8 +124,6 @@ void HarryPotterScene::InitPlayer()
 
 	// Animations
 	m_pAnimator = pModel->GetAnimator();
-	m_pAnimator->SetAnimation(0);
-	m_pAnimator->SetAnimationSpeed(1.f);
 	m_pAnimator->Play();
 
 	m_pCharacterMesh->GetTransform()->Scale(m_GeneralScale);
@@ -142,59 +146,81 @@ void HarryPotterScene::InitPlayer()
 	m_SceneContext.pInput->AddInputAction(inputAction);
 }
 
-void HarryPotterScene::HandleMeshTransform()
+void HarryPotterScene::HandleMeshTransform(bool isForward, bool isBackward, bool isLeft, bool isRight)
 {
 	// Correctly transform model
+	// *************************
+
 	TransformComponent* pControllerTransform{ m_pCharacter->GetController()->GetTransform() };
+	
+	// Position
+	// --------
 	const XMFLOAT3 controllerPosition{ pControllerTransform->GetWorldPosition() };
 	const float characterBuffer{ 0.5f };
-
 	m_pCharacterMesh->GetTransform()->Translate(controllerPosition.x, controllerPosition.y - m_ControllerHeight / 2.f - characterBuffer, controllerPosition.z);
 	
-	if (true /*InputManager::IsMouseButton(InputState::down, VK_LBUTTON)*/)
+	// Rotation
+	// --------
+	const float totalYaw{ m_pCharacter->GetTotalYaw() };
+	float angleBuffer{ 180.0f };
+	float rotationSpeed{ 100.f };
+	const float deltaTime{ m_SceneContext.pGameTime->GetElapsed() };
+
+	// If button not held, rotate according to movement
+	if (InputManager::IsMouseButton(InputState::down, VK_LBUTTON) == false)
 	{
-		const float totalYaw{ m_pCharacter->GetTotalYaw() };
-		const float angleBuffer{ 180.0f };
-		m_pCharacterMesh->GetTransform()->Rotate(0.f, totalYaw + angleBuffer, 0.f);
+		if (isForward)       angleBuffer = angleBuffer;
+		else if (isBackward) angleBuffer = 0.f;
+		else if (isLeft)     angleBuffer = 90.f;
+		else if (isRight)    angleBuffer = -90.f;
+		else			     return;
+
+		rotationSpeed *= 2.5f;
 	}
+
+	// Calculate currentAngle
+	const float buffer{ 10.f };
+	const bool isInsideBuffer{ totalYaw + angleBuffer - buffer <= m_CurrentAngle && m_CurrentAngle <= totalYaw + angleBuffer + buffer };
+	if (isInsideBuffer) return;
+
+	if (m_CurrentAngle < angleBuffer)
+	{
+		m_CurrentAngle += rotationSpeed * deltaTime;
+	}
+	else
+	{
+		m_CurrentAngle -= rotationSpeed * deltaTime;
+	}
+
+	m_pCharacterMesh->GetTransform()->Rotate(0.f, totalYaw + m_CurrentAngle, 0.f);
 }
-void HarryPotterScene::HandleAnimations()
+void HarryPotterScene::HandleAnimations(bool isForward, bool isBackward, bool isLeft, bool isRight)
 {
 	// Check actions
-	const bool isForward{ m_SceneContext.pInput->IsActionTriggered(CharacterMoveForward) };
-	const bool isLeft{ m_SceneContext.pInput->IsActionTriggered(CharacterMoveLeft) };
-	const bool isRight{ m_SceneContext.pInput->IsActionTriggered(CharacterMoveRight) };
-	const bool isBackward{ m_SceneContext.pInput->IsActionTriggered(CharacterMoveBackward) };
 	const bool isMoving{ isForward || isLeft || isRight || isBackward };
 	
+	//const bool isJumping{ m_SceneContext.pInput->IsActionTriggered(CharacterJump) };
+
 	// Change state
-	const CharacterState initialState{ m_CurrentCharacterState };
+	const CharacterStates initialState{ m_CurrentCharacterState };
 	
-	if (m_pCharacter->IsJumping())	m_CurrentCharacterState = Jumping;
-	else if (isMoving)				m_CurrentCharacterState = Moving;
-	else							m_CurrentCharacterState = Idle;
+	if (m_pCharacter->IsJumping())
+	{
+		m_CurrentCharacterState = CharacterStates::Jumping;
+	}
+	else if (isMoving)
+	{
+		m_CurrentCharacterState = CharacterStates::RunForward;
+	}
+	else
+	{
+		m_CurrentCharacterState = CharacterStates::Idle;
+	}
 
 	// Change animations, if necessary
 	if (initialState != m_CurrentCharacterState)
 	{
-		int animationID{};
-
-		switch (m_CurrentCharacterState)
-		{
-		case HarryPotterScene::Idle:
-			animationID = 0;
-			break;
-
-		case HarryPotterScene::Moving:
-			animationID = 1;
-			break;
-
-		case HarryPotterScene::Jumping:
-			animationID = 2;
-			break;
-		}
-
-		m_pAnimator->SetAnimation(animationID);
+		m_pAnimator->SetAnimation(static_cast<int>(m_CurrentCharacterState));
 		m_pAnimator->Play();
 	}
 }

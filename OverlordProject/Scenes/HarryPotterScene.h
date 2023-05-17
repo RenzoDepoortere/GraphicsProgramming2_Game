@@ -24,9 +24,12 @@ private:
 		CharacterJump
 	};
 
-	enum CharacterState
+	enum CharacterStates
 	{
-		Idle, Moving, Jumping
+		Idle, 
+		RunForward, RunLeft, RunRight, RunBackward, 
+		Jumping,
+		Hit, Death
 	};
 
 	// Variables
@@ -39,7 +42,9 @@ private:
 	float m_GeneralScale{};
 	float m_ControllerHeight{};
 
-	CharacterState m_CurrentCharacterState{ Idle };
+	float m_CurrentAngle{};
+
+	CharacterStates m_CurrentCharacterState{ Idle };
 	ModelAnimator* m_pAnimator{};
 
 	// Functions
@@ -55,7 +60,7 @@ private:
 	void InitPlayer();
 
 	// Character
-	void HandleMeshTransform();
-	void HandleAnimations();
+	void HandleMeshTransform(bool isForward, bool isBackward, bool isLeft, bool isRight);
+	void HandleAnimations(bool isForward, bool isBackward, bool isLeft, bool isRight);
 };
 
