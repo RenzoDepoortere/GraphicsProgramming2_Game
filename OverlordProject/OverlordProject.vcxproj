@@ -103,6 +103,8 @@
     <ClCompile Include="Prefabs\TorusPrefab.cpp" />
     <ClCompile Include="Materials\ColorMaterial.cpp" />
     <ClCompile Include="Materials\SpikyMaterial.cpp" />
+    <ClCompile Include="Materials\SkyBoxMaterial.cpp" />
+    <ClCompile Include="Prefabs\SkyBox.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">stdafx.h</PrecompiledHeaderFile>
@@ -136,6 +138,8 @@
     <ClInclude Include="Prefabs\TorusPrefab.h" />
     <ClInclude Include="Materials\ColorMaterial.h" />
     <ClInclude Include="Materials\SpikyMaterial.h" />
+    <ClInclude Include="Materials\SkyBoxMaterial.h" />
+    <ClInclude Include="Prefabs\SkyBox.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="MainGame.h" />
     <ClInclude Include="Materials\UberMaterial.h" />

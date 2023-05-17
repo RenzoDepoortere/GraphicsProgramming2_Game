@@ -7,6 +7,7 @@
 #include "Materials/UberMaterial.h"
 
 #include "Prefabs/Character.h"
+#include "Prefabs/SkyBox.h"
 
 void HarryPotterScene::Initialize()
 {
@@ -75,6 +76,10 @@ void HarryPotterScene::InitMap()
 
 	// Transform
 	pLevelObject->GetTransform()->Scale(m_GeneralScale);
+
+	// Skybox
+	// ------
+	AddChild(new SkyBox());
 }
 void HarryPotterScene::InitPlayer()
 {
