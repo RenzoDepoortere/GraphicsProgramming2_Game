@@ -3,6 +3,7 @@
 
 #include "Materials/ColorMaterial.h"
 #include "Materials/DiffuseMaterial.h"
+#include "Materials/DiffuseMaterial_Skinned.h"
 #include "Materials/UberMaterial.h"
 
 #include "Prefabs/Character.h"
@@ -26,6 +27,7 @@ void HarryPotterScene::Update()
 	//m_SceneContext.pInput->CursorVisible(false);
 
 	HandleMeshTransform();
+	HandleAnimations();
 }
 
 void HarryPotterScene::OnGUI()
@@ -70,9 +72,11 @@ void HarryPotterScene::InitMap()
 void HarryPotterScene::InitPlayer()
 {
 	// Physics
+	// -------
 	PxMaterial* pDefaultMaterial = PxGetPhysics().createMaterial(0.5f, 0.5f, 0.5f);
 
-	//Character
+	// Character Controller
+	// -------------------
 	CharacterDesc characterDesc{ pDefaultMaterial };
 	characterDesc.actionId_MoveForward = CharacterMoveForward;
 	characterDesc.actionId_MoveBackward = CharacterMoveBackward;
@@ -94,26 +98,34 @@ void HarryPotterScene::InitPlayer()
 	m_pCharacter->GetTransform()->Translate(-5.f, -6.f, -79.f);
 
 	// Mesh
-	m_pCharacterMesh = new GameObject;
+	// ----
+	m_pCharacterMesh = AddChild(new GameObject);
 	ModelComponent* pModel = m_pCharacterMesh->AddComponent(new ModelComponent(L"Meshes/Harry.ovm"));
 	//pModel->SetMaterial(MaterialManager::Get()->CreateMaterial<ColorMaterial>());
 
+	// Materials
 	auto pLevelMaterials{ ContentManager::Load<std::vector<TextureData*>>(L"Textures/Character/skharrymesh.mtl") };
-	DiffuseMaterial* pDiffuseMaterial{ nullptr };
+	DiffuseMaterial_Skinned* pSkinnedDiffuseMaterial{ nullptr };
 	for (size_t idx{}; idx < pLevelMaterials->size(); ++idx)
 	{
 		// Create materials
-		pDiffuseMaterial = MaterialManager::Get()->CreateMaterial<DiffuseMaterial>();
-		pDiffuseMaterial->SetDiffuseTexture(pLevelMaterials->at(idx));
+		pSkinnedDiffuseMaterial = MaterialManager::Get()->CreateMaterial<DiffuseMaterial_Skinned>();
+		pSkinnedDiffuseMaterial->SetDiffuseTexture(pLevelMaterials->at(idx));
 
 		// Set material
-		pModel->SetMaterial(pDiffuseMaterial, static_cast<UINT8>(idx));
+		pModel->SetMaterial(pSkinnedDiffuseMaterial, static_cast<UINT8>(idx));
 	}
 
-	AddChild(m_pCharacterMesh);
+	// Animations
+	m_pAnimator = pModel->GetAnimator();
+	m_pAnimator->SetAnimation(0);
+	m_pAnimator->SetAnimationSpeed(1.f);
+	m_pAnimator->Play();
+
 	m_pCharacterMesh->GetTransform()->Scale(m_GeneralScale);
 
 	//Input
+	// ----
 	auto inputAction = InputAction(CharacterMoveLeft, InputState::down, 'A');
 	m_SceneContext.pInput->AddInputAction(inputAction);
 
@@ -136,9 +148,53 @@ void HarryPotterScene::HandleMeshTransform()
 	TransformComponent* pControllerTransform{ m_pCharacter->GetController()->GetTransform() };
 	const XMFLOAT3 controllerPosition{ pControllerTransform->GetWorldPosition() };
 	const float characterBuffer{ 0.5f };
-	const float totalYaw{ m_pCharacter->GetTotalYaw() };
-	const float angleBuffer{ 90.0f };
 
 	m_pCharacterMesh->GetTransform()->Translate(controllerPosition.x, controllerPosition.y - m_ControllerHeight / 2.f - characterBuffer, controllerPosition.z);
-	m_pCharacterMesh->GetTransform()->Rotate(0.f, totalYaw + angleBuffer, 0.f);
+	
+	if (true /*InputManager::IsMouseButton(InputState::down, VK_LBUTTON)*/)
+	{
+		const float totalYaw{ m_pCharacter->GetTotalYaw() };
+		const float angleBuffer{ 180.0f };
+		m_pCharacterMesh->GetTransform()->Rotate(0.f, totalYaw + angleBuffer, 0.f);
+	}
+}
+void HarryPotterScene::HandleAnimations()
+{
+	// Check actions
+	const bool isForward{ m_SceneContext.pInput->IsActionTriggered(CharacterMoveForward) };
+	const bool isLeft{ m_SceneContext.pInput->IsActionTriggered(CharacterMoveLeft) };
+	const bool isRight{ m_SceneContext.pInput->IsActionTriggered(CharacterMoveRight) };
+	const bool isBackward{ m_SceneContext.pInput->IsActionTriggered(CharacterMoveBackward) };
+	const bool isMoving{ isForward || isLeft || isRight || isBackward };
+	
+	// Change state
+	const CharacterState initialState{ m_CurrentCharacterState };
+	
+	if (m_pCharacter->IsJumping())	m_CurrentCharacterState = Jumping;
+	else if (isMoving)				m_CurrentCharacterState = Moving;
+	else							m_CurrentCharacterState = Idle;
+
+	// Change animations, if necessary
+	if (initialState != m_CurrentCharacterState)
+	{
+		int animationID{};
+
+		switch (m_CurrentCharacterState)
+		{
+		case HarryPotterScene::Idle:
+			animationID = 0;
+			break;
+
+		case HarryPotterScene::Moving:
+			animationID = 1;
+			break;
+
+		case HarryPotterScene::Jumping:
+			animationID = 2;
+			break;
+		}
+
+		m_pAnimator->SetAnimation(animationID);
+		m_pAnimator->Play();
+	}
 }

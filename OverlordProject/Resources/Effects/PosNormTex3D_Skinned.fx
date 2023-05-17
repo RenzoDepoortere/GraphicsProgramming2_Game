@@ -18,6 +18,19 @@ RasterizerState Solid
 	CullMode = FRONT;
 };
 
+DepthStencilState EnableDepth
+{
+	DepthEnable = TRUE;
+	DepthWriteMask = ALL;
+};
+
+BlendState gBS_EnableBlending 
+{     
+	BlendEnable[0] = TRUE;
+	SrcBlend = SRC_ALPHA;
+    DestBlend = INV_SRC_ALPHA;
+};
+
 struct VS_INPUT{
 	float3 pos : POSITION;
 	float3 normal : NORMAL;
@@ -29,12 +42,6 @@ struct VS_OUTPUT{
 	float4 pos : SV_POSITION;
 	float3 normal : NORMAL;
 	float2 texCoord : TEXCOORD;
-};
-
-DepthStencilState EnableDepth
-{
-	DepthEnable = TRUE;
-	DepthWriteMask = ALL;
 };
 
 RasterizerState NoCulling
@@ -162,7 +169,7 @@ technique10 Default
     {
 		SetRasterizerState(NoCulling);
 		SetDepthStencilState(EnableDepth, 0);
-		SetBlendState(NoBlending, float4(0.0f, 0.0f, 0.0f, 0.0f), 0xFFFFFFFF);
+		SetBlendState(gBS_EnableBlending, float4(0.0f, 0.0f, 0.0f, 0.0f), 0xFFFFFFFF);
 
 		SetVertexShader( CompileShader( vs_4_0, VS() ) );
 		SetGeometryShader( NULL );

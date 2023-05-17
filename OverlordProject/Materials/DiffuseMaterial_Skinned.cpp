@@ -11,6 +11,14 @@ void DiffuseMaterial_Skinned::SetDiffuseTexture(const std::wstring& assetFile)
 	m_pDiffuseTexture = ContentManager::Load<TextureData>(assetFile);
 	SetVariable_Texture(L"gDiffuseMap", m_pDiffuseTexture);
 }
+void DiffuseMaterial_Skinned::SetDiffuseTexture(TextureData* pTextureData)
+{
+	// Set texture
+	m_pDiffuseTexture = pTextureData;
+
+	// Set variables
+	SetVariable_Texture(L"gDiffuseMap", m_pDiffuseTexture);
+}
 
 void DiffuseMaterial_Skinned::InitializeEffectVariables()
 {

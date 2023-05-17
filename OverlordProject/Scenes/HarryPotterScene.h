@@ -14,6 +14,7 @@ public:
 
 private:
 	// Enums
+	// -----
 	enum InputIds
 	{
 		CharacterMoveLeft,
@@ -23,21 +24,38 @@ private:
 		CharacterJump
 	};
 
+	enum CharacterState
+	{
+		Idle, Moving, Jumping
+	};
+
 	// Variables
+	// ---------
+
+	// Character
 	Character* m_pCharacter{};
 	GameObject* m_pCharacterMesh{};
 
 	float m_GeneralScale{};
 	float m_ControllerHeight{};
 
+	CharacterState m_CurrentCharacterState{ Idle };
+	ModelAnimator* m_pAnimator{};
+
 	// Functions
+	// ---------
+
+	// Scene
 	void Initialize() override;
 	void Update() override;
 	void OnGUI() override;
 
+	// Init
 	void InitMap();
 	void InitPlayer();
 
+	// Character
 	void HandleMeshTransform();
+	void HandleAnimations();
 };
 

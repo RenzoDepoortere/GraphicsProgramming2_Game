@@ -22,6 +22,51 @@ void Character::Initialize(const SceneContext& /*sceneContext*/)
 
 void Character::Update(const SceneContext& sceneContext)
 {
+	Input(sceneContext);
+}
+
+void Character::DrawImGui()
+{
+	if (ImGui::CollapsingHeader("Character"))
+	{
+		ImGui::Text(std::format("Move Speed: {:0.1f} m/s", m_MoveSpeed).c_str());
+		ImGui::Text(std::format("Fall Speed: {:0.1f} m/s", m_TotalVelocity.y).c_str());
+
+		ImGui::Text(std::format("Move Acceleration: {:0.1f} m/s2", m_MoveAcceleration).c_str());
+		ImGui::Text(std::format("Fall Acceleration: {:0.1f} m/s2", m_FallAcceleration).c_str());
+
+		const float jumpMaxTime = m_CharacterDesc.JumpSpeed / m_FallAcceleration;
+		const float jumpMaxHeight = (m_CharacterDesc.JumpSpeed * jumpMaxTime) - (0.5f * (m_FallAcceleration * powf(jumpMaxTime, 2)));
+		ImGui::Text(std::format("Jump Height: {:0.1f} m", jumpMaxHeight).c_str());
+
+		ImGui::Dummy({ 0.f,5.f });
+		if (ImGui::DragFloat("Max Move Speed (m/s)", &m_CharacterDesc.maxMoveSpeed, 0.1f, 0.f, 0.f, "%.1f") ||
+			ImGui::DragFloat("Move Acceleration Time (s)", &m_CharacterDesc.moveAccelerationTime, 0.1f, 0.f, 0.f, "%.1f"))
+		{
+			m_MoveAcceleration = m_CharacterDesc.maxMoveSpeed / m_CharacterDesc.moveAccelerationTime;
+		}
+
+		ImGui::Dummy({ 0.f,5.f });
+		if (ImGui::DragFloat("Max Fall Speed (m/s)", &m_CharacterDesc.maxFallSpeed, 0.1f, 0.f, 0.f, "%.1f") ||
+			ImGui::DragFloat("Fall Acceleration Time (s)", &m_CharacterDesc.fallAccelerationTime, 0.1f, 0.f, 0.f, "%.1f"))
+		{
+			m_FallAcceleration = m_CharacterDesc.maxFallSpeed / m_CharacterDesc.fallAccelerationTime;
+		}
+
+		ImGui::Dummy({ 0.f,5.f });
+		ImGui::DragFloat("Jump Speed", &m_CharacterDesc.JumpSpeed, 0.1f, 0.f, 0.f, "%.1f");
+		ImGui::DragFloat("Rotation Speed (deg/s)", &m_CharacterDesc.rotationSpeed, 0.1f, 0.f, 0.f, "%.1f");
+
+		bool isActive = m_pCameraComponent->IsActive();
+		if(ImGui::Checkbox("Character Camera", &isActive))
+		{
+			m_pCameraComponent->SetActive(isActive);
+		}
+	}
+}
+
+void Character::Input(const SceneContext& sceneContext)
+{
 	if (m_pCameraComponent->IsActive())
 	{
 		constexpr float epsilon{ 0.01f }; //Constant that can be used to compare if a float is near zero
@@ -34,7 +79,7 @@ void Character::Update(const SceneContext& sceneContext)
 		//## Input Gathering (move)
 		XMFLOAT2 move{ 0.f, 0.f };
 		const XMFLOAT2 leftThumbStickPosition{ InputManager::GetThumbstickPosition() };
-		
+
 		const bool forwardInput{ pInputManager->IsActionTriggered(m_CharacterDesc.actionId_MoveForward) };
 		const bool backwardInput{ pInputManager->IsActionTriggered(m_CharacterDesc.actionId_MoveBackward) };
 		const bool rightInput{ pInputManager->IsActionTriggered(m_CharacterDesc.actionId_MoveRight) };
@@ -43,20 +88,20 @@ void Character::Update(const SceneContext& sceneContext)
 		const bool isInput{ forwardInput || backwardInput || rightInput || leftInput };
 
 		//move.y should contain a 1 (Forward) or -1 (Backward) based on the active input (check corresponding actionId in m_CharacterDesc)
-		if		(forwardInput)	move.y = 1;
+		if (forwardInput)	move.y = 1;
 		else if (backwardInput) move.y = -1;
 		//Optional: if move.y is near zero (abs(move.y) < epsilon), you could use the ThumbStickPosition.y for movement
 		if (abs(move.y) < epsilon) move.y = leftThumbStickPosition.y;
 
 		//move.x should contain a 1 (Right) or -1 (Left) based on the active input (check corresponding actionId in m_CharacterDesc)
-		if		(rightInput) move.x = 1;
+		if (rightInput) move.x = 1;
 		else if (leftInput)	 move.x = -1;
 		//Optional: if move.x is near zero (abs(move.x) < epsilon), you could use the Left ThumbStickPosition.x for movement
 		if (abs(move.x) < epsilon) move.x = leftThumbStickPosition.x;
 
 		//## Input Gathering (look)
 		XMFLOAT2 look{ 0.f, 0.f };
-		
+
 		//Only if the Left Mouse Button is Down >
 		if (true /*InputManager::IsMouseButton(InputState::down, VK_LBUTTON)*/)
 		{
@@ -89,7 +134,7 @@ void Character::Update(const SceneContext& sceneContext)
 		//Adjust the TotalYaw (m_TotalYaw) & TotalPitch (m_TotalPitch) based on the local 'look' variable
 		//Make sure this is calculated on a framerate independent way and uses CharacterDesc::rotationSpeed.
 		m_TotalYaw += look.x * m_CharacterDesc.rotationSpeed * elapsedTime;
-		m_TotalPitch += look.y * m_CharacterDesc.rotationSpeed * elapsedTime;	
+		m_TotalPitch += look.y * m_CharacterDesc.rotationSpeed * elapsedTime;
 
 		// Lock pitch
 		const float minPitch{ -30.f };
@@ -108,7 +153,7 @@ void Character::Update(const SceneContext& sceneContext)
 		//## Horizontal Velocity (Forward/Backward/Right/Left)
 		//Calculate the current move acceleration for this frame (m_MoveAcceleration * ElapsedTime)
 		const float moveAcceleration{ m_MoveAcceleration * elapsedTime };
-		
+
 		//If the character is moving (= input is pressed)
 		if (isInput && isInAir == false)
 		{
@@ -117,7 +162,7 @@ void Character::Update(const SceneContext& sceneContext)
 			rightVector = XMLoadFloat3(&pTransformComponent->GetRight());
 			const XMVECTOR currentDir{ XMVectorAdd(XMVectorScale(forwardVector, move.y), XMVectorScale(rightVector, move.x)) };
 			XMStoreFloat3(&m_CurrentDirection, currentDir);
-			
+
 			//Increase the current MoveSpeed with the current Acceleration (m_MoveSpeed)
 			m_MoveSpeed += moveAcceleration;
 			//Make sure the current MoveSpeed stays below the maximum MoveSpeed (CharacterDesc::maxMoveSpeed)
@@ -131,6 +176,8 @@ void Character::Update(const SceneContext& sceneContext)
 			// Make sure the current MoveSpeed doesn't get smaller than zero
 			if (m_MoveSpeed < 0) m_MoveSpeed = 0;
 		}
+
+		m_IsJumping = isInAir;
 
 		//Now we can calculate the Horizontal Velocity which should be stored in m_TotalVelocity.xz
 		//Calculate the horizontal velocity (m_CurrentDirection * MoveSpeed)
@@ -178,45 +225,5 @@ void Character::Update(const SceneContext& sceneContext)
 
 		//The above is a simple implementation of Movement Dynamics, adjust the code to further improve the movement logic and behaviour.
 		//Also, it can be usefull to use a seperate RayCast to check if the character is grounded (more responsive)
-	}
-}
-
-void Character::DrawImGui()
-{
-	if (ImGui::CollapsingHeader("Character"))
-	{
-		ImGui::Text(std::format("Move Speed: {:0.1f} m/s", m_MoveSpeed).c_str());
-		ImGui::Text(std::format("Fall Speed: {:0.1f} m/s", m_TotalVelocity.y).c_str());
-
-		ImGui::Text(std::format("Move Acceleration: {:0.1f} m/s2", m_MoveAcceleration).c_str());
-		ImGui::Text(std::format("Fall Acceleration: {:0.1f} m/s2", m_FallAcceleration).c_str());
-
-		const float jumpMaxTime = m_CharacterDesc.JumpSpeed / m_FallAcceleration;
-		const float jumpMaxHeight = (m_CharacterDesc.JumpSpeed * jumpMaxTime) - (0.5f * (m_FallAcceleration * powf(jumpMaxTime, 2)));
-		ImGui::Text(std::format("Jump Height: {:0.1f} m", jumpMaxHeight).c_str());
-
-		ImGui::Dummy({ 0.f,5.f });
-		if (ImGui::DragFloat("Max Move Speed (m/s)", &m_CharacterDesc.maxMoveSpeed, 0.1f, 0.f, 0.f, "%.1f") ||
-			ImGui::DragFloat("Move Acceleration Time (s)", &m_CharacterDesc.moveAccelerationTime, 0.1f, 0.f, 0.f, "%.1f"))
-		{
-			m_MoveAcceleration = m_CharacterDesc.maxMoveSpeed / m_CharacterDesc.moveAccelerationTime;
-		}
-
-		ImGui::Dummy({ 0.f,5.f });
-		if (ImGui::DragFloat("Max Fall Speed (m/s)", &m_CharacterDesc.maxFallSpeed, 0.1f, 0.f, 0.f, "%.1f") ||
-			ImGui::DragFloat("Fall Acceleration Time (s)", &m_CharacterDesc.fallAccelerationTime, 0.1f, 0.f, 0.f, "%.1f"))
-		{
-			m_FallAcceleration = m_CharacterDesc.maxFallSpeed / m_CharacterDesc.fallAccelerationTime;
-		}
-
-		ImGui::Dummy({ 0.f,5.f });
-		ImGui::DragFloat("Jump Speed", &m_CharacterDesc.JumpSpeed, 0.1f, 0.f, 0.f, "%.1f");
-		ImGui::DragFloat("Rotation Speed (deg/s)", &m_CharacterDesc.rotationSpeed, 0.1f, 0.f, 0.f, "%.1f");
-
-		bool isActive = m_pCameraComponent->IsActive();
-		if(ImGui::Checkbox("Character Camera", &isActive))
-		{
-			m_pCameraComponent->SetActive(isActive);
-		}
 	}
 }
