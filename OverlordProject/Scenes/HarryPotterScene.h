@@ -60,7 +60,7 @@ private:
 	void InitPlayer();
 
 	// Character
-	void HandleMeshTransform(bool isForward, bool isBackward, bool isLeft, bool isRight);
-	void HandleAnimations(bool isForward, bool isBackward, bool isLeft, bool isRight);
+	void HandleMeshTransform(bool isForward, bool isBackward, bool isLeft, bool isRight, bool isHoldingLeft);
+	void HandleAnimations(bool isForward, bool isBackward, bool isLeft, bool isRight, bool isHoldingLeft);
 };
 
