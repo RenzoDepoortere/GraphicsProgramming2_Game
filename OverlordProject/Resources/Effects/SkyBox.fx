@@ -52,12 +52,21 @@ RasterizerState NoCull
 	CullMode = NONE;
 };
 
+BlendState gBS_EnableBlending 
+{     
+	BlendEnable[0] = TRUE;
+	SrcBlend = SRC_ALPHA;
+    DestBlend = INV_SRC_ALPHA;
+};
+
 DepthStencilState LessEqualDSS
 {
 	// Make sure the depth function is LESS_EQUAL and not just LESS.
     // Otherwise, the normalized depth values at z = 1 (NDC) will
     // fail the depth test if the depth buffer was cleared to 1.
 	DepthFunc = LESS_EQUAL;
+	DepthEnable = TRUE;
+	DepthWriteMask = ALL;
 };
 
 
@@ -70,5 +79,6 @@ technique10 Render
         SetPixelShader( CompileShader( ps_4_0, PS() ) );
 		SetRasterizerState(NoCull);
 		SetDepthStencilState(LessEqualDSS,0);
+		SetBlendState(gBS_EnableBlending,float4(0.0f, 0.0f, 0.0f, 0.0f), 0xFFFFFFFF);
     }
 }
