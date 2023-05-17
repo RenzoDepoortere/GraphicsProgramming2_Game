@@ -10,6 +10,14 @@ void DiffuseMaterial_Shadow::SetDiffuseTexture(const std::wstring& assetFile)
 	m_pDiffuseTexture = ContentManager::Load<TextureData>(assetFile);
 	SetVariable_Texture(L"gDiffuseMap", m_pDiffuseTexture);
 }
+void DiffuseMaterial_Shadow::SetDiffuseTexture(TextureData* pTextureData)
+{
+	// Set texture
+	m_pDiffuseTexture = pTextureData;
+
+	// Set variables
+	SetVariable_Texture(L"gDiffuseMap", m_pDiffuseTexture);
+}
 
 void DiffuseMaterial_Shadow::InitializeEffectVariables()
 {
@@ -39,12 +47,12 @@ void DiffuseMaterial_Shadow::OnUpdateModelVariables(const SceneContext& sceneCon
 	const XMMATRIX lightVWPMatrix{ XMMatrixMultiply(XMLoadFloat4x4(&modelWorld), XMLoadFloat4x4(&lightVP)) };
 	XMFLOAT4X4 lightVWP{};
 	XMStoreFloat4x4(&lightVWP, lightVWPMatrix);
-	
+
 	SetVariable_Matrix(L"gWorldViewProj_Light", lightVWP);
-	
+
 	// Update the ShadowMap texture
 	SetVariable_Texture(L"gShadowMap", pShadowMapRenderer->GetShadowMap());
-	
+
 	// Update the Light Direction
 	SetVariable_Vector(L"gLightDirection", sceneContext.pLights->GetDirectionalLight().direction);
 }

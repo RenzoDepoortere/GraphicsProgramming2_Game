@@ -141,6 +141,9 @@ float4 PS(VS_OUTPUT input) : SV_TARGET
 	diffuseStrength = diffuseStrength * 0.5 + 0.5;
 	diffuseStrength = saturate(diffuseStrength);
 	color_rgb = color_rgb * diffuseStrength;
+	
+	// Don't write to depthBuffer if is fully opaque
+	clip(color_a - 1.0f);
 
 	return float4( color_rgb * shadowValue , color_a );
 }

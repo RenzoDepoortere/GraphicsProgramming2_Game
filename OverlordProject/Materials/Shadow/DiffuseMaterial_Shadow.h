@@ -11,6 +11,7 @@ public:
 	DiffuseMaterial_Shadow& operator=(DiffuseMaterial_Shadow&& other) noexcept = delete;
 
 	void SetDiffuseTexture(const std::wstring& assetFile);
+	void SetDiffuseTexture(TextureData* pTextureData);
 
 protected:
 	void InitializeEffectVariables() override;

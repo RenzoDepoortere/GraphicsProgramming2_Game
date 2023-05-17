@@ -5,6 +5,8 @@
 #include "Materials/DiffuseMaterial.h"
 #include "Materials/DiffuseMaterial_Skinned.h"
 #include "Materials/UberMaterial.h"
+#include "Materials/Shadow/DiffuseMaterial_Shadow.h"
+#include "Materials/Shadow/DiffuseMaterial_Shadow_Skinned.h"
 
 #include "Prefabs/Character.h"
 #include "Prefabs/SkyBox.h"
@@ -57,11 +59,11 @@ void HarryPotterScene::InitMap()
 	//pLevelMesh->SetMaterial(MaterialManager::Get()->CreateMaterial<ColorMaterial>());
 
 	auto pLevelMaterials{ ContentManager::Load<std::vector<TextureData*>>(L"Textures/Map/1.0_LevelTexture.mtl") };
-	DiffuseMaterial* pDiffuseMaterial{ nullptr };
+	DiffuseMaterial_Shadow* pDiffuseMaterial{ nullptr };
 	for (size_t idx{}; idx < pLevelMaterials->size(); ++idx)
 	{
 		// Create materials
-		pDiffuseMaterial = MaterialManager::Get()->CreateMaterial<DiffuseMaterial>();
+		pDiffuseMaterial = MaterialManager::Get()->CreateMaterial<DiffuseMaterial_Shadow>();
 		pDiffuseMaterial->SetDiffuseTexture(pLevelMaterials->at(idx));
 
 		// Set material
