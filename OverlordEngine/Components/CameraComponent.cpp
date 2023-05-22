@@ -67,7 +67,7 @@ void CameraComponent::SetActive(bool active)
 	pScene->SetActiveCamera(active?this:nullptr); //Switch to default camera if active==false
 }
 
-GameObject* CameraComponent::Pick(CollisionGroup ignoreGroups) const
+GameObject* CameraComponent::Pick(XMFLOAT3& hitObjectPosition, CollisionGroup ignoreGroups) const
 {
 	// Get windowVariables
 	const SceneContext& sceneContext{ m_pScene->GetSceneContext() };
@@ -86,7 +86,7 @@ GameObject* CameraComponent::Pick(CollisionGroup ignoreGroups) const
 	
 	if (convertedMousePos.x < -1 || 1 < convertedMousePos.x || convertedMousePos.y < -1 || 1 < convertedMousePos.y)
 	{
-		Logger::LogWarning(L"ConvertedMousePos isn't in NDC space");
+		//Logger::LogWarning(L"ConvertedMousePos isn't in NDC space");
 		return nullptr;
 	}
 
@@ -122,6 +122,10 @@ GameObject* CameraComponent::Pick(CollisionGroup ignoreGroups) const
 	{
 		PxRigidActor* pHitActor{ hit.block.actor };
 		pHitGameObject = reinterpret_cast<BaseComponent*>(pHitActor->userData)->GetGameObject();
+
+	
+		const PxVec3 hitPos{ raycastStart + raycastDir * hit.block.distance };
+		hitObjectPosition = XMFLOAT3{ hitPos.x, hitPos.y, hitPos.z };
 	}
 
 	// Return

@@ -51,8 +51,16 @@ private:
 	CharacterStates m_CurrentCharacterState{ Idle };
 	ModelAnimator* m_pAnimator{};
 
+	// Casting object
+	GameObject* m_pCastingObject{ nullptr };
+
 	// Functions
 	// ---------
+	void InitHarry(const SceneContext& sceneContext);
+	void InitCastingObject(const SceneContext& sceneContext);
+
 	void HandleMeshTransform(bool isForward, bool isBackward, bool isLeft, bool isRight, bool isHoldingLeft);
 	void HandleAnimations(bool isForward, bool isBackward, bool isLeft, bool isRight, bool isHoldingLeft);
+
+	void HandleCastingObject(const SceneContext& sceneContext, bool isHoldingLeft);
 };

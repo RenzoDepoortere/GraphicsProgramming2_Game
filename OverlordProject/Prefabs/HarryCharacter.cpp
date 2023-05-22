@@ -9,6 +9,7 @@
 #include "Materials/Shadow/DiffuseMaterial_Shadow_Skinned.h"
 
 #include "Prefabs/Character.h"
+#include "Prefabs/CubePrefab.h"
 
 HarryCharacter::HarryCharacter(float generalScale)
 	: m_GeneralScale{ generalScale }
@@ -16,6 +17,29 @@ HarryCharacter::HarryCharacter(float generalScale)
 }
 
 void HarryCharacter::Initialize(const SceneContext& sceneContext)
+{
+	InitHarry(sceneContext);
+	InitCastingObject(sceneContext);
+}
+
+void HarryCharacter::Update(const SceneContext& sceneContext)
+{
+	// Actions
+	const bool isForward{ sceneContext.pInput->IsActionTriggered(CharacterMoveForward) };
+	const bool isBackward{ sceneContext.pInput->IsActionTriggered(CharacterMoveBackward) };
+	const bool isLeft{ sceneContext.pInput->IsActionTriggered(CharacterMoveLeft) };
+	const bool isRight{ sceneContext.pInput->IsActionTriggered(CharacterMoveRight) };
+	const bool isHoldingLeft{ InputManager::IsMouseButton(InputState::down, VK_LBUTTON) };
+
+	HandleMeshTransform(isForward, isBackward, isLeft, isRight, isHoldingLeft);
+	HandleAnimations(isForward, isBackward, isLeft, isRight, isHoldingLeft);
+
+	HandleCastingObject(sceneContext, isHoldingLeft);
+}
+
+// Member functions
+// ----------------
+void HarryCharacter::InitHarry(const SceneContext& sceneContext)
 {
 	// Physics
 	// -------
@@ -88,22 +112,10 @@ void HarryCharacter::Initialize(const SceneContext& sceneContext)
 	// -----
 	m_CurrentAngle = m_pCharacter->GetTotalYaw();
 }
-
-void HarryCharacter::Update(const SceneContext& sceneContext)
+void HarryCharacter::InitCastingObject(const SceneContext& /*sceneContext*/)
 {
-	// Hide and set mouse
-	//m_SceneContext.pInput->ForceMouseToCenter(true);
-	//m_SceneContext.pInput->CursorVisible(false);
-
-	// Actions
-	const bool isForward{ sceneContext.pInput->IsActionTriggered(CharacterMoveForward) };
-	const bool isBackward{ sceneContext.pInput->IsActionTriggered(CharacterMoveBackward) };
-	const bool isLeft{ sceneContext.pInput->IsActionTriggered(CharacterMoveLeft) };
-	const bool isRight{ sceneContext.pInput->IsActionTriggered(CharacterMoveRight) };
-	const bool isHoldingLeft{ InputManager::IsMouseButton(InputState::down, VK_LBUTTON) };
-
-	HandleMeshTransform(isForward, isBackward, isLeft, isRight, isHoldingLeft);
-	HandleAnimations(isForward, isBackward, isLeft, isRight, isHoldingLeft);
+	m_pCastingObject = new CubePrefab{};
+	AddChild(m_pCastingObject);
 }
 
 void HarryCharacter::HandleMeshTransform(bool isForward, bool isBackward, bool isLeft, bool isRight, bool isHoldingLeft)
@@ -174,5 +186,37 @@ void HarryCharacter::HandleAnimations(bool isForward, bool isBackward, bool isLe
 	{
 		m_pAnimator->SetAnimation(static_cast<int>(m_CurrentCharacterState));
 		m_pAnimator->Play();
+	}
+}
+
+void HarryCharacter::HandleCastingObject(const SceneContext& sceneContext, bool isHoldingLeft)
+{
+	// Lambdas
+	auto resetCastingObject = [&]()
+	{
+		m_pCastingObject->GetTransform()->Translate(XMFLOAT3{});
+	};
+
+	// If is casting
+	if (isHoldingLeft)
+	{
+		// Check raycast
+		XMFLOAT3 hitPos{};
+		sceneContext.pCamera->Pick(hitPos);
+
+		// If hit something
+		const bool isDefault{ hitPos.x == 0.f && hitPos.y == 0.f && hitPos.z == 0.f };
+		if (isDefault == false)
+		{
+			// Set pos to hit object
+			m_pCastingObject->GetTransform()->Translate(hitPos);
+		}
+		// Else, reset
+		else resetCastingObject();
+	}
+	// Reset
+	else
+	{
+		resetCastingObject();
 	}
 }
