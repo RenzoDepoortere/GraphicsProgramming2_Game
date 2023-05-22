@@ -74,7 +74,37 @@ void TransformComponent::UpdateTransforms()
 	if (const auto pParent = m_pGameObject->GetParent())
 	{
 		const auto parentWorld = XMLoadFloat4x4(&pParent->GetTransform()->m_World);
-		world *= parentWorld;
+
+		if (m_FollowParentRotation == false)
+		{
+			// Get worldMatrix
+			XMVECTOR parentRotation{};
+			XMVECTOR parentTranslation{};
+			XMVECTOR parentScale{};
+			XMMatrixDecompose(&parentScale, &parentRotation, &parentTranslation, parentWorld);
+
+			// Set rotation to identity
+			parentRotation = XMQuaternionIdentity();
+
+			// Store scale and position
+			XMFLOAT3 newScaleFloat{};
+			XMStoreFloat3(&newScaleFloat, parentScale);
+
+			XMFLOAT3 newPositionFloat{};
+			XMStoreFloat3(&newPositionFloat, parentTranslation);
+
+			// Create new parentWorld
+			auto newParentWorld = XMMatrixScaling(newScaleFloat.x, newScaleFloat.y, newScaleFloat.z) *
+								  XMMatrixRotationQuaternion(parentRotation) *
+								  XMMatrixTranslation(newPositionFloat.x, newPositionFloat.y, newPositionFloat.z);
+
+			// Multiply with own world
+			world *= newParentWorld;
+		}
+		else
+		{
+			world *= parentWorld;
+		}
 	}
 
 	XMStoreFloat4x4(&m_World, world);

@@ -43,6 +43,8 @@ public:
 	void SetRigidBodyComponent(RigidBodyComponent* pRigidBody) { m_pRigidBodyComponent = pRigidBody; }
 	void SetControllerComponent(ControllerComponent* pController) { m_pControllerComponent = pController; }
 
+	void SetFollowParentRotation(bool setFollow) { m_FollowParentRotation = setFollow; }
+
 protected:
 
 	void Initialize(const SceneContext& sceneContext) override;
@@ -65,4 +67,6 @@ private:
 
 	RigidBodyComponent* m_pRigidBodyComponent{};
 	ControllerComponent* m_pControllerComponent{};
+
+	bool m_FollowParentRotation{ true };
 };

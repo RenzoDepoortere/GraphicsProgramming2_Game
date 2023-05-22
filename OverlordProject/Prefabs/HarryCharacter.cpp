@@ -29,12 +29,12 @@ void HarryCharacter::Update(const SceneContext& sceneContext)
 	const bool isBackward{ sceneContext.pInput->IsActionTriggered(CharacterMoveBackward) };
 	const bool isLeft{ sceneContext.pInput->IsActionTriggered(CharacterMoveLeft) };
 	const bool isRight{ sceneContext.pInput->IsActionTriggered(CharacterMoveRight) };
-	const bool isHoldingLeft{ InputManager::IsMouseButton(InputState::down, VK_LBUTTON) };
+	const bool isAiming{ InputManager::IsMouseButton(InputState::down, VK_RBUTTON) };
 
-	HandleMeshTransform(isForward, isBackward, isLeft, isRight, isHoldingLeft);
-	HandleAnimations(isForward, isBackward, isLeft, isRight, isHoldingLeft);
+	HandleMeshTransform(isForward, isBackward, isLeft, isRight, isAiming);
+	HandleAnimations(isForward, isBackward, isLeft, isRight, isAiming);
 
-	HandleCastingObject(sceneContext, isHoldingLeft);
+	HandleCastingObject(sceneContext, isAiming);
 }
 
 // Member functions
@@ -66,10 +66,20 @@ void HarryCharacter::InitHarry(const SceneContext& sceneContext)
 
 	m_pCharacter = AddChild(new Character(characterDesc));
 	m_pCharacter->GetTransform()->Translate(-5.f, -6.f, -79.f);
+	m_pCharacter->GetController()->SetCollisionGroup(CollisionGroup::Group1);
 
 	// Mesh
 	// ----
-	m_pCharacterMesh = AddChild(new GameObject);
+	
+	// GameObject
+	m_pCharacterMesh = m_pCharacter->AddChild(new GameObject);
+	
+	m_pCharacterMesh->GetTransform()->Translate(0.f, -characterDesc.controller.height, 0.f);
+	m_pCharacterMesh->GetTransform()->Rotate(0.f, 180.f, 0.f);
+	m_pCharacterMesh->GetTransform()->Scale(m_GeneralScale);
+
+	m_pCharacterMesh->GetTransform()->SetFollowParentRotation(false);
+
 	ModelComponent* pModel = m_pCharacterMesh->AddComponent(new ModelComponent(L"Meshes/Harry.ovm"));
 
 	// Materials
@@ -89,8 +99,6 @@ void HarryCharacter::InitHarry(const SceneContext& sceneContext)
 	m_pAnimator = pModel->GetAnimator();
 	m_pAnimator->Play();
 
-	m_pCharacterMesh->GetTransform()->Scale(m_GeneralScale);
-
 	//Input
 	// ----
 	auto inputAction = InputAction(CharacterMoveLeft, InputState::down, 'A');
@@ -107,37 +115,37 @@ void HarryCharacter::InitHarry(const SceneContext& sceneContext)
 
 	inputAction = InputAction(CharacterJump, InputState::pressed, VK_SPACE, -1, XINPUT_GAMEPAD_A);
 	sceneContext.pInput->AddInputAction(inputAction);
-
-	// Other
-	// -----
-	m_CurrentAngle = m_pCharacter->GetTotalYaw();
 }
 void HarryCharacter::InitCastingObject(const SceneContext& /*sceneContext*/)
 {
-	m_pCastingObject = new CubePrefab{};
-	AddChild(m_pCastingObject);
+	//Particle System
+	ParticleEmitterSettings settings{};
+	settings.velocity = { 0.f,6.f,0.f };
+	settings.minSize = 1.f;
+	settings.maxSize = 2.f;
+	settings.minEnergy = 1.f;
+	settings.maxEnergy = 2.f;
+	settings.minScale = 3.5f;
+	settings.maxScale = 5.5f;
+	settings.minEmitterRadius = .2f;
+	settings.maxEmitterRadius = .5f;
+	settings.color = { 1.f,1.f,1.f, .6f };
+
+	GameObject* pParticleObject{ AddChild(new CubePrefab{}) };
+	m_pCastingObject = pParticleObject->AddComponent(new ParticleEmitterComponent(L"Textures/TestTennisBall.jpg", settings, 200));
 }
 
-void HarryCharacter::HandleMeshTransform(bool isForward, bool isBackward, bool isLeft, bool isRight, bool isHoldingLeft)
+void HarryCharacter::HandleMeshTransform(bool isForward, bool isBackward, bool isLeft, bool isRight, bool isAiming)
 {
-	// Correctly transform model
-	// *************************
-	TransformComponent* pControllerTransform{ m_pCharacter->GetController()->GetTransform() };
-
-	// Position
-	// --------
-	const XMFLOAT3 controllerPosition{ pControllerTransform->GetWorldPosition() };
-	const float characterBuffer{ 0.5f };
-	m_pCharacterMesh->GetTransform()->Translate(controllerPosition.x, controllerPosition.y - m_ControllerHeight / 2.f - characterBuffer, controllerPosition.z);
-
 	// Rotation
 	// --------
+
 	if (m_pCharacter->IsJumping()) return;
 	const float totalYaw{ m_pCharacter->GetTotalYaw() };
 	float angleBuffer{ 180.0f };
 
 	// If button not held, rotate according to movement
-	if (isHoldingLeft == false)
+	if (isAiming == false)
 	{
 		if (isForward)       angleBuffer = 180.f;
 		else if (isBackward) angleBuffer = 0.f;
@@ -147,10 +155,10 @@ void HarryCharacter::HandleMeshTransform(bool isForward, bool isBackward, bool i
 	}
 
 	// Calculate currentAngle
-	m_CurrentAngle = totalYaw + angleBuffer;
-	m_pCharacterMesh->GetTransform()->Rotate(0.f, m_CurrentAngle, 0.f);
+	const float currentAngle{ totalYaw + angleBuffer };
+	m_pCharacterMesh->GetTransform()->Rotate(0.f, currentAngle, 0.f);
 }
-void HarryCharacter::HandleAnimations(bool isForward, bool isBackward, bool isLeft, bool isRight, bool isHoldingLeft)
+void HarryCharacter::HandleAnimations(bool isForward, bool isBackward, bool isLeft, bool isRight, bool isAiming)
 {
 	// Change state
 	// ------------
@@ -166,7 +174,7 @@ void HarryCharacter::HandleAnimations(bool isForward, bool isBackward, bool isLe
 	else if (isMoving)
 	{
 		m_CurrentCharacterState = CharacterStates::RunForward;
-		if (isHoldingLeft)
+		if (isAiming)
 		{
 			if (isForward)       m_CurrentCharacterState = CharacterStates::RunForward;
 			else if (isBackward) m_CurrentCharacterState = CharacterStates::RunBackward;
@@ -189,7 +197,7 @@ void HarryCharacter::HandleAnimations(bool isForward, bool isBackward, bool isLe
 	}
 }
 
-void HarryCharacter::HandleCastingObject(const SceneContext& sceneContext, bool isHoldingLeft)
+void HarryCharacter::HandleCastingObject(const SceneContext& sceneContext, bool isAiming)
 {
 	// Lambdas
 	auto resetCastingObject = [&]()
@@ -197,12 +205,12 @@ void HarryCharacter::HandleCastingObject(const SceneContext& sceneContext, bool 
 		m_pCastingObject->GetTransform()->Translate(XMFLOAT3{});
 	};
 
-	// If is casting
-	if (isHoldingLeft)
+	// If is aiming
+	if (isAiming)
 	{
 		// Check raycast
 		XMFLOAT3 hitPos{};
-		sceneContext.pCamera->Pick(hitPos);
+		sceneContext.pCamera->Pick(hitPos, CollisionGroup::Group1);
 
 		// If hit something
 		const bool isDefault{ hitPos.x == 0.f && hitPos.y == 0.f && hitPos.z == 0.f };

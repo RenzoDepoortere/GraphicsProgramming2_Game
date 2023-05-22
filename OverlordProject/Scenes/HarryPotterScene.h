@@ -1,4 +1,6 @@
 #pragma once
+class HarryCharacter;
+
 class HarryPotterScene final : public GameScene
 {
 public:
@@ -11,11 +13,16 @@ public:
 	HarryPotterScene& operator=(HarryPotterScene&& other) noexcept = delete;
 
 private:
+	// Variables
+	// ---------
+	HarryCharacter* m_pHarry{ nullptr };
+
 	// Functions
 	// ---------
 
 	// Scene
 	void Initialize() override;
 	void Update() override;
+	void OnGUI() override;
 };
 

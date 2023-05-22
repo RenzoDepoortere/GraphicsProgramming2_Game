@@ -3,6 +3,7 @@
 #include "Prefabs/SkyBox.h"
 #include "Prefabs/HarryCharacter.h"
 #include "Prefabs/CastlePrefab.h"
+#include "Prefabs/Character.h"
 
 void HarryPotterScene::Initialize()
 {
@@ -18,7 +19,7 @@ void HarryPotterScene::Initialize()
 	const float generalScale{ 0.025f };
 
 	// Character
-	AddChild(new HarryCharacter(generalScale));
+	m_pHarry = AddChild(new HarryCharacter(generalScale));
 
 	// Map
 	AddChild(new CastlePrefab(generalScale));
@@ -30,4 +31,9 @@ void HarryPotterScene::Update()
 	// Hide and set mouse
 	//m_SceneContext.pInput->ForceMouseToCenter(true);
 	//m_SceneContext.pInput->CursorVisible(false);
+}
+
+void HarryPotterScene::OnGUI()
+{
+	m_pHarry->GetCharacter()->DrawImGui();
 }

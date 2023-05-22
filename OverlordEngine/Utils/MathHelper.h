@@ -44,6 +44,12 @@ namespace MathHelper
 	}
 
 	template<typename T>
+	inline T Lerp(T a, T b, float t)
+	{
+		return (1 - t) * a + t * b;
+	}
+
+	template<typename T>
 	void Clamp(T& value, T hi, T lo)
 	{
 		if (value > hi)

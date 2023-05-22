@@ -1,5 +1,7 @@
 #pragma once
 class Character;
+class ParticleEmitterComponent;
+
 class HarryCharacter final : public GameObject
 {
 public:
@@ -12,7 +14,11 @@ public:
 	HarryCharacter& operator=(const HarryCharacter& other) = delete;
 	HarryCharacter& operator=(HarryCharacter&& other) noexcept = delete;
 
+	// Pass through functions
+	Character* GetCharacter() const { return m_pCharacter; }
+
 protected:
+	// Functionality
 	void Initialize(const SceneContext& sceneContext) override;
 	void Update(const SceneContext& sceneContext) override;
 
@@ -46,21 +52,19 @@ private:
 	float m_GeneralScale{};
 	float m_ControllerHeight{};
 
-	float m_CurrentAngle{};
-
 	CharacterStates m_CurrentCharacterState{ Idle };
 	ModelAnimator* m_pAnimator{};
 
 	// Casting object
-	GameObject* m_pCastingObject{ nullptr };
+	ParticleEmitterComponent* m_pCastingObject{ nullptr };
 
 	// Functions
 	// ---------
 	void InitHarry(const SceneContext& sceneContext);
 	void InitCastingObject(const SceneContext& sceneContext);
 
-	void HandleMeshTransform(bool isForward, bool isBackward, bool isLeft, bool isRight, bool isHoldingLeft);
-	void HandleAnimations(bool isForward, bool isBackward, bool isLeft, bool isRight, bool isHoldingLeft);
+	void HandleMeshTransform(bool isForward, bool isBackward, bool isLeft, bool isRight, bool isAiming);
+	void HandleAnimations(bool isForward, bool isBackward, bool isLeft, bool isRight, bool isAiming);
 
-	void HandleCastingObject(const SceneContext& sceneContext, bool isHoldingLeft);
+	void HandleCastingObject(const SceneContext& sceneContext, bool isAiming);
 };
