@@ -19,6 +19,8 @@
     <ClCompile Include="Prefabs\SkyBox.cpp" />
     <ClCompile Include="Materials\Shadow\DiffuseMaterial_Shadow.cpp" />
     <ClCompile Include="Materials\Shadow\DiffuseMaterial_Shadow_Skinned.cpp" />
+    <ClCompile Include="Prefabs\HarryCharacter.cpp" />
+    <ClCompile Include="Prefabs\CastlePrefab.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MainGame.h" />
@@ -38,5 +40,7 @@
     <ClInclude Include="Prefabs\SkyBox.h" />
     <ClInclude Include="Materials\Shadow\DiffuseMaterial_Shadow.h" />
     <ClInclude Include="Materials\Shadow\DiffuseMaterial_Shadow_Skinned.h" />
+    <ClInclude Include="Prefabs\HarryCharacter.h" />
+    <ClInclude Include="Prefabs\CastlePrefab.h" />
   </ItemGroup>
 </Project>

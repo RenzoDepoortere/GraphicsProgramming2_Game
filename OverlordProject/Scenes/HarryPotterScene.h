@@ -1,6 +1,4 @@
 #pragma once
-class Character;
-
 class HarryPotterScene final : public GameScene
 {
 public:
@@ -13,54 +11,11 @@ public:
 	HarryPotterScene& operator=(HarryPotterScene&& other) noexcept = delete;
 
 private:
-	// Enums
-	// -----
-	enum InputIds
-	{
-		CharacterMoveLeft,
-		CharacterMoveRight,
-		CharacterMoveForward,
-		CharacterMoveBackward,
-		CharacterJump
-	};
-
-	enum CharacterStates
-	{
-		Idle, 
-		RunForward, RunLeft, RunRight, RunBackward, 
-		Jumping,
-		Hit, Death
-	};
-
-	// Variables
-	// ---------
-
-	// Character
-	Character* m_pCharacter{};
-	GameObject* m_pCharacterMesh{};
-
-	float m_GeneralScale{};
-	float m_ControllerHeight{};
-
-	float m_CurrentAngle{};
-
-	CharacterStates m_CurrentCharacterState{ Idle };
-	ModelAnimator* m_pAnimator{};
-
 	// Functions
 	// ---------
 
 	// Scene
 	void Initialize() override;
 	void Update() override;
-	void OnGUI() override;
-
-	// Init
-	void InitMap();
-	void InitPlayer();
-
-	// Character
-	void HandleMeshTransform(bool isForward, bool isBackward, bool isLeft, bool isRight, bool isHoldingLeft);
-	void HandleAnimations(bool isForward, bool isBackward, bool isLeft, bool isRight, bool isHoldingLeft);
 };
 
