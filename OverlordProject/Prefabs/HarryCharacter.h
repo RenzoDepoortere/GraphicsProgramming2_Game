@@ -31,7 +31,9 @@ private:
 		CharacterMoveRight,
 		CharacterMoveForward,
 		CharacterMoveBackward,
-		CharacterJump
+		CharacterJump,
+		CharacterCast,
+		CharacterSpellActivate
 	};
 
 	enum CharacterStates
@@ -56,7 +58,7 @@ private:
 	ModelAnimator* m_pAnimator{};
 
 	// Casting object
-	ParticleEmitterComponent* m_pCastingObject{ nullptr };
+	GameObject* m_pCastingObject{ nullptr };
 
 	// Functions
 	// ---------

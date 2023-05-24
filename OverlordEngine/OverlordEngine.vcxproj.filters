@@ -55,6 +55,8 @@
     <ClCompile Include="Graphics\ShadowMapRenderer.cpp" />
     <ClCompile Include="Components\ParticleEmitterComponent.cpp" />
     <ClCompile Include="Content\TextureContainerLoader.cpp" />
+    <ClCompile Include="Components\CastableComponent.cpp" />
+    <ClCompile Include="Components\DestroyCastableComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -121,5 +123,7 @@
     <ClInclude Include="Graphics\ShadowMapRenderer.h" />
     <ClInclude Include="Components\ParticleEmitterComponent.h" />
     <ClInclude Include="Content\TextureContainerLoader.h" />
+    <ClInclude Include="Components\CastableComponent.h" />
+    <ClInclude Include="Components\DestroyCastableComponent.h" />
   </ItemGroup>
 </Project>

@@ -1,9 +1,16 @@
 #include "stdafx.h"
 #include "HarryPotterScene.h"
-#include "Prefabs/SkyBox.h"
+
+// Character
 #include "Prefabs/HarryCharacter.h"
-#include "Prefabs/CastlePrefab.h"
 #include "Prefabs/Character.h"
+
+// Map
+#include "Prefabs/SkyBox.h"
+#include "Prefabs/CastlePrefab.h"
+
+// Props
+#include "Prefabs/Vines.h"
 
 void HarryPotterScene::Initialize()
 {
@@ -24,6 +31,9 @@ void HarryPotterScene::Initialize()
 	// Map
 	AddChild(new CastlePrefab(generalScale));
 	AddChild(new SkyBox());
+
+	// Props
+	AddChild(new Vines(generalScale));
 }
 
 void HarryPotterScene::Update()

@@ -11,6 +11,8 @@
 #include "Prefabs/Character.h"
 #include "Prefabs/CubePrefab.h"
 
+#include "Components/DestroyCastableComponent.h"	
+
 HarryCharacter::HarryCharacter(float generalScale)
 	: m_GeneralScale{ generalScale }
 {
@@ -29,7 +31,7 @@ void HarryCharacter::Update(const SceneContext& sceneContext)
 	const bool isBackward{ sceneContext.pInput->IsActionTriggered(CharacterMoveBackward) };
 	const bool isLeft{ sceneContext.pInput->IsActionTriggered(CharacterMoveLeft) };
 	const bool isRight{ sceneContext.pInput->IsActionTriggered(CharacterMoveRight) };
-	const bool isAiming{ InputManager::IsMouseButton(InputState::down, VK_RBUTTON) };
+	const bool isAiming{ sceneContext.pInput->IsActionTriggered(CharacterCast) };
 
 	HandleMeshTransform(isForward, isBackward, isLeft, isRight, isAiming);
 	HandleAnimations(isForward, isBackward, isLeft, isRight, isAiming);
@@ -80,10 +82,10 @@ void HarryCharacter::InitHarry(const SceneContext& sceneContext)
 
 	m_pCharacterMesh->GetTransform()->SetFollowParentRotation(false);
 
-	ModelComponent* pModel = m_pCharacterMesh->AddComponent(new ModelComponent(L"Meshes/Harry.ovm"));
+	ModelComponent* pModel = m_pCharacterMesh->AddComponent(new ModelComponent(L"Meshes/Character/Harry.ovm"));
 
 	// Materials
-	auto pLevelMaterials{ ContentManager::Load<std::vector<TextureData*>>(L"Textures/Character/skharrymesh.mtl") };
+	auto pLevelMaterials{ ContentManager::Load<std::vector<TextureData*>>(L"Textures/Character/HarryMesh.mtl") };
 	DiffuseMaterial_Skinned* pSkinnedDiffuseMaterial{ nullptr };
 	for (size_t idx{}; idx < pLevelMaterials->size(); ++idx)
 	{
@@ -101,6 +103,8 @@ void HarryCharacter::InitHarry(const SceneContext& sceneContext)
 
 	//Input
 	// ----
+
+	// Movement
 	auto inputAction = InputAction(CharacterMoveLeft, InputState::down, 'A');
 	sceneContext.pInput->AddInputAction(inputAction);
 
@@ -115,24 +119,32 @@ void HarryCharacter::InitHarry(const SceneContext& sceneContext)
 
 	inputAction = InputAction(CharacterJump, InputState::pressed, VK_SPACE, -1, XINPUT_GAMEPAD_A);
 	sceneContext.pInput->AddInputAction(inputAction);
+
+	// Casting
+	inputAction = InputAction(CharacterCast, InputState::down, -1, VK_RBUTTON);
+	sceneContext.pInput->AddInputAction(inputAction);
+
+	inputAction = InputAction(CharacterSpellActivate, InputState::pressed, -1, VK_LBUTTON);
+	sceneContext.pInput->AddInputAction(inputAction);
 }
 void HarryCharacter::InitCastingObject(const SceneContext& /*sceneContext*/)
 {
-	//Particle System
-	ParticleEmitterSettings settings{};
-	settings.velocity = { 0.f,6.f,0.f };
-	settings.minSize = 1.f;
-	settings.maxSize = 2.f;
-	settings.minEnergy = 1.f;
-	settings.maxEnergy = 2.f;
-	settings.minScale = 3.5f;
-	settings.maxScale = 5.5f;
-	settings.minEmitterRadius = .2f;
-	settings.maxEmitterRadius = .5f;
-	settings.color = { 1.f,1.f,1.f, .6f };
+	////Particle System
+	//ParticleEmitterSettings settings{};
+	//settings.velocity = { 0.f,6.f,0.f };
+	//settings.minSize = 1.f;
+	//settings.maxSize = 2.f;
+	//settings.minEnergy = 1.f;
+	//settings.maxEnergy = 2.f;
+	//settings.minScale = 3.5f;
+	//settings.maxScale = 5.5f;
+	//settings.minEmitterRadius = .2f;
+	//settings.maxEmitterRadius = .5f;
+	//settings.color = { 1.f,1.f,1.f, .6f };
 
-	GameObject* pParticleObject{ AddChild(new CubePrefab{}) };
-	m_pCastingObject = pParticleObject->AddComponent(new ParticleEmitterComponent(L"Textures/TestTennisBall.jpg", settings, 200));
+	m_pCastingObject = AddChild(new CubePrefab{});
+	m_pCastingObject->GetTransform()->Scale(0.5f);
+	//m_pCastingObject = pParticleObject->AddComponent(new ParticleEmitterComponent(L"Textures/TestTennisBall.jpg", settings, 200));
 }
 
 void HarryCharacter::HandleMeshTransform(bool isForward, bool isBackward, bool isLeft, bool isRight, bool isAiming)
@@ -210,7 +222,7 @@ void HarryCharacter::HandleCastingObject(const SceneContext& sceneContext, bool 
 	{
 		// Check raycast
 		XMFLOAT3 hitPos{};
-		sceneContext.pCamera->Pick(hitPos, CollisionGroup::Group1);
+		GameObject* pHitObject{ sceneContext.pCamera->Pick(hitPos, CollisionGroup::Group1) };
 
 		// If hit something
 		const bool isDefault{ hitPos.x == 0.f && hitPos.y == 0.f && hitPos.z == 0.f };
@@ -218,6 +230,25 @@ void HarryCharacter::HandleCastingObject(const SceneContext& sceneContext, bool 
 		{
 			// Set pos to hit object
 			m_pCastingObject->GetTransform()->Translate(hitPos);
+
+			// Check if is castable
+			CastableComponent* pCastable{ pHitObject->GetComponent<DestroyCastableComponent>(true) };
+			if (pCastable == nullptr) return;	// pCastable = new castableComponent
+												// If pCastable = null, return
+
+			// Reset castable
+			resetCastingObject();
+
+			// On right click
+			const bool spellActivate{ sceneContext.pInput->IsActionTriggered(CharacterSpellActivate) };
+			if (spellActivate)
+			{
+				// Send spell
+
+				// Spell -->
+				// Activate castable
+				pCastable->Activate();
+			}
 		}
 		// Else, reset
 		else resetCastingObject();

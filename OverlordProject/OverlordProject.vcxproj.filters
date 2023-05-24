@@ -21,6 +21,7 @@
     <ClCompile Include="Materials\Shadow\DiffuseMaterial_Shadow_Skinned.cpp" />
     <ClCompile Include="Prefabs\HarryCharacter.cpp" />
     <ClCompile Include="Prefabs\CastlePrefab.cpp" />
+    <ClCompile Include="Prefabs\Vines.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MainGame.h" />
@@ -42,5 +43,6 @@
     <ClInclude Include="Materials\Shadow\DiffuseMaterial_Shadow_Skinned.h" />
     <ClInclude Include="Prefabs\HarryCharacter.h" />
     <ClInclude Include="Prefabs\CastlePrefab.h" />
+    <ClInclude Include="Prefabs\Vines.h" />
   </ItemGroup>
 </Project>
