@@ -25,5 +25,5 @@ void DestroyCastableComponent::Activate()
 	GetTransform()->Translate(XMFLOAT3{});
 
 	// Set collision to origin 
-	m_pRigidBodyComponent->Translate({});
+	//m_pRigidBodyComponent->Translate({});
 }

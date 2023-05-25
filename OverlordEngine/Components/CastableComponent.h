@@ -21,6 +21,9 @@ public:
 	void SetSpell(Spell newSpell) { m_CurrentSpell = newSpell; }
 	Spell GetSpell() const { return m_CurrentSpell; }
 
+	void SetCastedTo(bool castedTo) { m_HasBeenCastedTo = castedTo; }
+	bool GetCastedTo() const { return m_HasBeenCastedTo; }
+
 	virtual void Activate() = 0;
 
 protected:
@@ -32,4 +35,6 @@ private:
 	// Member variables
 	TextureData* m_pTexture{};
 	Spell m_CurrentSpell{};
+
+	bool m_HasBeenCastedTo{ false };
 };

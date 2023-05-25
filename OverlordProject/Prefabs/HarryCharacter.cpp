@@ -10,6 +10,7 @@
 
 #include "Prefabs/Character.h"
 #include "Prefabs/CubePrefab.h"
+#include "Prefabs/MovingSpell.h"
 
 #include "Components/DestroyCastableComponent.h"	
 
@@ -241,13 +242,15 @@ void HarryCharacter::HandleCastingObject(const SceneContext& sceneContext, bool 
 
 			// On right click
 			const bool spellActivate{ sceneContext.pInput->IsActionTriggered(CharacterSpellActivate) };
-			if (spellActivate)
+			if (spellActivate && pCastable->GetCastedTo() == false)
 			{
 				// Send spell
+				const float spellMovementSpeed{ 5.f };
+				MovingSpell* pSpell{ AddChild(new MovingSpell{ spellMovementSpeed, pCastable->GetSpell(), hitPos, pCastable }) };
+				pSpell->GetTransform()->Translate(m_pCharacter->GetTransform()->GetWorldPosition());
 
-				// Spell -->
-				// Activate castable
-				pCastable->Activate();
+				// Set casted to
+				pCastable->SetCastedTo(true);
 			}
 		}
 		// Else, reset
