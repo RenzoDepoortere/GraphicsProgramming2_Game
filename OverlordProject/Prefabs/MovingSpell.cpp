@@ -38,7 +38,7 @@ void MovingSpell::Initialize(const SceneContext& /*sceneContext*/)
 		if (action == PxTriggerAction::ENTER && pOther == m_pObjectToHit->GetGameObject())
 		{
 			// Activate object
-			m_pObjectToHit->Activate();
+			m_pObjectToHit->Activate(GetTransform()->GetPosition());
 
 			// "Delete"
 			GetTransform()->Translate(XMFLOAT3{});

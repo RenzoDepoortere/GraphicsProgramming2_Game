@@ -4,15 +4,16 @@
 #include "Materials/ColorMaterial.h"
 #include "Materials/DiffuseMaterial.h"
 #include "Materials/DiffuseMaterial_Skinned.h"
-#include "Materials/UberMaterial.h"
 #include "Materials/Shadow/DiffuseMaterial_Shadow.h"
 #include "Materials/Shadow/DiffuseMaterial_Shadow_Skinned.h"
+#include "Misc/ParticleMaterial.h"
 
 #include "Prefabs/Character.h"
 #include "Prefabs/CubePrefab.h"
 #include "Prefabs/MovingSpell.h"
 
 #include "Components/DestroyCastableComponent.h"	
+#include "Components/BeansCastableComponent.h"
 
 HarryCharacter::HarryCharacter(float generalScale)
 	: m_GeneralScale{ generalScale }
@@ -130,22 +131,36 @@ void HarryCharacter::InitHarry(const SceneContext& sceneContext)
 }
 void HarryCharacter::InitCastingObject(const SceneContext& /*sceneContext*/)
 {
-	////Particle System
-	//ParticleEmitterSettings settings{};
-	//settings.velocity = { 0.f,6.f,0.f };
-	//settings.minSize = 1.f;
-	//settings.maxSize = 2.f;
-	//settings.minEnergy = 1.f;
-	//settings.maxEnergy = 2.f;
-	//settings.minScale = 3.5f;
-	//settings.maxScale = 5.5f;
-	//settings.minEmitterRadius = .2f;
-	//settings.maxEmitterRadius = .5f;
-	//settings.color = { 1.f,1.f,1.f, .6f };
+	// Temp cube
+	//m_pCastingObject = AddChild(new CubePrefab{});
 
-	m_pCastingObject = AddChild(new CubePrefab{});
-	m_pCastingObject->GetTransform()->Scale(0.5f);
-	//m_pCastingObject = pParticleObject->AddComponent(new ParticleEmitterComponent(L"Textures/TestTennisBall.jpg", settings, 200));
+	// Particles
+	ParticleEmitterSettings settings{};
+	settings.velocity = { 0.f,6.f,0.f };
+	settings.minSize = 1.f;
+	settings.maxSize = 2.f;
+	settings.minEnergy = 1.f;
+	settings.maxEnergy = 2.f;
+	settings.minScale = 3.5f;
+	settings.maxScale = 5.5f;
+	settings.minEmitterRadius = .2f;
+	settings.maxEmitterRadius = .5f;
+	settings.color = { 1.f, 0.f, 0.f, .6f };
+
+	m_pCastingObject = GetScene()->AddChild(new GameObject{});
+	m_pCastingObject->AddComponent(new ParticleEmitterComponent(L"Textures/TestTennisBall.jpg", settings, 200));
+
+	m_pCastingObject->AddChild(new CubePrefab{})->GetTransform()->Scale(0.5f);
+
+	//// Get spell textures
+	//ParticleMaterial* pMaterial{ MaterialManager::Get()->CreateMaterial<ParticleMaterial>() };
+	//pMaterial->SetDiffuseTexture(L"Textures/Spells/Diffindo.png");
+
+	//// Sprite renderer
+	//m_pCastingObject->AddComponent(new SpriteComponent(L"Textures/Spells/Diffindo.png"));
+
+	// Transform
+	//m_pCastingObject->GetTransform()->Scale(0.5f);
 }
 
 void HarryCharacter::HandleMeshTransform(bool isForward, bool isBackward, bool isLeft, bool isRight, bool isAiming)
@@ -160,8 +175,20 @@ void HarryCharacter::HandleMeshTransform(bool isForward, bool isBackward, bool i
 	// If button not held, rotate according to movement
 	if (isAiming == false)
 	{
-		if (isForward)       angleBuffer = 180.f;
-		else if (isBackward) angleBuffer = 0.f;
+		if (isForward)
+		{
+			angleBuffer = 180.f;
+
+			if (isLeft) angleBuffer -= 45.f;
+			else if (isRight) angleBuffer += 45.f;
+		}
+		else if (isBackward)
+		{
+			angleBuffer = 0.f;
+
+			if (isLeft) angleBuffer += 45.f;
+			else if (isRight) angleBuffer -= 45.f;
+		}
 		else if (isLeft)     angleBuffer = 90.f;
 		else if (isRight)    angleBuffer = -90.f;
 		else			     return;
@@ -179,7 +206,7 @@ void HarryCharacter::HandleAnimations(bool isForward, bool isBackward, bool isLe
 	const bool isMoving{ isForward || isLeft || isRight || isBackward };
 
 	// Jumping
-	if (m_pCharacter->IsJumping())
+	if (m_pCharacter->IsJumping() && (m_pCharacter->PressedJump() || m_CurrentCharacterState == CharacterStates::Jumping))
 	{
 		m_CurrentCharacterState = CharacterStates::Jumping;
 	}
@@ -234,8 +261,8 @@ void HarryCharacter::HandleCastingObject(const SceneContext& sceneContext, bool 
 
 			// Check if is castable
 			CastableComponent* pCastable{ pHitObject->GetComponent<DestroyCastableComponent>(true) };
-			if (pCastable == nullptr) return;	// pCastable = new castableComponent
-												// If pCastable = null, return
+			if (pCastable == nullptr) pCastable = pHitObject->GetComponent<BeansCastableComponent>(true);
+			if (pCastable == nullptr) return;
 
 			// Reset castable
 			resetCastingObject();
@@ -245,7 +272,7 @@ void HarryCharacter::HandleCastingObject(const SceneContext& sceneContext, bool 
 			if (spellActivate && pCastable->GetCastedTo() == false)
 			{
 				// Send spell
-				const float spellMovementSpeed{ 5.f };
+				const float spellMovementSpeed{ 15.f };
 				MovingSpell* pSpell{ AddChild(new MovingSpell{ spellMovementSpeed, pCastable->GetSpell(), hitPos, pCastable }) };
 				pSpell->GetTransform()->Translate(m_pCharacter->GetTransform()->GetWorldPosition());
 

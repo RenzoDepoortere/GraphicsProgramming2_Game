@@ -239,10 +239,9 @@ void GameObject::RemoveChild(GameObject* obj, bool deleteObject)
 	obj->OnParentDetach(this);
 
 	//Signal object and children if detached from scenegraph (Scene Detached)
-	if(GameScene* pScene = GetScene())
-		obj->RootOnSceneDetach(pScene);
+	if (GameScene* pScene = GetScene()) obj->RootOnSceneDetach(pScene);
 
-	if(deleteObject)
+	if (deleteObject)
 	{
 		SafeDelete(obj);
 	}

@@ -10,7 +10,7 @@
 #include "Prefabs/CastlePrefab.h"
 
 // Props
-#include "Prefabs/Vines.h"
+#include "Prefabs/PropsPrefab.h"
 
 void HarryPotterScene::Initialize()
 {
@@ -33,7 +33,7 @@ void HarryPotterScene::Initialize()
 	AddChild(new SkyBox());
 
 	// Props
-	AddChild(new Vines(generalScale));
+	AddChild(new PropsPrefab(generalScale));
 }
 
 void HarryPotterScene::Update()

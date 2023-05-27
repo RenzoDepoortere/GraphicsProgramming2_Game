@@ -23,6 +23,9 @@
     <ClCompile Include="Prefabs\CastlePrefab.cpp" />
     <ClCompile Include="Prefabs\Vines.cpp" />
     <ClCompile Include="Prefabs\MovingSpell.cpp" />
+    <ClCompile Include="Prefabs\Bean.cpp" />
+    <ClCompile Include="Prefabs\BeansProp.cpp" />
+    <ClCompile Include="Prefabs\PropsPrefab.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MainGame.h" />
@@ -46,5 +49,8 @@
     <ClInclude Include="Prefabs\CastlePrefab.h" />
     <ClInclude Include="Prefabs\Vines.h" />
     <ClInclude Include="Prefabs\MovingSpell.h" />
+    <ClInclude Include="Prefabs\Bean.h" />
+    <ClInclude Include="Prefabs\BeansProp.h" />
+    <ClInclude Include="Prefabs\PropsPrefab.h" />
   </ItemGroup>
 </Project>

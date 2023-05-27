@@ -1,4 +1,6 @@
 #pragma once
+#define _USE_MATH_DEFINES
+#include <math.h>
 
 namespace MathHelper
 {
@@ -26,6 +28,23 @@ namespace MathHelper
 	inline bool XMFloat2Equals(const XMFLOAT2& a, const XMFLOAT2& b)
 	{
 		return a.x == b.x && a.y == b.y;
+	}
+
+	inline XMFLOAT3 DirectionTo(const XMFLOAT3& from, const XMFLOAT3& to)
+	{
+		const XMVECTOR fromVector{ XMLoadFloat3(&from) };
+		const XMVECTOR toVector{ XMLoadFloat3(&to) };
+
+		const XMVECTOR desiredVector{ XMVector3Normalize(XMVectorSubtract(toVector, fromVector)) };
+		XMFLOAT3 desiredDirection{};
+		XMStoreFloat3(&desiredDirection, desiredVector);
+
+		return desiredDirection;
+	}
+
+	inline float toDegrees(float angle)
+	{
+		return angle * static_cast<float>(180.f / M_PI);
 	}
 
 	inline float randF(float min, float max)

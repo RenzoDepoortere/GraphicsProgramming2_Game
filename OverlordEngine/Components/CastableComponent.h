@@ -24,7 +24,7 @@ public:
 	void SetCastedTo(bool castedTo) { m_HasBeenCastedTo = castedTo; }
 	bool GetCastedTo() const { return m_HasBeenCastedTo; }
 
-	virtual void Activate() = 0;
+	virtual void Activate(const XMFLOAT3& spellPosition) = 0;
 
 protected:
 	void Initialize(const SceneContext& sceneContext) override = 0;
@@ -33,8 +33,6 @@ protected:
 
 private:
 	// Member variables
-	TextureData* m_pTexture{};
 	Spell m_CurrentSpell{};
-
 	bool m_HasBeenCastedTo{ false };
 };

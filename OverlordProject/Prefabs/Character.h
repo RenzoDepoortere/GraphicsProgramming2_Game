@@ -46,7 +46,11 @@ public:
 	ControllerComponent* GetController() const { return m_pControllerComponent; }
 	
 	bool IsJumping() const { return m_IsJumping; }
+	bool PressedJump() const { return m_PressedJump; }
+
 	float GetTotalYaw() const { return m_TotalYaw; }
+	const XMFLOAT3& GetForward() const { return m_Forward; }
+	const XMFLOAT3& GetRight() const { return m_Right; }
 	const XMFLOAT3& GetCurrentDirection() const { return m_CurrentDirection; }
 
 protected:
@@ -69,6 +73,9 @@ private:
 	XMFLOAT3 m_CurrentDirection{};					//Current/Last Direction based on Camera forward/right (Stored for deacceleration)
 
 	bool m_IsJumping{};
+	bool m_PressedJump{};
+	XMFLOAT3 m_Forward{};
+	XMFLOAT3 m_Right{};
 
 	// Member functions
 	void Input(const SceneContext& sceneContext);

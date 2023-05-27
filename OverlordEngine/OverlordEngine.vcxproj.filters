@@ -57,6 +57,7 @@
     <ClCompile Include="Content\TextureContainerLoader.cpp" />
     <ClCompile Include="Components\CastableComponent.cpp" />
     <ClCompile Include="Components\DestroyCastableComponent.cpp" />
+    <ClCompile Include="Components\BeansCastableComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -125,5 +126,6 @@
     <ClInclude Include="Content\TextureContainerLoader.h" />
     <ClInclude Include="Components\CastableComponent.h" />
     <ClInclude Include="Components\DestroyCastableComponent.h" />
+    <ClInclude Include="Components\BeansCastableComponent.h" />
   </ItemGroup>
 </Project>

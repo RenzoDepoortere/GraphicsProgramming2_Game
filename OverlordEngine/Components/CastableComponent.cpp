@@ -3,5 +3,5 @@
 
 CastableComponent::CastableComponent(Spell spell)
 	: m_CurrentSpell{ spell }
-{
+{	
 }

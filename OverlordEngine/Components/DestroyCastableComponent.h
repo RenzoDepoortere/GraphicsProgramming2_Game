@@ -14,11 +14,10 @@ public:
 	DestroyCastableComponent& operator=(DestroyCastableComponent&& other) noexcept = delete;
 
 	// Functionality
-	virtual void Activate() override;
+	virtual void Activate(const XMFLOAT3& spellPosition) override;
 
 protected:
 	void Initialize(const SceneContext& sceneContext) override;
-	//void Draw(const SceneContext& sceneContext) override;
 
 private:
 	// Member variables

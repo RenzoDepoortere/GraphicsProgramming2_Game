@@ -9,7 +9,12 @@ public:
 	ParticleMaterial& operator=(const ParticleMaterial& other) = delete;
 	ParticleMaterial& operator=(ParticleMaterial&& other) noexcept = delete;
 
+	void SetDiffuseTexture(const std::wstring& assetFile);
+
 protected:
 	void InitializeEffectVariables() override;
+
+private:
+	TextureData* m_pTexture{};
 };
 

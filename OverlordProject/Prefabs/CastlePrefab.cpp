@@ -2,6 +2,7 @@
 #include "CastlePrefab.h"
 
 #include "Materials/Shadow/DiffuseMaterial_Shadow.h"
+#include "Materials/DiffuseMaterial.h"
 
 CastlePrefab::CastlePrefab(float generalScale)
 	: m_GeneralScale{ generalScale }
@@ -21,11 +22,11 @@ void CastlePrefab::Initialize(const SceneContext& /*sceneContext*/)
 	ModelComponent* pLevelMesh = pLevelObject->AddComponent(new ModelComponent(L"Meshes/Map/Level.ovm"));
 
 	auto pLevelMaterials{ ContentManager::Load<std::vector<TextureData*>>(L"Textures/Map/1.0_LevelMesh.mtl") };
-	DiffuseMaterial_Shadow* pDiffuseMaterial{ nullptr };
+	DiffuseMaterial* pDiffuseMaterial{ nullptr };
 	for (size_t idx{}; idx < pLevelMaterials->size(); ++idx)
 	{
 		// Create materials
-		pDiffuseMaterial = MaterialManager::Get()->CreateMaterial<DiffuseMaterial_Shadow>();
+		pDiffuseMaterial = MaterialManager::Get()->CreateMaterial<DiffuseMaterial>();
 		pDiffuseMaterial->SetDiffuseTexture(pLevelMaterials->at(idx));
 
 		// Set material

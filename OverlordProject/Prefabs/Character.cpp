@@ -144,6 +144,8 @@ void Character::Input(const SceneContext& sceneContext)
 
 		//Rotate this character based on the TotalPitch (X) and TotalYaw (Y)
 		pTransformComponent->Rotate(m_TotalPitch, m_TotalYaw, 0.f);
+		m_Forward = pTransformComponent->GetForward();
+		m_Right = pTransformComponent->GetRight();
 
 		//********
 		//MOVEMENT
@@ -160,7 +162,7 @@ void Character::Input(const SceneContext& sceneContext)
 			//Calculate & Store the current direction (m_CurrentDirection) >> based on the forward/right vectors and the pressed input
 			forwardVector = XMLoadFloat3(&pTransformComponent->GetForward());
 			rightVector = XMLoadFloat3(&pTransformComponent->GetRight());
-			const XMVECTOR currentDir{ XMVectorAdd(XMVectorScale(forwardVector, move.y), XMVectorScale(rightVector, move.x)) };
+			const XMVECTOR currentDir{ XMVector3Normalize(XMVectorAdd(XMVectorScale(forwardVector, move.y), XMVectorScale(rightVector, move.x))) };
 			XMStoreFloat3(&m_CurrentDirection, currentDir);
 
 			//Increase the current MoveSpeed with the current Acceleration (m_MoveSpeed)
@@ -203,12 +205,14 @@ void Character::Input(const SceneContext& sceneContext)
 		{
 			//Set m_TotalVelocity.y equal to CharacterDesc::JumpSpeed
 			m_TotalVelocity.y = m_CharacterDesc.JumpSpeed;
+			m_PressedJump = true;
 		}
 		//Else (=Character is grounded, no input pressed)
 		else
 		{
 			//m_TotalVelocity.y is zero
 			m_TotalVelocity.y = -0.1f;
+			m_PressedJump = false;
 		}
 
 
