@@ -6,7 +6,6 @@
 #include "Prefabs/Character.h"
 
 // Map
-#include "Prefabs/SkyBox.h"
 #include "Prefabs/CastlePrefab.h"
 
 // Props
@@ -30,7 +29,6 @@ void HarryPotterScene::Initialize()
 
 	// Map
 	AddChild(new CastlePrefab(generalScale));
-	AddChild(new SkyBox());
 
 	// Props
 	AddChild(new PropsPrefab(generalScale));
@@ -46,4 +44,5 @@ void HarryPotterScene::Update()
 void HarryPotterScene::OnGUI()
 {
 	m_pHarry->GetCharacter()->DrawImGui();
+	m_pHarry->GetParticleEmitter()->DrawImGui();
 }

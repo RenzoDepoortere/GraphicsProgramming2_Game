@@ -14,7 +14,7 @@ public:
 	BeansCastableComponent& operator=(BeansCastableComponent&& other) noexcept = delete;
 
 	// Functionality
-	virtual void Activate(const XMFLOAT3& spellPosition) override;
+	virtual void Activate(GameObject* pHarry) override;
 
 	// Getters and Setters
 	void SetMinNrBeans(int minNrBeans) { m_MinNrBeans = minNrBeans; }
@@ -49,7 +49,7 @@ private:
 	float m_CurrentTimer{};
 
 	// Spawning
-	XMFLOAT3 m_ShootDirection{};
+	GameObject* m_pHarry{ nullptr };
 	float m_MaxRandomShootAngle{};
 
 	XMFLOAT3 m_PreviousLocation{};

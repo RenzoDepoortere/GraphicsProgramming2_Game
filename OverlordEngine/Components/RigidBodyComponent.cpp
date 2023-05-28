@@ -46,7 +46,7 @@ void RigidBodyComponent::OnSceneAttach(GameScene* pScene)
 
 void RigidBodyComponent::OnSceneDetach(GameScene* /*pScene*/)
 {
-	if(m_pActor)
+	if (m_pActor)
 	{
 		if (const auto pxScene = m_pActor->getScene())
 		{

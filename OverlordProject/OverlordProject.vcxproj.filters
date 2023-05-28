@@ -26,6 +26,7 @@
     <ClCompile Include="Prefabs\Bean.cpp" />
     <ClCompile Include="Prefabs\BeansProp.cpp" />
     <ClCompile Include="Prefabs\PropsPrefab.cpp" />
+    <ClCompile Include="Scenes\ParticleScene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MainGame.h" />
@@ -52,5 +53,6 @@
     <ClInclude Include="Prefabs\Bean.h" />
     <ClInclude Include="Prefabs\BeansProp.h" />
     <ClInclude Include="Prefabs\PropsPrefab.h" />
+    <ClInclude Include="Scenes\ParticleScene.h" />
   </ItemGroup>
 </Project>

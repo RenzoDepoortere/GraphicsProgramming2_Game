@@ -33,7 +33,7 @@ void BeansCastableComponent::Update(const SceneContext& sceneContext)
 		// Calculate random direction
 
 		// Spawn bean
-		GetGameObject()->GetScene()->AddChild(new Bean{m_GeneralScale, m_PreviousLocation, m_ShootDirection});
+		GetGameObject()->AddChild(new Bean{ m_GeneralScale, m_PreviousLocation, MathHelper::DirectionTo(m_PreviousLocation, m_pHarry->GetTransform()->GetWorldPosition()) });
 
 		// One bean less
 		--m_NrBeansToSpawn;
@@ -41,7 +41,7 @@ void BeansCastableComponent::Update(const SceneContext& sceneContext)
 	}
 }
 
-void BeansCastableComponent::Activate(const XMFLOAT3& spellPosition)
+void BeansCastableComponent::Activate(GameObject* pHarry)
 {
 	// If already activated, return
 	if (m_HasBeenActivated) return;
@@ -52,20 +52,15 @@ void BeansCastableComponent::Activate(const XMFLOAT3& spellPosition)
 	m_SpawnBeans = true;
 
 	// DEBUG: SPAWN 1
-	m_NrBeansToSpawn = 1;
+	//m_NrBeansToSpawn = 1;
 
-	// Calculate ShootDirection
-	const XMFLOAT3 desiredDirection{ MathHelper::DirectionTo(GetTransform()->GetPosition(), spellPosition) };
-
-	//const XMFLOAT3 upDirection{ 0, 1, 0 };
-	//const XMVECTOR upVector{ XMLoadFloat3(&upDirection) };
-
-
-	XMStoreFloat3(&m_ShootDirection, XMLoadFloat3(&desiredDirection));
+	// Get position
+	m_pHarry = pHarry;
 	m_PreviousLocation = GetGameObject()->GetTransform()->GetWorldPosition();
 
 	// Delete
-	//GetGameObject()->GetScene()->RemoveChild(GetGameObject(), true);
+	//GameObject* pObject{ GetGameObject() };
+	//pObject->GetScene()->RemoveChild(pObject, true);
 
 	// Set object to origin
 	GetTransform()->Translate(XMFLOAT3{});

@@ -53,6 +53,8 @@ public:
 	const XMFLOAT3& GetRight() const { return m_Right; }
 	const XMFLOAT3& GetCurrentDirection() const { return m_CurrentDirection; }
 
+	CameraComponent* GetCamera() const { return m_pCameraComponent; }
+
 protected:
 	void Initialize(const SceneContext&) override;
 	void Update(const SceneContext&) override;

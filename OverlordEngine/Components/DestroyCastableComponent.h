@@ -14,7 +14,7 @@ public:
 	DestroyCastableComponent& operator=(DestroyCastableComponent&& other) noexcept = delete;
 
 	// Functionality
-	virtual void Activate(const XMFLOAT3& spellPosition) override;
+	virtual void Activate(GameObject* pHarry) override;
 
 protected:
 	void Initialize(const SceneContext& sceneContext) override;

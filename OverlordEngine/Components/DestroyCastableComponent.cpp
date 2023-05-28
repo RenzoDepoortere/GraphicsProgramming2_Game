@@ -12,7 +12,7 @@ void DestroyCastableComponent::Initialize(const SceneContext& /*sceneContext*/)
 }
 
 // (Can't get the gameObject to be deleted, so objects will be set to origin instead)
-void DestroyCastableComponent::Activate(const XMFLOAT3& /*spellPosition*/)
+void DestroyCastableComponent::Activate(GameObject* /*pHarry*/)
 {
 	// If already activated, return
 	if (m_HasBeenActivated) return;

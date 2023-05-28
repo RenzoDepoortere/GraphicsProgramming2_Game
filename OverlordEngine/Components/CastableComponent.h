@@ -24,7 +24,7 @@ public:
 	void SetCastedTo(bool castedTo) { m_HasBeenCastedTo = castedTo; }
 	bool GetCastedTo() const { return m_HasBeenCastedTo; }
 
-	virtual void Activate(const XMFLOAT3& spellPosition) = 0;
+	virtual void Activate(GameObject* pHarry) = 0;
 
 protected:
 	void Initialize(const SceneContext& sceneContext) override = 0;

@@ -1,6 +1,7 @@
 #pragma once
 class Character;
 class ParticleEmitterComponent;
+class MovingSpell;
 
 class HarryCharacter final : public GameObject
 {
@@ -16,6 +17,7 @@ public:
 
 	// Pass through functions
 	Character* GetCharacter() const { return m_pCharacter; }
+	ParticleEmitterComponent* GetParticleEmitter() const { return m_pCastingObject; }
 
 protected:
 	// Functionality
@@ -58,7 +60,8 @@ private:
 	ModelAnimator* m_pAnimator{};
 
 	// Casting object
-	GameObject* m_pCastingObject{ nullptr };
+	ParticleEmitterComponent* m_pCastingObject{ nullptr };
+	MovingSpell* m_pMovingSpell{ nullptr };
 
 	// Functions
 	// ---------

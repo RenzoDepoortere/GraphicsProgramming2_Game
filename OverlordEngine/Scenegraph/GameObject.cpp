@@ -10,7 +10,7 @@ GameObject::GameObject():
 }
 GameObject::~GameObject()
 {
-	for(BaseComponent* pComp: m_pComponents)
+	for (BaseComponent* pComp : m_pComponents)
 	{
 		SafeDelete(pComp);
 	}

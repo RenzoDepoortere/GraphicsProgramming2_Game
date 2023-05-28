@@ -88,11 +88,11 @@ void HarryCharacter::InitHarry(const SceneContext& sceneContext)
 
 	// Materials
 	auto pLevelMaterials{ ContentManager::Load<std::vector<TextureData*>>(L"Textures/Character/HarryMesh.mtl") };
-	DiffuseMaterial_Skinned* pSkinnedDiffuseMaterial{ nullptr };
+	DiffuseMaterial_Shadow_Skinned* pSkinnedDiffuseMaterial{ nullptr };
 	for (size_t idx{}; idx < pLevelMaterials->size(); ++idx)
 	{
 		// Create materials
-		pSkinnedDiffuseMaterial = MaterialManager::Get()->CreateMaterial<DiffuseMaterial_Skinned>();
+		pSkinnedDiffuseMaterial = MaterialManager::Get()->CreateMaterial<DiffuseMaterial_Shadow_Skinned>();
 		pSkinnedDiffuseMaterial->SetDiffuseTexture(pLevelMaterials->at(idx));
 
 		// Set material
@@ -131,9 +131,6 @@ void HarryCharacter::InitHarry(const SceneContext& sceneContext)
 }
 void HarryCharacter::InitCastingObject(const SceneContext& /*sceneContext*/)
 {
-	// Temp cube
-	//m_pCastingObject = AddChild(new CubePrefab{});
-
 	// Particles
 	ParticleEmitterSettings settings{};
 	settings.velocity = { 0.f,6.f,0.f };
@@ -147,10 +144,11 @@ void HarryCharacter::InitCastingObject(const SceneContext& /*sceneContext*/)
 	settings.maxEmitterRadius = .5f;
 	settings.color = { 1.f, 0.f, 0.f, .6f };
 
-	m_pCastingObject = GetScene()->AddChild(new GameObject{});
-	m_pCastingObject->AddComponent(new ParticleEmitterComponent(L"Textures/TestTennisBall.jpg", settings, 200));
+	auto object = GetScene()->AddChild(new GameObject{});
+	m_pCastingObject = object->AddComponent(new ParticleEmitterComponent(L"Textures/TestTennisBall.jpg", settings, 200));
+	object->GetTransform()->Scale(m_GeneralScale);
 
-	m_pCastingObject->AddChild(new CubePrefab{})->GetTransform()->Scale(0.5f);
+	//m_pCastingObject->AddChild(new CubePrefab{})->GetTransform()->Scale(0.5f);
 
 	//// Get spell textures
 	//ParticleMaterial* pMaterial{ MaterialManager::Get()->CreateMaterial<ParticleMaterial>() };
@@ -161,6 +159,10 @@ void HarryCharacter::InitCastingObject(const SceneContext& /*sceneContext*/)
 
 	// Transform
 	//m_pCastingObject->GetTransform()->Scale(0.5f);
+
+	// Moving spell
+	const float spellMovementSpeed{ 15.f };
+	m_pMovingSpell = AddChild(new MovingSpell{ spellMovementSpeed, m_pCharacterMesh });
 }
 
 void HarryCharacter::HandleMeshTransform(bool isForward, bool isBackward, bool isLeft, bool isRight, bool isAiming)
@@ -272,9 +274,8 @@ void HarryCharacter::HandleCastingObject(const SceneContext& sceneContext, bool 
 			if (spellActivate && pCastable->GetCastedTo() == false)
 			{
 				// Send spell
-				const float spellMovementSpeed{ 15.f };
-				MovingSpell* pSpell{ AddChild(new MovingSpell{ spellMovementSpeed, pCastable->GetSpell(), hitPos, pCastable }) };
-				pSpell->GetTransform()->Translate(m_pCharacter->GetTransform()->GetWorldPosition());
+				m_pMovingSpell->SetActive(pCastable->GetSpell(), hitPos, pCastable);
+				m_pMovingSpell->GetTransform()->Translate(m_pCharacter->GetTransform()->GetWorldPosition());
 
 				// Set casted to
 				pCastable->SetCastedTo(true);

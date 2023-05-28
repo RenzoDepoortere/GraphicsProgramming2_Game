@@ -64,6 +64,13 @@ RasterizerState NoCulling
 	CullMode = NONE;
 };
 
+BlendState gBS_EnableBlending
+{
+	BlendEnable[0] = TRUE;
+	SrcBlend = SRC_ALPHA;
+	DestBlend = INV_SRC_ALPHA;
+};
+
 //--------------------------------------------------------------------------------------
 // Vertex Shader
 //--------------------------------------------------------------------------------------
@@ -157,6 +164,7 @@ technique10 Default
     {
 		SetRasterizerState(NoCulling);
 		SetDepthStencilState(EnableDepth, 0);
+		SetBlendState(gBS_EnableBlending, float4(0.0f, 0.0f, 0.0f, 0.0f), 0xFFFFFFFF);
 
 		SetVertexShader( CompileShader( vs_4_0, VS() ) );
 		SetGeometryShader( NULL );

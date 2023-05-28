@@ -8,7 +8,7 @@ Bean::Bean(float generalScale, const XMFLOAT3& spawnLocation, const XMFLOAT3& fo
 	, m_SpawnLocation{ spawnLocation }
 	, m_NrBeans{ 16 }
 	, m_ForceDirection{ forceDirection }
-	, m_Force{ 5.f }
+	, m_Force{ 7.5f }
 {
 }
 

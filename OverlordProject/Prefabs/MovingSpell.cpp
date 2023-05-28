@@ -3,12 +3,19 @@
 
 #include "Prefabs/CubePrefab.h"
 
-MovingSpell::MovingSpell(float movementSpeed, CastableComponent::Spell spell, const XMFLOAT3& desiredLocation, CastableComponent* pObjectToHit)
+MovingSpell::MovingSpell(float movementSpeed, GameObject* pHarry)
 	: m_MovingSpeed{ movementSpeed }
-	, m_CurrentSpell{ spell }
-	, m_DesiredLocation{ desiredLocation }
-	, m_pObjectToHit{ pObjectToHit }
+	, m_pHarry{ pHarry }
 {
+}
+
+void MovingSpell::SetActive(CastableComponent::Spell spell, const XMFLOAT3& desiredLocation, CastableComponent* pObjectToHit)
+{
+	m_CurrentSpell = spell;
+	m_DesiredLocation = desiredLocation;
+	m_pObjectToHit = pObjectToHit;
+
+	m_IsActive = true;
 }
 
 void MovingSpell::Initialize(const SceneContext& /*sceneContext*/)
@@ -31,25 +38,25 @@ void MovingSpell::Initialize(const SceneContext& /*sceneContext*/)
 	// On collision
 	SetOnTriggerCallBack([=](GameObject*, GameObject* pOther, PxTriggerAction action)
 	{
-		// If being destroyed, return
-		if (m_IsBeingDestroyed) return;
+		// If not active, return
+		if (m_IsActive == false) return;
 
 		// If was desiredObject
 		if (action == PxTriggerAction::ENTER && pOther == m_pObjectToHit->GetGameObject())
 		{
 			// Activate object
-			m_pObjectToHit->Activate(GetTransform()->GetPosition());
+			m_pObjectToHit->Activate(m_pHarry);
 
 			// "Delete"
 			GetTransform()->Translate(XMFLOAT3{});
-			m_IsBeingDestroyed = true;
+			m_IsActive = false;
 		}
 	});
 }
 
 void MovingSpell::Update(const SceneContext& sceneContext)
 {
-	if (m_IsBeingDestroyed) return;
+	if (m_IsActive == false) return;
 
 	// Calculate new position
 	const XMFLOAT3 currentPosition{ GetTransform()->GetPosition() };
