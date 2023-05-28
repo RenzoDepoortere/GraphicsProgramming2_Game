@@ -30,12 +30,12 @@ namespace MathHelper
 		return a.x == b.x && a.y == b.y;
 	}
 
-	inline XMFLOAT3 DirectionTo(const XMFLOAT3& from, const XMFLOAT3& to)
+	inline XMFLOAT3 DirectionTo(const XMFLOAT3& from, const XMFLOAT3& to, bool normalize = true)
 	{
 		const XMVECTOR fromVector{ XMLoadFloat3(&from) };
 		const XMVECTOR toVector{ XMLoadFloat3(&to) };
 
-		const XMVECTOR desiredVector{ XMVector3Normalize(XMVectorSubtract(toVector, fromVector)) };
+		const XMVECTOR desiredVector = (normalize) ? XMVector3Normalize(XMVectorSubtract(toVector, fromVector)) : XMVectorSubtract(toVector, fromVector);
 		XMFLOAT3 desiredDirection{};
 		XMStoreFloat3(&desiredDirection, desiredVector);
 

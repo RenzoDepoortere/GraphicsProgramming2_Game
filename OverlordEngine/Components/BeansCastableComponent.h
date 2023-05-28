@@ -5,7 +5,7 @@ class BeansCastableComponent final : public CastableComponent
 {
 public:
 	// Rule of five
-	BeansCastableComponent(Spell spell, float generalScale);
+	BeansCastableComponent(float generalScale, GameObject* pHarry, Spell spell);
 	virtual ~BeansCastableComponent() override = default;
 
 	BeansCastableComponent(const BeansCastableComponent& other) = delete;
@@ -37,6 +37,7 @@ private:
 	// ----------------
 	bool m_HasBeenActivated{ false };
 	float m_GeneralScale{};
+	GameObject* m_pHarry{};
 
 	// Beans
 	int m_MinNrBeans{}, m_MaxNrBeans{};
@@ -49,7 +50,6 @@ private:
 	float m_CurrentTimer{};
 
 	// Spawning
-	GameObject* m_pHarry{ nullptr };
 	float m_MaxRandomShootAngle{};
 
 	XMFLOAT3 m_PreviousLocation{};

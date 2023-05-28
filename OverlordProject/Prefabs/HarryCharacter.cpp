@@ -86,6 +86,7 @@ void HarryCharacter::InitHarry(const SceneContext& sceneContext)
 
 	ModelComponent* pModel = m_pCharacterMesh->AddComponent(new ModelComponent(L"Meshes/Character/Harry.ovm"));
 
+
 	// Materials
 	auto pLevelMaterials{ ContentManager::Load<std::vector<TextureData*>>(L"Textures/Character/HarryMesh.mtl") };
 	DiffuseMaterial_Shadow_Skinned* pSkinnedDiffuseMaterial{ nullptr };
@@ -144,11 +145,8 @@ void HarryCharacter::InitCastingObject(const SceneContext& /*sceneContext*/)
 	settings.maxEmitterRadius = .5f;
 	settings.color = { 1.f, 0.f, 0.f, .6f };
 
-	auto object = GetScene()->AddChild(new GameObject{});
+	auto object = GetScene()->AddChild(new CubePrefab{ 0.2f, 0.2f, 0.2f, static_cast<XMFLOAT4>(Colors::Coral) });
 	m_pCastingObject = object->AddComponent(new ParticleEmitterComponent(L"Textures/TestTennisBall.jpg", settings, 200));
-	object->GetTransform()->Scale(m_GeneralScale);
-
-	//m_pCastingObject->AddChild(new CubePrefab{})->GetTransform()->Scale(0.5f);
 
 	//// Get spell textures
 	//ParticleMaterial* pMaterial{ MaterialManager::Get()->CreateMaterial<ParticleMaterial>() };

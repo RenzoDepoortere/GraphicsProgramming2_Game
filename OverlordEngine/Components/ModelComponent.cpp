@@ -120,7 +120,7 @@ void ModelComponent::ShadowMapDraw(const SceneContext& sceneContext)
 		boneTransforms = m_pAnimator->GetBoneTransforms();
 	}
 	
-	ShadowMapRenderer::Get()->DrawMesh(sceneContext, m_pMeshFilter, GetGameObject()->GetTransform()->GetWorld(), boneTransforms);
+	ShadowMapRenderer::Get()->DrawMesh(sceneContext, m_pMeshFilter, GetTransform()->GetWorld(), boneTransforms);
 }
 
 void ModelComponent::SetMaterial(BaseMaterial* pMaterial, UINT8 submeshId)

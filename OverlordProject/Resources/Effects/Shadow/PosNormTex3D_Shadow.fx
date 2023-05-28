@@ -138,6 +138,7 @@ float EvaluateShadowMap(float4 lpos)
 float4 PS(VS_OUTPUT input) : SV_TARGET
 {
 	float shadowValue = EvaluateShadowMap(input.lPos);
+	if (shadowValue < 0.5f) shadowValue = 0.5f;
 
 	float4 diffuseColor = gDiffuseMap.Sample( samLinear,input.texCoord );
 	float3 color_rgb= diffuseColor.rgb;

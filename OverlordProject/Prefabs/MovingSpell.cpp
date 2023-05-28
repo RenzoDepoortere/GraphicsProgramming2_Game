@@ -25,7 +25,7 @@ void MovingSpell::Initialize(const SceneContext& /*sceneContext*/)
 	// Particles
 
 	// Temp cube
-	GameObject* pCube{ AddChild(new CubePrefab{}) };
+	GameObject* pCube{ AddChild(new CubePrefab{1.0f, 1.0f, 1.0f, static_cast<XMFLOAT4>(Colors::GreenYellow)}) };
 	pCube->GetTransform()->Scale(boxDimension);
 
 	// Rigidbody

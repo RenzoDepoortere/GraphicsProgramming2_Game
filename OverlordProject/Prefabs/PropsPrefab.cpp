@@ -6,8 +6,9 @@
 
 #include "Components/CastableComponent.h"
 
-PropsPrefab::PropsPrefab(float generalScale)
+PropsPrefab::PropsPrefab(float generalScale, GameObject* pHarry)
 	: m_GeneralScale{ generalScale }
+	, m_pHarry{ pHarry }
 {
 }
 
@@ -18,6 +19,6 @@ void PropsPrefab::Initialize(const SceneContext& /*sceneContext*/)
 
 	// Bean props
 	//AddChild(new BeansProp{m_GeneralScale, CastableComponent::Diffindo});
-	GameObject* pProp{ GetScene()->AddChild(new BeansProp{m_GeneralScale, CastableComponent::Diffindo}) };
+	GameObject* pProp{ GetScene()->AddChild(new BeansProp{m_GeneralScale, m_pHarry, CastableComponent::Diffindo}) };
 	pProp->GetTransform()->Translate(7.f, -8.4f, -79.f);
 }

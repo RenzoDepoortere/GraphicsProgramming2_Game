@@ -17,12 +17,16 @@ private:
 	// ---------
 	HarryCharacter* m_pHarry{ nullptr };
 
+	bool m_DrawShadowMap{ false };
+	float m_ShadowMapScale{};
+
 	// Functions
 	// ---------
 
 	// Scene
 	void Initialize() override;
 	void Update() override;
+	void PostDraw() override;
 	void OnGUI() override;
 };
 

@@ -5,7 +5,7 @@ class BeansProp final : public GameObject
 {
 public:
 	// Rule of five
-	BeansProp(float generalScale, CastableComponent::Spell spell);
+	BeansProp(float generalScale, GameObject* pHarry, CastableComponent::Spell spell);
 	~BeansProp() override = default;
 
 	BeansProp(const BeansProp& other) = delete;
@@ -20,5 +20,7 @@ private:
 	// Variables
 	// ---------
 	float m_GeneralScale{};
+	GameObject* m_pHarry{};
+
 	CastableComponent::Spell m_Spell{};
 };

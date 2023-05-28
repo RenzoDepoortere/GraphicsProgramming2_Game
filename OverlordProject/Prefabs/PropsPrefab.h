@@ -4,7 +4,7 @@ class PropsPrefab final : public GameObject
 {
 public:
 	// Rule of five
-	PropsPrefab(float generalScale);
+	PropsPrefab(float generalScale, GameObject* pHarry);
 	~PropsPrefab() override = default;
 
 	PropsPrefab(const PropsPrefab& other) = delete;
@@ -19,4 +19,5 @@ private:
 	// Variables
 	// ---------
 	float m_GeneralScale{};
+	GameObject* m_pHarry{};
 };

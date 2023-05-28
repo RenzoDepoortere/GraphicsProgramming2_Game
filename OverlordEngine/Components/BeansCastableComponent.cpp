@@ -3,9 +3,10 @@
 
 #include "../OverlordProject/Prefabs/Bean.h"
 
-BeansCastableComponent::BeansCastableComponent(Spell spell, float generalScale)
-	: CastableComponent{ spell }
-	, m_GeneralScale{ generalScale }
+BeansCastableComponent::BeansCastableComponent(float generalScale, GameObject* pHarry, Spell spell)
+	: m_GeneralScale{ generalScale }
+	, m_pHarry{ pHarry }
+	, CastableComponent{ spell }
 {
 }
 
@@ -33,7 +34,7 @@ void BeansCastableComponent::Update(const SceneContext& sceneContext)
 		// Calculate random direction
 
 		// Spawn bean
-		GetGameObject()->AddChild(new Bean{ m_GeneralScale, m_PreviousLocation, MathHelper::DirectionTo(m_PreviousLocation, m_pHarry->GetTransform()->GetWorldPosition()) });
+		GetGameObject()->AddChild(new Bean{ m_GeneralScale, m_pHarry, m_PreviousLocation, MathHelper::DirectionTo(m_PreviousLocation, m_pHarry->GetTransform()->GetWorldPosition()) });
 
 		// One bean less
 		--m_NrBeansToSpawn;
