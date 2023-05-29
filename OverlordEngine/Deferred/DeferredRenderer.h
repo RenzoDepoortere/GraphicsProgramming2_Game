@@ -16,7 +16,8 @@ public:
 		Diffuse = 1,
 		Specular = 2,
 		Normal = 3,
-		Depth = 4
+		Shadow = 4,
+		Depth = 5
 	};
 
 	void Begin(const SceneContext& sceneContext) const;
@@ -32,7 +33,7 @@ private:
 	DeferredRenderer() = default;
 
 	//GBUFFER
-	static constexpr int RT_COUNT{ 4 }; //GBuffer RenderTarget Count 
+	static constexpr int RT_COUNT{ 5 }; //GBuffer RenderTarget Count 
 	static constexpr int SRV_COUNT{ RT_COUNT + 1 }; //GBuffer ShaderResourceView Count 
 
 	RenderTarget* CreateRenderTarget(UINT width, UINT height, DXGI_FORMAT format) const; //Helper to construct RenderTargets

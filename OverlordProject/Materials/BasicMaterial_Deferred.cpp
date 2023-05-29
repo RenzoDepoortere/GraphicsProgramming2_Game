@@ -50,7 +50,29 @@ void BasicMaterial_Deferred::InitializeEffectVariables()
 {
 }
 
-void BasicMaterial_Deferred::OnUpdateModelVariables(const SceneContext& sceneContext, const ModelComponent*) const
+void BasicMaterial_Deferred::OnUpdateModelVariables(const SceneContext& sceneContext, const ModelComponent* pModel) const
 {
+	// SHADOW
+	// ******
+	
+	//Update Shadow Variables
+	const auto pShadowMapRenderer = ShadowMapRenderer::Get();
+
+	//Update the LightWVP
+	const XMFLOAT4X4 lightVP{ pShadowMapRenderer->GetLightVP() };
+	const XMFLOAT4X4 modelWorld{ pModel->GetTransform()->GetWorld() };
+
+	const XMMATRIX lightVWPMatrix{ XMMatrixMultiply(XMLoadFloat4x4(&modelWorld), XMLoadFloat4x4(&lightVP)) };
+	XMFLOAT4X4 lightVWP{};
+	XMStoreFloat4x4(&lightVWP, lightVWPMatrix);
+
+	SetVariable_Matrix(L"gWorldViewProj_Light", lightVWP);
+
+	// Update the ShadowMap texture
+	SetVariable_Texture(L"gShadowMap", pShadowMapRenderer->GetShadowMap());
+
+	// Light direction
+	// ***************
+
 	SetVariable_Vector(L"gLightDirection", sceneContext.pLights->GetDirectionalLight().direction);
 }

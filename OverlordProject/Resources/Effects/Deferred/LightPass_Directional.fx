@@ -14,6 +14,8 @@ Texture2D gTextureSpecular;
 Texture2D gTextureNormal;
 Texture2D gTextureDepth;
 
+Texture2D gTextureShadow;
+
 SamplerState gTextureSampler
 {
 	Filter = MIN_MAG_MIP_POINT;
@@ -79,6 +81,9 @@ float4 PS(VS_OUTPUT input) :SV_TARGET
 
 	// Calculate pixel worldPosition from depth value
 	float depth = gTextureDepth.Load(loadCoord).r;
+	float textureWidth;
+	float textureHeight;
+	gTextureDepth.GetDimensions(textureWidth, textureHeight);
 	float3 P = DepthToWorldPosition_QUAD(depth, input.TexCoord, gMatrixViewProjInv);
 
 	float3 V = normalize(P - gEyePos); // View-Direction
@@ -88,6 +93,8 @@ float4 PS(VS_OUTPUT input) :SV_TARGET
 	float shininess = exp2(specular.a * 10.5f);
 	float3 N = gTextureNormal.Load(loadCoord).xyz;          // Normal
 	float L = normalize(gDirectionalLight.Direction.xyz);	// Light-Direction
+
+	float shadow = gTextureShadow.Load(loadCoord);			// Shadow
 
 	// Material
 	Material mat = (Material)0;
@@ -99,7 +106,7 @@ float4 PS(VS_OUTPUT input) :SV_TARGET
 	LightingResult result = DoDirectionalLighting(gDirectionalLight, mat, L, V, N);
 
 	// Final Color
-	return float4((mat.Diffuse * result.Diffuse) + (mat.Specular * result.Specular), 1.0f); // + Ambient (is on back-buffer)
+	return float4((mat.Diffuse * result.Diffuse * shadow) + (mat.Specular * result.Specular), 1.0f); // + Ambient (is on back-buffer)
 }
 
 //TECHNIQUE

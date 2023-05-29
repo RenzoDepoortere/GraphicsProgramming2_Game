@@ -28,6 +28,7 @@ void DeferredRenderer::Initialize()
 	m_GBuffer[static_cast<int>(eGBufferId::Diffuse)] = CreateRenderTarget(width, height, DXGI_FORMAT_R8G8B8A8_UNORM);
 	m_GBuffer[static_cast<int>(eGBufferId::Specular)] = CreateRenderTarget(width, height, DXGI_FORMAT_R8G8B8A8_UNORM);
 	m_GBuffer[static_cast<int>(eGBufferId::Normal)] = CreateRenderTarget(width, height, DXGI_FORMAT_R32G32B32A32_FLOAT);
+	m_GBuffer[static_cast<int>(eGBufferId::Shadow)] = CreateRenderTarget(width, height, DXGI_FORMAT_R8G8B8A8_UNORM);
 
 	//Collect References of RTVs
 	for (int idx{}; idx < RT_COUNT; ++idx)

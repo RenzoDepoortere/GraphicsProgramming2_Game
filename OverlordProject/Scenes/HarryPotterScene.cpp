@@ -40,7 +40,6 @@ void HarryPotterScene::PostDraw()
 	//Draw ShadowMap (Debug Visualization)
 	if (m_DrawShadowMap)
 	{
-
 		ShadowMapRenderer::Get()->Debug_DrawDepthSRV({ m_SceneContext.windowWidth - 10.f, 10.f }, { m_ShadowMapScale, m_ShadowMapScale }, { 1.f,0.f });
 	}
 }
@@ -59,5 +58,5 @@ void HarryPotterScene::OnGUI()
 
 	// Shadow
 	ImGui::Checkbox("Draw ShadowMap", &m_DrawShadowMap);
-	ImGui::SliderFloat("ShadowMap Scale", &m_ShadowMapScale, 0.f, 1.f);
+	//ImGui::SliderFloat("ShadowMap Scale", &m_ShadowMapScale, 0.f, 1.f);
 }

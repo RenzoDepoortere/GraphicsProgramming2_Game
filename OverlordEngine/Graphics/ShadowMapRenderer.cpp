@@ -188,11 +188,12 @@ ID3D11ShaderResourceView* ShadowMapRenderer::GetShadowMap() const
 	return m_pShadowRenderTarget->GetDepthShaderResourceView();
 }
 
-void ShadowMapRenderer::Debug_DrawDepthSRV(const XMFLOAT2& position, const XMFLOAT2& scale, const XMFLOAT2& pivot) const
+void ShadowMapRenderer::Debug_DrawDepthSRV(const XMFLOAT2& /*position*/, const XMFLOAT2& /*scale*/, const XMFLOAT2& /*pivot*/) const
 {
 	if (m_pShadowRenderTarget->HasDepthSRV())
 	{
-		SpriteRenderer::Get()->DrawImmediate(m_GameContext.d3dContext, m_pShadowRenderTarget->GetDepthShaderResourceView(), position, XMFLOAT4{ Colors::White }, pivot, scale);
+		QuadRenderer::Get()->Draw(m_pShadowRenderTarget->GetDepthShaderResourceView());
+		//SpriteRenderer::Get()->DrawImmediate(m_GameContext.d3dContext, m_pShadowRenderTarget->GetDepthShaderResourceView(), position, XMFLOAT4{ Colors::White }, pivot, scale);
 
 		//Remove from Pipeline
 		constexpr ID3D11ShaderResourceView* const pSRV[] = { nullptr };

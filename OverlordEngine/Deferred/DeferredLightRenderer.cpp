@@ -56,6 +56,8 @@ void DeferredLightRenderer::DirectionalLightPass(const SceneContext& sceneContex
 		m_pDirectionalLightMaterial->SetVariable_Vector(L"gEyePos", sceneContext.pCamera->GetTransform()->GetWorldPosition());
 		m_pDirectionalLightMaterial->SetVariable(L"gDirectionalLight", &light, 0, sizeof(Light) - 4);
 
+		m_pDirectionalLightMaterial->SetVariable_Texture(L"gTextureShadow", gbufferSRVs[static_cast<int>(DeferredRenderer::eGBufferId::Shadow)]);
+
 		//Draw Effect (Full Screen Quad)
 		QuadRenderer::Get()->Draw(m_pDirectionalLightMaterial);
 	}
@@ -76,6 +78,8 @@ void DeferredLightRenderer::VolumetricLightPass(const SceneContext& sceneContext
 
 	m_pVolumetricLightMaterial->SetVariable_Matrix(L"gMatrixViewProjInv", sceneContext.pCamera->GetViewProjectionInverse());
 	m_pVolumetricLightMaterial->SetVariable_Vector(L"gEyePos", sceneContext.pCamera->GetTransform()->GetWorldPosition());
+
+	m_pDirectionalLightMaterial->SetVariable_Texture(L"gTextureShadow", gbufferSRVs[static_cast<int>(DeferredRenderer::eGBufferId::Shadow)]);
 
 	//Iterate Lights & Render Volumes
 	for (auto& light : sceneContext.pLights->GetLights())

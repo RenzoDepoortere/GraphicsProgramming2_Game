@@ -21,6 +21,8 @@ float4x4 gWorldViewProj : WORLDVIEWPROJECTION;
 float4x4 gViewInverse : VIEWINVERSE;
 // The World Matrix
 float4x4 gWorld : WORLD;
+// Light matrix
+float4x4 gWorldViewProj_Light;
 // Bones
 float4x4 gBones[70];
 
@@ -52,6 +54,17 @@ SamplerState gTextureSampler
 	AddressU = WRAP;
 	AddressV = WRAP;
 	AddressW = WRAP;
+};
+
+SamplerComparisonState cmpSampler
+{
+	// sampler state
+	Filter = COMPARISON_MIN_MAG_MIP_LINEAR;
+	AddressU = MIRROR;
+	AddressV = MIRROR;
+
+	// sampler comparison state
+	ComparisonFunc = LESS_EQUAL;
 };
 
 //LIGHT
@@ -155,6 +168,10 @@ float gOpacityLevel <
 	float UIMax = 1;
 > = 1.0f;
 
+// SHADOW
+// ******
+float gShadowMapBias = 0.01f;
+Texture2D gShadowMap;
 
 //VS IN & OUT
 //***********
@@ -177,6 +194,7 @@ struct VS_Output
 	float3 Tangent: TANGENT;
 	float3 Binormal: BINORMAL;
 	float2 TexCoord: TEXCOORD0;
+	float4 LPos : TEXCOORD1;
 };
 
 struct PS_Output
@@ -185,6 +203,7 @@ struct PS_Output
 	float4 Diffuse : SV_TARGET1;
 	float4 Specular : SV_TARGET2;
 	float4 Normal : SV_TARGET3;
+	float Shadow : SV_TARGET4;
 };
 
 // The main vertex shader
@@ -309,8 +328,49 @@ VS_Output MainVS(VS_Input input) {
 	output.Binormal = transformedBinormal;
 
 	output.TexCoord = input.TexCoord;
+	output.LPos = mul(transformedPosition, gWorldViewProj_Light);
 
 	return output;
+}
+
+float2 texOffset(int u, int v)
+{
+	return float2(u * 1.0f / 1280, v * 1.0f / 720);
+}
+
+float EvaluateShadowMap(float4 lpos)
+{
+	//re-homogenize position after interpolation
+	lpos /= lpos.w;
+
+	//if position is not visible to the light - dont illuminate it
+	//results in hard light frustum
+	if (lpos.x < -1.0f || 1.0f < lpos.x ||
+		lpos.y < -1.0f || 1.0f < lpos.y ||
+		lpos.z < 0.0f || 1.0f < lpos.z)
+		return 0.0f;
+
+	//transform clip space coords to texture space coords (-1:1 to 0:1)
+	lpos.x = lpos.x / 2 + 0.5;
+	lpos.y = lpos.y / -2 + 0.5;
+
+	//apply shadow map bias
+	lpos.z -= gShadowMapBias;
+
+	//PCF sampling for shadow map
+	float sum = 0;
+	float x, y;
+
+	//perform PCF filtering on a 4 x 4 texel neighborhood
+	for (y = -1.5f; y < 1.5f; y += 1.0f)
+	{
+		for (x = -1.5f; x < 1.5f; x += 1.0f)
+		{
+			sum += gShadowMap.SampleCmpLevelZero(cmpSampler, lpos.xy + texOffset(x, y), lpos.z);
+		}
+	}
+
+	return sum / 16.0f;
 }
 
 // The main pixel shader
@@ -379,6 +439,13 @@ PS_Output MainPS(VS_Output input){
 
 	// Set specular
 	output.Specular = float4(specular, shininess);
+
+	// Shadow
+	// ******
+	float shadowValue = EvaluateShadowMap(input.LPos);
+
+	// Set shadow
+	output.Shadow = shadowValue;
 
 	return output;
 }

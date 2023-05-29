@@ -13,6 +13,8 @@ Texture2D gTextureSpecular;
 Texture2D gTextureNormal;
 Texture2D gTextureDepth;
 
+Texture2D gTextureShadow;
+
 
 SamplerState gTextureSampler
 {
@@ -119,6 +121,8 @@ float4 PS(VS_OUTPUT input) :SV_TARGET
 	float shininess = exp2(specular.a * 10.5f);
 	float3 N = gTextureNormal.Load(loadCoord).xyz;          // Normal
 
+	float shadow = gTextureShadow.Load(loadCoord);			// Shadow
+
 	// Material
 	Material mat = (Material)0;
 	mat.Diffuse = diffuse;
@@ -137,7 +141,7 @@ float4 PS(VS_OUTPUT input) :SV_TARGET
 	}
 
 	// Final color
-	return float4((mat.Diffuse * result.Diffuse) + (mat.Specular * result.Specular), 1.0f);
+	return float4((mat.Diffuse * result.Diffuse * shadow) + (mat.Specular * result.Specular), 1.0f);
 }
 
 technique11 Default
