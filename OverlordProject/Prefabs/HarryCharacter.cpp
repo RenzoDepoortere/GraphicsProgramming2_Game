@@ -1,11 +1,7 @@
 #include "stdafx.h"
 #include "HarryCharacter.h"
 
-#include "Materials/ColorMaterial.h"
-#include "Materials/DiffuseMaterial.h"
-#include "Materials/DiffuseMaterial_Skinned.h"
-#include "Materials/Shadow/DiffuseMaterial_Shadow.h"
-#include "Materials/Shadow/DiffuseMaterial_Shadow_Skinned.h"
+#include "Materials/BasicMaterial_Deferred_Skinned.h"
 #include "Misc/ParticleMaterial.h"
 
 #include "Prefabs/Character.h"
@@ -89,12 +85,12 @@ void HarryCharacter::InitHarry(const SceneContext& sceneContext)
 
 	// Materials
 	auto pLevelMaterials{ ContentManager::Load<std::vector<TextureData*>>(L"Textures/Character/HarryMesh.mtl") };
-	DiffuseMaterial_Shadow_Skinned* pSkinnedDiffuseMaterial{ nullptr };
+	BasicMaterial_Deferred_Skinned* pSkinnedDiffuseMaterial{ nullptr };
 	for (size_t idx{}; idx < pLevelMaterials->size(); ++idx)
 	{
 		// Create materials
-		pSkinnedDiffuseMaterial = MaterialManager::Get()->CreateMaterial<DiffuseMaterial_Shadow_Skinned>();
-		pSkinnedDiffuseMaterial->SetDiffuseTexture(pLevelMaterials->at(idx));
+		pSkinnedDiffuseMaterial = MaterialManager::Get()->CreateMaterial<BasicMaterial_Deferred_Skinned>();
+		pSkinnedDiffuseMaterial->SetDiffuseMap(pLevelMaterials->at(idx));
 
 		// Set material
 		pModel->SetMaterial(pSkinnedDiffuseMaterial, static_cast<UINT8>(idx));

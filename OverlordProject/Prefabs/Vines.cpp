@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "Vines.h"
 
-#include "Materials/DiffuseMaterial.h"
+#include "Materials/BasicMaterial_Deferred.h"
 #include "Components/DestroyCastableComponent.h"
 
 Vines::Vines(float generalScale)
@@ -17,8 +17,8 @@ void Vines::Initialize(const SceneContext& /*sceneContext*/)
 	// Mesh
 	ModelComponent* pModel{ AddComponent(new ModelComponent{L"Meshes/Props/Vines/Vines.ovm"}) };
 	
-	DiffuseMaterial* pMaterial{ MaterialManager::Get()->CreateMaterial<DiffuseMaterial>() };
-	pMaterial->SetDiffuseTexture(L"Textures/Props/Vines/Vines.png");
+	BasicMaterial_Deferred* pMaterial{ MaterialManager::Get()->CreateMaterial<BasicMaterial_Deferred>() };
+	pMaterial->SetDiffuseMap(L"Textures/Props/Vines/Vines.png");
 	pModel->SetMaterial(pMaterial);
 
 	// Collision

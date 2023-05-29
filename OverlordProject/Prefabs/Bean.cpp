@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "Bean.h"
 
-#include "Materials/DiffuseMaterial.h"
+#include "Materials/BasicMaterial_Deferred.h"
 
 Bean::Bean(float generalScale, GameObject* pHarry, const XMFLOAT3& spawnLocation, const XMFLOAT3& forceDirection)
 	: m_GeneralScale{ generalScale }
@@ -28,8 +28,8 @@ void Bean::Initialize(const SceneContext& /*sceneContext*/)
 	const int randID{ rand() % m_NrBeans };
 	baseTextureName += std::to_wstring(randID) + L".png";
 
-	DiffuseMaterial* pMaterial{ MaterialManager::Get()->CreateMaterial<DiffuseMaterial>() };
-	pMaterial->SetDiffuseTexture(baseTextureName);
+	BasicMaterial_Deferred* pMaterial{ MaterialManager::Get()->CreateMaterial<BasicMaterial_Deferred>() };
+	pMaterial->SetDiffuseMap(baseTextureName);
 	pModel->SetMaterial(pMaterial);
 
 	// Collision

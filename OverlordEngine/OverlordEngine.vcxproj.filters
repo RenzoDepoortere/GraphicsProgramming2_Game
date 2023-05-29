@@ -58,6 +58,9 @@
     <ClCompile Include="Components\CastableComponent.cpp" />
     <ClCompile Include="Components\DestroyCastableComponent.cpp" />
     <ClCompile Include="Components\BeansCastableComponent.cpp" />
+    <ClCompile Include="Deferred\DeferredLightRenderer.cpp" />
+    <ClCompile Include="Deferred\DeferredRenderer.cpp" />
+    <ClCompile Include="Deferred\QuadRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -127,5 +130,8 @@
     <ClInclude Include="Components\CastableComponent.h" />
     <ClInclude Include="Components\DestroyCastableComponent.h" />
     <ClInclude Include="Components\BeansCastableComponent.h" />
+    <ClInclude Include="Deferred\DeferredLightRenderer.h" />
+    <ClInclude Include="Deferred\DeferredRenderer.h" />
+    <ClInclude Include="Deferred\QuadRenderer.h" />
   </ItemGroup>
 </Project>
