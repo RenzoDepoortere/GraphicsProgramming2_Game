@@ -32,6 +32,8 @@
     <ClCompile Include="Materials\BasicMaterial_Deferred.cpp" />
     <ClCompile Include="Materials\BasicMaterial_Deferred_Skinned.cpp" />
     <ClCompile Include="Prefabs\CastObject.cpp" />
+    <ClCompile Include="Prefabs\EnemiesPrefab.cpp" />
+    <ClCompile Include="Prefabs\Snail.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MainGame.h" />
@@ -64,5 +66,7 @@
     <ClInclude Include="Materials\BasicMaterial_Deferred.h" />
     <ClInclude Include="Materials\BasicMaterial_Deferred_Skinned.h" />
     <ClInclude Include="Prefabs\CastObject.h" />
+    <ClInclude Include="Prefabs\EnemiesPrefab.h" />
+    <ClInclude Include="Prefabs\Snail.h" />
   </ItemGroup>
 </Project>

@@ -5,6 +5,9 @@
 #include "Prefabs/HarryCharacter.h"
 #include "Prefabs/Character.h"
 
+// Enemies
+#include "Prefabs/EnemiesPrefab.h"
+
 // Map
 #include "Prefabs/CastlePrefab.h"
 
@@ -31,6 +34,9 @@ void HarryPotterScene::Initialize()
 
 	// Character
 	m_pHarry = AddChild(new HarryCharacter(generalScale));
+
+	// Enemies
+	AddChild(new EnemiesPrefab(generalScale, m_pHarry));
 
 	// Map
 	AddChild(new CastlePrefab(generalScale));

@@ -93,6 +93,7 @@
     <PostBuildEvent />
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Prefabs\EnemiesPrefab.cpp" />
     <ClCompile Include="Prefabs\CastObject.cpp" />
     <ClCompile Include="Materials\BasicMaterial_Deferred_Skinned.cpp" />
     <ClCompile Include="Materials\BasicMaterial.cpp" />
@@ -119,6 +120,7 @@
     <ClCompile Include="Materials\SkyBoxMaterial.cpp" />
     <ClCompile Include="Prefabs\SkyBox.cpp" />
     <ClCompile Include="Scenes\ParticleScene.cpp" />
+    <ClCompile Include="Prefabs\Snail.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">stdafx.h</PrecompiledHeaderFile>
@@ -143,6 +145,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Prefabs\EnemiesPrefab.h" />
     <ClInclude Include="Prefabs\CastObject.h" />
     <ClInclude Include="Materials\BasicMaterial_Deferred_Skinned.h" />
     <ClInclude Include="Materials\BasicMaterial.h" />
@@ -169,6 +172,7 @@
     <ClInclude Include="Materials\SkyBoxMaterial.h" />
     <ClInclude Include="Prefabs\SkyBox.h" />
     <ClInclude Include="Scenes\ParticleScene.h" />
+    <ClInclude Include="Prefabs\Snail.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="MainGame.h" />
     <ClInclude Include="Materials\UberMaterial.h" />
