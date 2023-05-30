@@ -20,6 +20,10 @@ void HarryPotterScene::Initialize()
 	m_SceneContext.settings.enableOnGUI = true;
 	m_SceneContext.useDeferredRendering = true;
 
+	// Mouse settings
+	// --------------
+	m_SceneContext.pInput->ForceMouseToCenter(true);
+	m_SceneContext.pInput->CursorVisible(false);
 
 	// Spawn Prefabs
 	// -------------
@@ -35,6 +39,18 @@ void HarryPotterScene::Initialize()
 	AddChild(new PropsPrefab(generalScale, m_pHarry->GetCharacter()));
 }
 
+void HarryPotterScene::Update()
+{
+	// Toggle hide and set mouse
+	if (m_SceneContext.pInput->IsKeyboardKey(InputState::pressed, '1'))
+	{
+		m_CenterMouse = !m_CenterMouse;
+		m_SceneContext.pInput->CursorVisible(!m_CenterMouse);
+	}
+
+	m_SceneContext.pInput->ForceMouseToCenter(m_CenterMouse);
+}
+
 void HarryPotterScene::PostDraw()
 {
 	//Draw ShadowMap (Debug Visualization)
@@ -46,15 +62,9 @@ void HarryPotterScene::PostDraw()
 
 void HarryPotterScene::OnGUI()
 {
-	// Input
-	
-	// Hide and set mouse
-	//m_SceneContext.pInput->ForceMouseToCenter(true);
-	//m_SceneContext.pInput->CursorVisible(false);
-
 	// Harry
 	m_pHarry->GetCharacter()->DrawImGui();
-	m_pHarry->GetParticleEmitter()->DrawImGui();
+	//m_pHarry->GetParticleEmitter()->DrawImGui();
 
 	// Shadow
 	ImGui::Checkbox("Draw ShadowMap", &m_DrawShadowMap);

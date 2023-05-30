@@ -280,7 +280,7 @@ PS_Output MainPS(VS_Output input){
 
 	// Alpha
 	float alpha = diffuse.a * gOpacityLevel;
-	clip(alpha - 0.1f);
+	clip(alpha - 0.3f);
 
 
 	// Ambient

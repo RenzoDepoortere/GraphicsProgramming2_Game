@@ -3,19 +3,13 @@
 
 #include "Prefabs/CubePrefab.h"
 
-MovingSpell::MovingSpell(float movementSpeed, GameObject* pHarry)
+MovingSpell::MovingSpell(float movementSpeed, GameObject* pHarry, CastableComponent::Spell spell, const XMFLOAT3& desiredLocation, CastableComponent* pObjectToHit)
 	: m_MovingSpeed{ movementSpeed }
 	, m_pHarry{ pHarry }
+	, m_CurrentSpell{spell}
+	, m_DesiredLocation{desiredLocation}
+	, m_pObjectToHit{ pObjectToHit }
 {
-}
-
-void MovingSpell::SetActive(CastableComponent::Spell spell, const XMFLOAT3& desiredLocation, CastableComponent* pObjectToHit)
-{
-	m_CurrentSpell = spell;
-	m_DesiredLocation = desiredLocation;
-	m_pObjectToHit = pObjectToHit;
-
-	m_IsActive = true;
 }
 
 void MovingSpell::Initialize(const SceneContext& /*sceneContext*/)
@@ -38,8 +32,8 @@ void MovingSpell::Initialize(const SceneContext& /*sceneContext*/)
 	// On collision
 	SetOnTriggerCallBack([=](GameObject*, GameObject* pOther, PxTriggerAction action)
 	{
-		// If not active, return
-		if (m_IsActive == false) return;
+		// If not deleting, return
+		if (m_HasToBeDeleted) return;
 
 		// If was desiredObject
 		if (action == PxTriggerAction::ENTER && pOther == m_pObjectToHit->GetGameObject())
@@ -47,17 +41,14 @@ void MovingSpell::Initialize(const SceneContext& /*sceneContext*/)
 			// Activate object
 			m_pObjectToHit->Activate(m_pHarry);
 
-			// "Delete"
-			GetTransform()->Translate(XMFLOAT3{});
-			m_IsActive = false;
+			// Set for deletion
+			m_HasToBeDeleted = true;
 		}
 	});
 }
 
 void MovingSpell::Update(const SceneContext& sceneContext)
 {
-	if (m_IsActive == false) return;
-
 	// Calculate new position
 	const XMFLOAT3 currentPosition{ GetTransform()->GetPosition() };
 	const XMVECTOR currentVector{ XMLoadFloat3(&currentPosition) };
@@ -68,4 +59,10 @@ void MovingSpell::Update(const SceneContext& sceneContext)
 
 	// Set new position
 	GetTransform()->Translate(newPos);
+
+	// Delete, if necessary
+	if (m_HasToBeDeleted)
+	{
+		GetParent()->RemoveChild(this, true);
+	}
 }

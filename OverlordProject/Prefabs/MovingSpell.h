@@ -5,16 +5,13 @@ class MovingSpell final : public GameObject
 {
 public:
 	// Rule of five
-	MovingSpell(float movementSpeed, GameObject* pHarry);
+	MovingSpell(float movementSpeed, GameObject* pHarry, CastableComponent::Spell spell, const XMFLOAT3& desiredLocation, CastableComponent* pObjectToHit);
 	~MovingSpell() override = default;
 
 	MovingSpell(const MovingSpell& other) = delete;
 	MovingSpell(MovingSpell&& other) noexcept = delete;
 	MovingSpell& operator=(const MovingSpell& other) = delete;
 	MovingSpell& operator=(MovingSpell&& other) noexcept = delete;
-
-	// Functionality
-	void SetActive(CastableComponent::Spell spell, const XMFLOAT3& desiredLocation, CastableComponent* pObjectToHit);
 
 protected:
 	void Initialize(const SceneContext& sceneContext) override;
@@ -24,7 +21,7 @@ private:
 	// Member variables
 	// ----------------
 	float m_MovingSpeed{};
-	bool m_IsActive{ false };
+	bool m_HasToBeDeleted{ false };
 
 	CastableComponent::Spell m_CurrentSpell{};
 	XMFLOAT3 m_DesiredLocation{};

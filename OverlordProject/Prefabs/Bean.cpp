@@ -72,7 +72,6 @@ void Bean::Update(const SceneContext& sceneContext)
 		// Sound
 
 		// "Delete"
-		GetTransform()->Translate(XMFLOAT3{});
-		m_IsActivated = false;
+		GetParent()->RemoveChild(this, true);
 	}
 }

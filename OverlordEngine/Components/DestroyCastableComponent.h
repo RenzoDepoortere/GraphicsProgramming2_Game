@@ -18,10 +18,11 @@ public:
 
 protected:
 	void Initialize(const SceneContext& sceneContext) override;
+	void Update(const SceneContext& sceneContext) override;
 
 private:
 	// Member variables
-	bool m_HasBeenActivated{ false };
+	bool m_HasToDelete{ false };
 	RigidBodyComponent* m_pRigidBodyComponent{ nullptr };
 };
 

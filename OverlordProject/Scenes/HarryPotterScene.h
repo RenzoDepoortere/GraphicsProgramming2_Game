@@ -20,11 +20,14 @@ private:
 	bool m_DrawShadowMap{ false };
 	float m_ShadowMapScale{};
 
+	bool m_CenterMouse{ true };
+
 	// Functions
 	// ---------
 
 	// Scene
 	void Initialize() override;
+	void Update() override;
 	void PostDraw() override;
 	void OnGUI() override;
 };

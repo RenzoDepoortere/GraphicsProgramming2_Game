@@ -45,6 +45,8 @@ public:
 	ParticleEmitterSettings& GetSettings() { return m_EmitterSettings; }; //EmitterSettings Getter (by reference) > allows settings changes
 	void DrawImGui();
 
+	void SetCamera(CameraComponent* pCamera) { m_pCustomCamera = pCamera; }
+
 protected:
 	void Initialize(const SceneContext&) override;
 	void Update(const SceneContext&) override;
@@ -67,6 +69,8 @@ private:
 	UINT m_ActiveParticles{}; //The active particles for the current frame
 	float m_LastParticleSpawn{}; //Total seconds since the last created particle
 	std::wstring m_AssetFile{};
+
+	CameraComponent* m_pCustomCamera{ nullptr };
 
 	bool m_DrawImGui{ false };
 };

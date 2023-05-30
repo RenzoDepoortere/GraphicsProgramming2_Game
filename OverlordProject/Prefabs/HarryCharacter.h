@@ -1,6 +1,6 @@
 #pragma once
 class Character;
-class ParticleEmitterComponent;
+class CastObject;
 class MovingSpell;
 
 class HarryCharacter final : public GameObject
@@ -17,7 +17,6 @@ public:
 
 	// Pass through functions
 	Character* GetCharacter() const { return m_pCharacter; }
-	ParticleEmitterComponent* GetParticleEmitter() const { return m_pCastingObject; }
 
 protected:
 	// Functionality
@@ -60,7 +59,7 @@ private:
 	ModelAnimator* m_pAnimator{};
 
 	// Casting object
-	ParticleEmitterComponent* m_pCastingObject{ nullptr };
+	CastObject* m_pCastingObject{ nullptr };
 	MovingSpell* m_pMovingSpell{ nullptr };
 
 	// Functions
@@ -68,7 +67,7 @@ private:
 	void InitHarry(const SceneContext& sceneContext);
 	void InitCastingObject(const SceneContext& sceneContext);
 
-	void HandleMeshTransform(bool isForward, bool isBackward, bool isLeft, bool isRight, bool isAiming);
+	void HandleMeshTransform();
 	void HandleAnimations(bool isForward, bool isBackward, bool isLeft, bool isRight, bool isAiming);
 
 	void HandleCastingObject(const SceneContext& sceneContext, bool isAiming);

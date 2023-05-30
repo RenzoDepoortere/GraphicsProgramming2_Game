@@ -183,8 +183,11 @@ void ParticleEmitterComponent::PostDraw(const SceneContext& sceneContext)
 	//TODO_W9(L"Implement PostDraw")
 
 	// Set shader variables
-	m_pParticleMaterial->SetVariable_Matrix(L"gWorldViewProj", sceneContext.pCamera->GetViewProjection());
-	m_pParticleMaterial->SetVariable_Matrix(L"gViewInverse", sceneContext.pCamera->GetViewInverse());
+	CameraComponent* pCamera{ sceneContext.pCamera };
+	if (m_pCustomCamera) pCamera = m_pCustomCamera;
+	
+	m_pParticleMaterial->SetVariable_Matrix(L"gWorldViewProj", pCamera->GetViewProjection());
+	m_pParticleMaterial->SetVariable_Matrix(L"gViewInverse", pCamera->GetViewInverse());
 	m_pParticleMaterial->SetVariable_Texture(L"gParticleTexture", m_pParticleTexture);
 
 	const auto pDeviceContext{ sceneContext.d3dContext.pDeviceContext };

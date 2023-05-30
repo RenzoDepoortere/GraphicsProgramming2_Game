@@ -2,11 +2,12 @@
 #include "HarryCharacter.h"
 
 #include "Materials/BasicMaterial_Deferred_Skinned.h"
-#include "Misc/ParticleMaterial.h"
+#include "Materials/BasicMaterial_Deferred.h"
 
 #include "Prefabs/Character.h"
 #include "Prefabs/CubePrefab.h"
 #include "Prefabs/MovingSpell.h"
+#include "Prefabs/CastObject.h"
 
 #include "Components/DestroyCastableComponent.h"	
 #include "Components/BeansCastableComponent.h"
@@ -31,7 +32,7 @@ void HarryCharacter::Update(const SceneContext& sceneContext)
 	const bool isRight{ sceneContext.pInput->IsActionTriggered(CharacterMoveRight) };
 	const bool isAiming{ sceneContext.pInput->IsActionTriggered(CharacterCast) };
 
-	HandleMeshTransform(isForward, isBackward, isLeft, isRight, isAiming);
+	HandleMeshTransform();
 	HandleAnimations(isForward, isBackward, isLeft, isRight, isAiming);
 
 	HandleCastingObject(sceneContext, isAiming);
@@ -128,67 +129,16 @@ void HarryCharacter::InitHarry(const SceneContext& sceneContext)
 }
 void HarryCharacter::InitCastingObject(const SceneContext& /*sceneContext*/)
 {
-	// Particles
-	ParticleEmitterSettings settings{};
-	settings.velocity = { 0.f,6.f,0.f };
-	settings.minSize = 1.f;
-	settings.maxSize = 2.f;
-	settings.minEnergy = 1.f;
-	settings.maxEnergy = 2.f;
-	settings.minScale = 3.5f;
-	settings.maxScale = 5.5f;
-	settings.minEmitterRadius = .2f;
-	settings.maxEmitterRadius = .5f;
-	settings.color = { 1.f, 0.f, 0.f, .6f };
-
-	auto object = GetScene()->AddChild(new CubePrefab{ 0.2f, 0.2f, 0.2f, static_cast<XMFLOAT4>(Colors::Coral) });
-	m_pCastingObject = object->AddComponent(new ParticleEmitterComponent(L"Textures/TestTennisBall.jpg", settings, 200));
-
-	//// Get spell textures
-	//ParticleMaterial* pMaterial{ MaterialManager::Get()->CreateMaterial<ParticleMaterial>() };
-	//pMaterial->SetDiffuseTexture(L"Textures/Spells/Diffindo.png");
-
-	//// Sprite renderer
-	//m_pCastingObject->AddComponent(new SpriteComponent(L"Textures/Spells/Diffindo.png"));
-
-	// Transform
-	//m_pCastingObject->GetTransform()->Scale(0.5f);
-
-	// Moving spell
-	const float spellMovementSpeed{ 15.f };
-	m_pMovingSpell = AddChild(new MovingSpell{ spellMovementSpeed, m_pCharacterMesh });
+	m_pCastingObject = GetScene()->AddChild(new CastObject{ m_pCharacter });
 }
 
-void HarryCharacter::HandleMeshTransform(bool isForward, bool isBackward, bool isLeft, bool isRight, bool isAiming)
+void HarryCharacter::HandleMeshTransform()
 {
 	// Rotation
 	// --------
-
 	if (m_pCharacter->IsJumping()) return;
 	const float totalYaw{ m_pCharacter->GetTotalYaw() };
 	float angleBuffer{ 180.0f };
-
-	// If button not held, rotate according to movement
-	if (isAiming == false)
-	{
-		if (isForward)
-		{
-			angleBuffer = 180.f;
-
-			if (isLeft) angleBuffer -= 45.f;
-			else if (isRight) angleBuffer += 45.f;
-		}
-		else if (isBackward)
-		{
-			angleBuffer = 0.f;
-
-			if (isLeft) angleBuffer += 45.f;
-			else if (isRight) angleBuffer -= 45.f;
-		}
-		else if (isLeft)     angleBuffer = 90.f;
-		else if (isRight)    angleBuffer = -90.f;
-		else			     return;
-	}
 
 	// Calculate currentAngle
 	const float currentAngle{ totalYaw + angleBuffer };
@@ -258,17 +208,21 @@ void HarryCharacter::HandleCastingObject(const SceneContext& sceneContext, bool 
 			// Check if is castable
 			CastableComponent* pCastable{ pHitObject->GetComponent<DestroyCastableComponent>(true) };
 			if (pCastable == nullptr) pCastable = pHitObject->GetComponent<BeansCastableComponent>(true);
-			if (pCastable == nullptr) return;
-
-			// Reset castable
-			resetCastingObject();
+			if (pCastable == nullptr)
+			{
+				m_pCastingObject->SetIsCastable(false);
+				return;
+			}
+			m_pCastingObject->SetIsCastable(true);
+			m_pCastingObject->SetSpell(pCastable->GetSpell());
 
 			// On right click
 			const bool spellActivate{ sceneContext.pInput->IsActionTriggered(CharacterSpellActivate) };
 			if (spellActivate && pCastable->GetCastedTo() == false)
 			{
 				// Send spell
-				m_pMovingSpell->SetActive(pCastable->GetSpell(), hitPos, pCastable);
+				const float spellMovementSpeed{ 15.f };
+				m_pMovingSpell = AddChild(new MovingSpell{ spellMovementSpeed, m_pCharacterMesh, pCastable->GetSpell(), hitPos, pCastable });
 				m_pMovingSpell->GetTransform()->Translate(m_pCharacter->GetTransform()->GetWorldPosition());
 
 				// Set casted to

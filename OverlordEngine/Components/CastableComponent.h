@@ -5,7 +5,8 @@ public:
 	// Enums
 	enum Spell
 	{
-		Diffindo
+		Diffindo,
+		NR_SPELLS
 	};
 
 	// Rule of five

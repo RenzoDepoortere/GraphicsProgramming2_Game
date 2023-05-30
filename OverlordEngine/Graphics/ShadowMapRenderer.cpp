@@ -85,7 +85,7 @@ void ShadowMapRenderer::Begin(const SceneContext& sceneContext)
 	const float viewWidth{ 100.f * sceneContext.aspectRatio };
 	const float viewHeight{ 100.f };
 	const float nearZ{ 0.1f };
-	const float farZ{ 500.f };
+	const float farZ{ 50.f };
 
 	const XMMATRIX projectionMatrix{ XMMatrixOrthographicLH(viewWidth, viewHeight, nearZ, farZ) };
 

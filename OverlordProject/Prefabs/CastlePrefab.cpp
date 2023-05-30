@@ -14,9 +14,7 @@ CastlePrefab::CastlePrefab(float generalScale)
 void CastlePrefab::Initialize(const SceneContext& sceneContext)
 {
 	// Light
-	sceneContext.pLights->SetDirectionalLight({ 15.f, 80.f, -40.f }, { 0.2f, -0.8f, 0.f });
-	//sceneContext.pLights->SetDirectionalLight({ 95.6139526f, 66.1346436f,-41.1850471f }, { -0.740129888f, -0.597205281f, 0.309117377f });
-	//sceneContext.pLights->SetDirectionalLight({ 55.6139526f, 66.1346436f,-1.1850471f }, { -0.740129888f, -0.597205281f, 0.309117377f });
+	sceneContext.pLights->SetDirectionalLight({ 7.5, 40.f, -40.f}, { 0.2f, -0.8f, 0.f });
 
 	// Physics
 	PxMaterial* pDefaultMaterial = PxGetPhysics().createMaterial(0.5f, 0.5f, 0.5f);
