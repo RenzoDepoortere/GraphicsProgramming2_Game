@@ -17,7 +17,6 @@ Bean::Bean(float generalScale, GameObject* pHarry, const XMFLOAT3& spawnLocation
 void Bean::Initialize(const SceneContext& /*sceneContext*/)
 {
 	// Transform
-	GetTransform()->Translate(m_SpawnLocation);
 	GetTransform()->Scale(m_GeneralScale);
 
 	// Mesh
@@ -71,7 +70,9 @@ void Bean::Update(const SceneContext& sceneContext)
 	{
 		// Sound
 
-		// "Delete"
+		// Particle
+
+		// Delete
 		GetParent()->RemoveChild(this, true);
 	}
 }

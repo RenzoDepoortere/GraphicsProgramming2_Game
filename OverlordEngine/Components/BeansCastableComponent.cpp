@@ -33,6 +33,8 @@ void BeansCastableComponent::Update(const SceneContext& sceneContext)
 
 		// Calculate random direction
 
+		// Particles
+
 		// Spawn bean
 		GetGameObject()->AddChild(new Bean{ m_GeneralScale, m_pHarry, m_PreviousLocation, MathHelper::DirectionTo(m_PreviousLocation, m_pHarry->GetTransform()->GetWorldPosition()) });
 
@@ -52,17 +54,7 @@ void BeansCastableComponent::Activate(GameObject* pHarry)
 	m_NrBeansToSpawn = rand() % (m_MaxNrBeans - m_MinNrBeans + 1) + m_MinNrBeans;
 	m_SpawnBeans = true;
 
-	// DEBUG: SPAWN 1
-	//m_NrBeansToSpawn = 1;
-
 	// Get position
 	m_pHarry = pHarry;
 	m_PreviousLocation = GetGameObject()->GetTransform()->GetWorldPosition();
-
-	// Delete
-	//GameObject* pObject{ GetGameObject() };
-	//pObject->GetScene()->RemoveChild(pObject, true);
-
-	// Set object to origin
-	GetTransform()->Translate(XMFLOAT3{});
 }

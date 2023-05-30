@@ -19,6 +19,6 @@ void PropsPrefab::Initialize(const SceneContext& /*sceneContext*/)
 
 	// Bean props
 	//AddChild(new BeansProp{m_GeneralScale, CastableComponent::Diffindo});
-	GameObject* pProp{ GetScene()->AddChild(new BeansProp{m_GeneralScale, m_pHarry, CastableComponent::Diffindo}) };
+	GameObject* pProp{ GetScene()->AddChild(new BeansProp{m_GeneralScale, m_pHarry, CastableComponent::Diffindo, L"Chest"})};
 	pProp->GetTransform()->Translate(7.f, -8.4f, -79.f);
 }

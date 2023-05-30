@@ -213,8 +213,15 @@ void HarryCharacter::HandleCastingObject(const SceneContext& sceneContext, bool 
 				m_pCastingObject->SetIsCastable(false);
 				return;
 			}
-			m_pCastingObject->SetIsCastable(true);
-			m_pCastingObject->SetSpell(pCastable->GetSpell());
+			if (pCastable->GetCastedTo() == false)
+			{
+				m_pCastingObject->SetIsCastable(true);
+				m_pCastingObject->SetSpell(pCastable->GetSpell());
+			}
+			else
+			{
+				m_pCastingObject->SetIsCastable(false);
+			}
 
 			// On right click
 			const bool spellActivate{ sceneContext.pInput->IsActionTriggered(CharacterSpellActivate) };
