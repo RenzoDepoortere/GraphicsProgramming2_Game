@@ -15,6 +15,9 @@ public:
 
 	// Functionality
 	void AddPathPosition(const XMFLOAT3& position) { m_PathPositions.push_back(position); }
+	
+	void SetStunned();
+	void Push(const XMFLOAT3& source);
 
 protected:
 	// Functionality
@@ -43,6 +46,8 @@ private:
 
 	XMFLOAT3 m_CurrentTarget{};
 	float m_TotalYaw{};
+
+	float m_DegreesSpinned{};
 
 	//std::vector
 

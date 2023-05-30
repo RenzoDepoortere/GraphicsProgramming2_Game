@@ -61,6 +61,7 @@
     <ClCompile Include="Deferred\DeferredLightRenderer.cpp" />
     <ClCompile Include="Deferred\DeferredRenderer.cpp" />
     <ClCompile Include="Deferred\QuadRenderer.cpp" />
+    <ClCompile Include="Components\SnailCastableComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -133,5 +134,6 @@
     <ClInclude Include="Deferred\DeferredLightRenderer.h" />
     <ClInclude Include="Deferred\DeferredRenderer.h" />
     <ClInclude Include="Deferred\QuadRenderer.h" />
+    <ClInclude Include="Components\SnailCastableComponent.h" />
   </ItemGroup>
 </Project>

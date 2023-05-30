@@ -3,6 +3,8 @@
 
 #include "Materials/BasicMaterial_Deferred.h"
 
+#include "Components/SnailCastableComponent.h"
+
 Snail::Snail(float generalScale, HarryCharacter* pHarry)
 	: m_GeneralScale{generalScale}
 	, m_pHarry{ pHarry }
@@ -12,6 +14,9 @@ Snail::Snail(float generalScale, HarryCharacter* pHarry)
 
 void Snail::Initialize(const SceneContext& /*sceneContext*/)
 {
+	// Castable
+	AddComponent(new SnailCastableComponent{ CastableComponent::Rictusempra, CastableComponent::Diffindo, this });
+
 	// Mesh
 	ModelComponent* pModel{ AddComponent(new ModelComponent{L"Meshes/Enemies/Snail/Snail.ovm"}) };
 
@@ -38,6 +43,16 @@ void Snail::Update(const SceneContext& sceneContext)
 	HandleTransform(sceneContext);
 
 	HandleTrail(sceneContext);
+}
+
+void Snail::SetStunned()
+{
+	m_CurrentSnailState = Stunned;
+	m_DegreesSpinned = 0.f;
+}
+void Snail::Push(const XMFLOAT3& /*source*/)
+{
+
 }
 
 void Snail::HandlePathing(const SceneContext& /*sceneContext*/)

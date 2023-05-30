@@ -6,6 +6,7 @@ public:
 	enum Spell
 	{
 		Diffindo,
+		Rictusempra,
 		NR_SPELLS
 	};
 
@@ -20,7 +21,7 @@ public:
 
 	// Functionality
 	void SetSpell(Spell newSpell) { m_CurrentSpell = newSpell; }
-	Spell GetSpell() const { return m_CurrentSpell; }
+	virtual Spell GetSpell() const { return m_CurrentSpell; }
 
 	void SetCastedTo(bool castedTo) { m_HasBeenCastedTo = castedTo; }
 	bool GetCastedTo() const { return m_HasBeenCastedTo; }

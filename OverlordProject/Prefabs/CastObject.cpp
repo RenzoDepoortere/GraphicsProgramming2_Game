@@ -42,6 +42,12 @@ void CastObject::Initialize(const SceneContext& /*sceneContext*/)
 
 	m_pMaterials[static_cast<int>(CastableComponent::Diffindo)] = pMaterial;
 
+	// Rictusempra
+	pMaterial = MaterialManager::Get()->CreateMaterial<BasicMaterial_Deferred>();
+	pMaterial->SetDiffuseMap(L"Textures/Spells/Rictusempra.png");
+
+	m_pMaterials[static_cast<int>(CastableComponent::Rictusempra)] = pMaterial;
+
 	// Set default
 	m_CurrentSpell = CastableComponent::Diffindo;
 	m_pSpellObject->SetMaterial(m_pMaterials[0]);

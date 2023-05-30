@@ -11,6 +11,7 @@
 
 #include "Components/DestroyCastableComponent.h"	
 #include "Components/BeansCastableComponent.h"
+#include "Components/SnailCastableComponent.h"
 
 HarryCharacter::HarryCharacter(float generalScale)
 	: m_GeneralScale{ generalScale }
@@ -208,6 +209,7 @@ void HarryCharacter::HandleCastingObject(const SceneContext& sceneContext, bool 
 			// Check if is castable
 			CastableComponent* pCastable{ pHitObject->GetComponent<DestroyCastableComponent>(true) };
 			if (pCastable == nullptr) pCastable = pHitObject->GetComponent<BeansCastableComponent>(true);
+			if (pCastable == nullptr) pCastable = pHitObject->GetComponent<SnailCastableComponent>(true);
 			if (pCastable == nullptr)
 			{
 				m_pCastingObject->SetIsCastable(false);
