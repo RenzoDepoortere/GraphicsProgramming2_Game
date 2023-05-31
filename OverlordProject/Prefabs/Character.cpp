@@ -17,7 +17,7 @@ void Character::Initialize(const SceneContext& /*sceneContext*/)
 	m_pCameraComponent = pCamera->GetComponent<CameraComponent>();
 	m_pCameraComponent->SetActive(true); //Uncomment to make this camera the active camera
 
-	pCamera->GetTransform()->Translate(0.f, m_CharacterDesc.controller.height * 0.5f, -2.5f);
+	pCamera->GetTransform()->Translate(0.f, m_CharacterDesc.controller.height * 0.75f, -2.5f);
 }
 
 void Character::Update(const SceneContext& sceneContext)

@@ -31,6 +31,7 @@ private:
 	ModelComponent* m_pSpellObject{};
 	
 	ParticleEmitterComponent* m_pEmitter{};
+	float m_OriginalParticleSize{};
 
 	bool m_IsCastable{};
 	CastableComponent::Spell m_CurrentSpell{};

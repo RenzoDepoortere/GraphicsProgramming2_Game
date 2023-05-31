@@ -8,6 +8,7 @@
 
 CastObject::CastObject(Character* pHarry)
 	: m_pHarry{ pHarry }
+	, m_OriginalParticleSize{ 0.3f }
 {
 }
 
@@ -17,8 +18,8 @@ void CastObject::Initialize(const SceneContext& /*sceneContext*/)
 	// ---------
 	ParticleEmitterSettings settings{};
 	settings.velocity = { 0.f, -0.25f, 0.f };
-	settings.minSize = 0.3f;
-	settings.maxSize = 0.3f;
+	settings.minSize = m_OriginalParticleSize;
+	settings.maxSize = m_OriginalParticleSize;
 	settings.minEnergy = 1.f;
 	settings.maxEnergy = 1.f;
 	settings.minScale = 0.75f;
@@ -87,11 +88,19 @@ void CastObject::HandleSpell()
 
 		// Set spell
 		m_pSpellObject->SetMaterial(m_pMaterials[static_cast<int>(m_CurrentSpell)]);
+
+		// Disable particles
+		m_pEmitter->GetSettings().minSize = 0.f;
+		m_pEmitter->GetSettings().maxSize = 0.f;
 	}
 	// Else
 	else
 	{
 		// Hide spell
 		m_pSpellObject->GetTransform()->Translate(XMFLOAT3{ 0.f, -50.f, 0.f });
+
+		// Enable particles
+		m_pEmitter->GetSettings().minSize = m_OriginalParticleSize;
+		m_pEmitter->GetSettings().maxSize = m_OriginalParticleSize;
 	}
 }
