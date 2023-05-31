@@ -68,6 +68,7 @@ private:
 	// Functions
 	// ---------
 	void HandleTimer(const SceneContext& sceneContext);
+	void HandleStunEvents();
 
 	void HandlePathing(const SceneContext& sceneContext);
 	void HandleTransform(const SceneContext& sceneContext);
@@ -75,5 +76,6 @@ private:
 	void HandleAttacking(const SceneContext& sceneContext);
 	void HandleTrail(const SceneContext& sceneContext);
 
+	void InstantRotation();
 	void DamageHarry(int amount);
 };

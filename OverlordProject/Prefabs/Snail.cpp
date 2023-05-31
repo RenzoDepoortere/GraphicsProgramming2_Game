@@ -52,6 +52,7 @@ void Snail::Initialize(const SceneContext& /*sceneContext*/)
 void Snail::Update(const SceneContext& sceneContext)
 {
 	HandleTimer(sceneContext);
+	HandleStunEvents();
 
 	HandlePathing(sceneContext);
 	HandleTransform(sceneContext);
@@ -103,35 +104,6 @@ void Snail::HandleTimer(const SceneContext& sceneContext)
 	
 	// If not stunned, return
 	if (m_CurrentSnailState != Stunned) return;
-	
-	// Spin
-	if (m_HasToSpin)
-	{
-		m_HasToSpin = false;
-
-		// Unlock constaints
-		m_pRigidbody->SetConstraint(RigidBodyConstraint::RotY, true);
-
-		// Spin
-		const float rotationStrength{ 15.f };
-		m_pRigidbody->AddTorque(XMFLOAT3{ 0.f, rotationStrength, 0.f }, PxForceMode::eIMPULSE);
-	}
-
-	// Push
-	if (m_HasToPush)
-	{
-		m_HasToPush = false;
-
-		// Add force
-		const float force{ 10.f };
-		const XMFLOAT3 direction{ MathHelper::DirectionTo(m_PushSource, GetTransform()->GetWorldPosition()) };
-		const XMVECTOR forceVector{ XMVectorScale(XMLoadFloat3(&direction), force) };
-
-		XMFLOAT3 desiredForce{};
-		XMStoreFloat3(&desiredForce, forceVector);
-
-		m_pRigidbody->AddForce(desiredForce, PxForceMode::eIMPULSE);
-	}
 
 	// Count up
 	m_CurrentTime += deltaTime;
@@ -167,6 +139,40 @@ void Snail::HandleTimer(const SceneContext& sceneContext)
 		m_CurrentSnailState = Pathing;
 
 		m_pCastableComponent->SwitchSpell();
+	}
+}
+void Snail::HandleStunEvents()
+{
+	// If not stunned, return
+	if (m_CurrentSnailState != Stunned) return;
+
+	// Spin
+	if (m_HasToSpin)
+	{
+		m_HasToSpin = false;
+
+		// Unlock constaints
+		m_pRigidbody->SetConstraint(RigidBodyConstraint::RotY, true);
+
+		// Spin
+		const float rotationStrength{ 15.f };
+		m_pRigidbody->AddTorque(XMFLOAT3{ 0.f, rotationStrength, 0.f }, PxForceMode::eIMPULSE);
+	}
+
+	// Push
+	if (m_HasToPush)
+	{
+		m_HasToPush = false;
+
+		// Add force
+		const float force{ 10.f };
+		const XMFLOAT3 direction{ MathHelper::DirectionTo(m_PushSource, GetTransform()->GetWorldPosition()) };
+		const XMVECTOR forceVector{ XMVectorScale(XMLoadFloat3(&direction), force) };
+
+		XMFLOAT3 desiredForce{};
+		XMStoreFloat3(&desiredForce, forceVector);
+
+		m_pRigidbody->AddForce(desiredForce, PxForceMode::eIMPULSE);
 	}
 }
 
@@ -226,20 +232,35 @@ void Snail::HandlePathing(const SceneContext& /*sceneContext*/)
 		}
 	}
 }
-void Snail::HandleTransform(const SceneContext& sceneContext)
+void Snail::HandleTransform(const SceneContext& /*sceneContext*/)
 {
 	// If not stunned
 	// --------------
 	if (m_CurrentSnailState != Stunned)
 	{
 		// Rotate towards target
-		const XMFLOAT3 currentForward{ GetTransform()->GetForward() };
-		const XMFLOAT3 desiredForward{ MathHelper::DirectionTo(GetTransform()->GetWorldPosition(), m_CurrentTarget) };
-		const XMVECTOR angleBetween{ XMVector3AngleBetweenNormals(XMLoadFloat3(&currentForward), XMLoadFloat3(&desiredForward)) };
+		InstantRotation();
 
-		const float rotationSpeed{ 1.f };
-		m_TotalYaw += MathHelper::toDegrees(XMVectorGetY(angleBetween)) * rotationSpeed * sceneContext.pGameTime->GetElapsed();
-		GetTransform()->Rotate(0.f, m_TotalYaw, 0.f);
+		//// Get angles
+		//const XMFLOAT3 currentForward{ GetTransform()->GetForward() };
+		//const XMFLOAT3 worldForward{ 1, 0, 0 };
+		//const XMFLOAT3 directionToTarget{ MathHelper::DirectionTo(GetTransform()->GetWorldPosition(), m_CurrentTarget) };
+		//
+		//const XMVECTOR angleBetweenWorld{ XMVector3AngleBetweenNormals(XMLoadFloat3(&worldForward), XMLoadFloat3(&directionToTarget)) };
+		//const XMVECTOR angleBetweenObject{ XMVector3AngleBetweenNormals(XMLoadFloat3(&worldForward), XMLoadFloat3(&directionToTarget)) };
+
+		//const float currentAngle{ XMVectorGetY(angleBetweenObject) };
+		//const float desiredAngle{ XMVectorGetY(angleBetweenWorld) };
+
+		//// Calculate required rotation
+		//float angleDifference{ desiredAngle - currentAngle };
+		//angleDifference = XMScalarModAngle(angleDifference);
+
+		//const int rotationDirection = (0.f < angleDifference) ? 1 : -1;
+		//const float rotationSpeed{ 10.f };
+		//
+		//const float finalAngle{ rotationSpeed * sceneContext.pGameTime->GetElapsed() * rotationDirection };
+		//GetTransform()->Rotate(0.f, finalAngle + MathHelper::toRadians(180.f), 0.f, false);
 	}
 }
 
@@ -273,6 +294,9 @@ void Snail::HandleAttacking(const SceneContext& /*sceneContext*/)
 		// Set to attack stun
 		m_CurrentSnailState = Stunned;
 		m_IsAttackStun = true;
+
+		// Rotate
+		InstantRotation();
 	}
 }
 void Snail::HandleTrail(const SceneContext& sceneContext)
@@ -294,6 +318,18 @@ void Snail::HandleTrail(const SceneContext& sceneContext)
 	}
 }
 
+void Snail::InstantRotation()
+{
+	// Calculate rotation
+	const XMFLOAT3 worldForward{ 1, 0, 0 };
+	const XMFLOAT3 directionToTarget{ MathHelper::DirectionTo(GetTransform()->GetWorldPosition(), m_CurrentTarget) };
+
+	const XMVECTOR angleBetweenWorld{ XMVector3AngleBetweenNormals(XMLoadFloat3(&worldForward), XMLoadFloat3(&directionToTarget)) };
+	const float desiredAngle{ XMVectorGetY(angleBetweenWorld) };
+
+	const float finalAngle{ desiredAngle + MathHelper::toRadians(180.f) };
+	GetTransform()->Rotate(0.f, finalAngle, 0.f, false);
+}
 void Snail::DamageHarry(int amount)
 {
 	// If still on cooldown, return

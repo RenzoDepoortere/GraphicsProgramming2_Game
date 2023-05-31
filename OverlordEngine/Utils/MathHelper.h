@@ -46,6 +46,10 @@ namespace MathHelper
 	{
 		return angle * static_cast<float>(180.f / M_PI);
 	}
+	inline float toRadians(float angle)
+	{
+		return angle * static_cast<float>(M_PI / 180.f);
+	}
 
 	inline float randF(float min, float max)
 	{
