@@ -16,19 +16,18 @@ void CastObject::Initialize(const SceneContext& /*sceneContext*/)
 	// Particles
 	// ---------
 	ParticleEmitterSettings settings{};
-	settings.velocity = { 0.f,6.f,0.f };
-	settings.minSize = 1.f;
-	settings.maxSize = 2.f;
+	settings.velocity = { 0.f, -0.25f, 0.f };
+	settings.minSize = 0.3f;
+	settings.maxSize = 0.3f;
 	settings.minEnergy = 1.f;
-	settings.maxEnergy = 2.f;
-	settings.minScale = 3.5f;
-	settings.maxScale = 5.5f;
-	settings.minEmitterRadius = .2f;
-	settings.maxEmitterRadius = .5f;
-	settings.color = { 1.f, 0.f, 0.f, .6f };
+	settings.maxEnergy = 1.f;
+	settings.minScale = 0.75f;
+	settings.maxScale = 0.75f;
+	settings.minEmitterRadius = -0.1f;
+	settings.maxEmitterRadius = 0.1f;
+	settings.color = { 1.f, 1.f, 1.f, .6f };
 
-	m_pEmitter = AddComponent(new ParticleEmitterComponent(L"Textures/TestTennisBall.jpg", settings, 200));
-
+	m_pEmitter = AddComponent(new ParticleEmitterComponent(L"Textures/CastingObject/Casting.png", settings, 100));
 
 	// Spell Mesh
 	// ----------
@@ -61,9 +60,6 @@ void CastObject::Initialize(const SceneContext& /*sceneContext*/)
 	// Transform
 	m_pSpellObject->GetTransform()->Rotate(0.f, 0.f, 90.f);
 	m_pSpellObject->GetTransform()->Scale(0.5f);
-
-	// Temp visuals
-	AddChild(new CubePrefab{ 0.2f, 0.2f, 0.2f, static_cast<XMFLOAT4>(Colors::Coral) });
 }
 
 void CastObject::Update(const SceneContext& /*sceneContext*/)

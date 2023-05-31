@@ -152,16 +152,6 @@ void ParticleEmitterComponent::SpawnParticle(Particle& particle)
 	particle.totalEnergy = MathHelper::randF(m_EmitterSettings.minEnergy, m_EmitterSettings.maxEnergy);
 	particle.currentEnergy = particle.totalEnergy;
 
-	// Position Initialization
-	// -----------------------
-	const XMFLOAT3 randomDirection{ 1, 0, 0 };
-	const XMMATRIX randomRotationMatrix{ XMMatrixRotationRollPitchYaw(MathHelper::randF(-XM_PI, XM_PI), MathHelper::randF(-XM_PI, XM_PI), MathHelper::randF(-XM_PI, XM_PI)) };
-	const XMVECTOR randomDirectionVector{ XMVector3TransformNormal(XMLoadFloat3(&randomDirection), randomRotationMatrix) };
-	
-	const float randomDistance{ MathHelper::randF(m_EmitterSettings.minEmitterRadius, m_EmitterSettings.maxEmitterRadius) };
-	const XMFLOAT3 worldPos{ GetGameObject()->GetTransform()->GetWorldPosition() };
-	XMStoreFloat3(&particle.vertexInfo.Position, XMVectorAdd(XMVectorScale(randomDirectionVector, randomDistance), XMLoadFloat3(&worldPos)));
-
 	// Size Initialization
 	// -------------------
 	particle.vertexInfo.Size = MathHelper::randF(m_EmitterSettings.minSize, m_EmitterSettings.maxSize);
@@ -176,6 +166,16 @@ void ParticleEmitterComponent::SpawnParticle(Particle& particle)
 	// Color Initialization
 	// --------------------
 	particle.vertexInfo.Color = m_EmitterSettings.color;
+
+	// Position Initialization
+	// -----------------------
+	const XMFLOAT3 randomDirection{ 1, 0, 0 };
+	const XMMATRIX randomRotationMatrix{ XMMatrixRotationRollPitchYaw(MathHelper::randF(-XM_PI, XM_PI), MathHelper::randF(-XM_PI, XM_PI), MathHelper::randF(-XM_PI, XM_PI)) };
+	const XMVECTOR randomDirectionVector{ XMVector3TransformNormal(XMLoadFloat3(&randomDirection), randomRotationMatrix) };
+
+	const float randomDistance{ MathHelper::randF(m_EmitterSettings.minEmitterRadius, m_EmitterSettings.maxEmitterRadius) };
+	const XMFLOAT3 worldPos{ GetTransform()->GetWorldPosition() };
+	XMStoreFloat3(&particle.vertexInfo.Position, XMVectorAdd(XMVectorScale(randomDirectionVector, randomDistance), XMLoadFloat3(&worldPos)));
 }
 
 void ParticleEmitterComponent::PostDraw(const SceneContext& sceneContext)
@@ -183,11 +183,8 @@ void ParticleEmitterComponent::PostDraw(const SceneContext& sceneContext)
 	//TODO_W9(L"Implement PostDraw")
 
 	// Set shader variables
-	CameraComponent* pCamera{ sceneContext.pCamera };
-	if (m_pCustomCamera) pCamera = m_pCustomCamera;
-	
-	m_pParticleMaterial->SetVariable_Matrix(L"gWorldViewProj", pCamera->GetViewProjection());
-	m_pParticleMaterial->SetVariable_Matrix(L"gViewInverse", pCamera->GetViewInverse());
+	m_pParticleMaterial->SetVariable_Matrix(L"gWorldViewProj", sceneContext.pCamera->GetViewProjection());
+	m_pParticleMaterial->SetVariable_Matrix(L"gViewInverse", sceneContext.pCamera->GetViewInverse());
 	m_pParticleMaterial->SetVariable_Texture(L"gParticleTexture", m_pParticleTexture);
 
 	const auto pDeviceContext{ sceneContext.d3dContext.pDeviceContext };

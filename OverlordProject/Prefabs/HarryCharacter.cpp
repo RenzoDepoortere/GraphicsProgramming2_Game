@@ -145,7 +145,7 @@ void HarryCharacter::HandleMeshTransform()
 	const float currentAngle{ totalYaw + angleBuffer };
 	m_pCharacterMesh->GetTransform()->Rotate(0.f, currentAngle, 0.f);
 }
-void HarryCharacter::HandleAnimations(bool isForward, bool isBackward, bool isLeft, bool isRight, bool isAiming)
+void HarryCharacter::HandleAnimations(bool isForward, bool isBackward, bool isLeft, bool isRight, bool /*isAiming*/)
 {
 	// Change state
 	// ------------
@@ -160,14 +160,10 @@ void HarryCharacter::HandleAnimations(bool isForward, bool isBackward, bool isLe
 	// Moving
 	else if (isMoving)
 	{
-		m_CurrentCharacterState = CharacterStates::RunForward;
-		if (isAiming)
-		{
-			if (isForward)       m_CurrentCharacterState = CharacterStates::RunForward;
-			else if (isBackward) m_CurrentCharacterState = CharacterStates::RunBackward;
-			else if (isLeft)     m_CurrentCharacterState = CharacterStates::RunLeft;
-			else if (isRight)    m_CurrentCharacterState = CharacterStates::RunRight;
-		}
+		if (isForward)       m_CurrentCharacterState = CharacterStates::RunForward;
+		else if (isBackward) m_CurrentCharacterState = CharacterStates::RunBackward;
+		else if (isLeft)     m_CurrentCharacterState = CharacterStates::RunLeft;
+		else if (isRight)    m_CurrentCharacterState = CharacterStates::RunRight;
 	}
 	// Idle
 	else

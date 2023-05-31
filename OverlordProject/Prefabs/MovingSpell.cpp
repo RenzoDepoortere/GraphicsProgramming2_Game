@@ -16,10 +16,33 @@ void MovingSpell::Initialize(const SceneContext& /*sceneContext*/)
 	const XMFLOAT3 boxDimension{ 0.3f, 0.3f, 0.3f };
 
 	// Particles
+	ParticleEmitterSettings settings{};
+	settings.velocity = { 0.f, -0.25f, 0.f };
+	settings.minSize = 0.5;
+	settings.maxSize = 0.5f;
+	settings.minEnergy = 1.f;
+	settings.maxEnergy = 1.f;
+	settings.minScale = 0.75f;
+	settings.maxScale = 0.75f;
+	settings.minEmitterRadius = -0.1f;
+	settings.maxEmitterRadius = 0.1f;
+	
+	XMFLOAT4 spellColor{};
+	switch (m_CurrentSpell)
+	{
+	case CastableComponent::Diffindo:
+		spellColor = XMFLOAT4{ 0.f, 0.9f, 1.f, 0.6f };
+		break;
+	case CastableComponent::Rictusempra:
+		spellColor = XMFLOAT4{ 0.9f, 0.f, 0.f, 0.6f };
+		break;
+	case CastableComponent::Spongify:
+		spellColor = XMFLOAT4{ 1.f, 0.5f, 0.f, 0.6f };
+		break;
+	}
+	settings.color = spellColor;
 
-	// Temp cube
-	GameObject* pCube{ AddChild(new CubePrefab{1.0f, 1.0f, 1.0f, static_cast<XMFLOAT4>(Colors::GreenYellow)}) };
-	pCube->GetTransform()->Scale(boxDimension);
+	AddComponent(new ParticleEmitterComponent(L"Textures/CastingObject/Casting.png", settings, 100));
 
 	// Rigidbody
 	PxMaterial* pDefaultMaterial = PxGetPhysics().createMaterial(0.5f, 0.5f, 0.5f);
