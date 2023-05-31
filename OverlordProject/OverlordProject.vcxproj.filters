@@ -34,6 +34,7 @@
     <ClCompile Include="Prefabs\CastObject.cpp" />
     <ClCompile Include="Prefabs\EnemiesPrefab.cpp" />
     <ClCompile Include="Prefabs\Snail.cpp" />
+    <ClCompile Include="Prefabs\Trail.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MainGame.h" />
@@ -68,5 +69,6 @@
     <ClInclude Include="Prefabs\CastObject.h" />
     <ClInclude Include="Prefabs\EnemiesPrefab.h" />
     <ClInclude Include="Prefabs\Snail.h" />
+    <ClInclude Include="Prefabs\Trail.h" />
   </ItemGroup>
 </Project>

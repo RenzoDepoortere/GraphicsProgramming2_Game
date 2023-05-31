@@ -7,6 +7,9 @@
 
 #include "Prefabs/HarryCharacter.h"
 #include "Prefabs/Character.h"
+#include "Prefabs/Trail.h"
+
+#include <algorithm>
 
 Snail::Snail(float generalScale, HarryCharacter* pHarry)
 	: m_GeneralScale{generalScale}
@@ -17,6 +20,13 @@ Snail::Snail(float generalScale, HarryCharacter* pHarry)
 
 void Snail::Initialize(const SceneContext& /*sceneContext*/)
 {
+	// Trail
+	// -----
+	m_pTrailObject = GetScene()->AddChild(new GameObject{});
+
+	// Snail
+	// -----
+	
 	// Castable
 	m_pCastableComponent = AddComponent(new SnailCastableComponent{ CastableComponent::Rictusempra, CastableComponent::Spongify, this });
 
@@ -56,6 +66,13 @@ void Snail::SetStunned()
 	// Set to stunned
 	m_CurrentSnailState = Stunned;
 	m_HasToSpin = true;
+
+	//// Clear trail (are children)
+	//for (size_t idx{}; idx < m_Trail.size(); ++idx)
+	//{
+	//	RemoveChild(m_Trail[idx], true);
+	//}
+	//m_Trail.clear();
 }
 void Snail::Push(const XMFLOAT3& source)
 {
@@ -65,6 +82,16 @@ void Snail::Push(const XMFLOAT3& source)
 	// Prepare push
 	m_PushSource = source;
 	m_HasToPush = true;
+}
+
+void Snail::RemoveTrail(Trail* pTrail)
+{
+	// Remove from vector
+	const auto it = std::ranges::find(m_pTrails, pTrail);
+	m_pTrails.erase(it);
+
+	// Delete
+	m_pTrailObject->RemoveChild(pTrail, true);
 }
 
 void Snail::HandleStunned(const SceneContext& sceneContext)
@@ -243,7 +270,21 @@ void Snail::HandleAttacking(const SceneContext& /*sceneContext*/)
 		m_IsAttackStun = true;
 	}
 }
-void Snail::HandleTrail(const SceneContext& /*sceneContext*/)
+void Snail::HandleTrail(const SceneContext& sceneContext)
 {
+	// If is stunned, return
+	if (m_CurrentSnailState == Stunned) return;
 
+	// Countdown
+	m_TrailTimer -= sceneContext.pGameTime->GetElapsed();
+	if (m_TrailTimer <= 0.f)
+	{
+		const float trailFrequency{ 0.3f };
+		m_TrailTimer = trailFrequency;
+
+		// Spawn trail
+		Trail* pTrail{ m_pTrailObject->AddChild(new Trail{ m_pHarry, this }) };
+		pTrail->GetTransform()->Translate(GetTransform()->GetWorldPosition());
+		m_pTrails.emplace_back(pTrail);
+	}
 }

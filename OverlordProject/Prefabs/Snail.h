@@ -1,6 +1,7 @@
 #pragma once
 class HarryCharacter;
 class SnailCastableComponent;
+class Trail;
 
 class Snail final : public GameObject
 {
@@ -19,6 +20,8 @@ public:
 	
 	void SetStunned();
 	void Push(const XMFLOAT3& source);
+
+	void RemoveTrail(Trail* pTrail);
 
 protected:
 	// Functionality
@@ -45,6 +48,10 @@ private:
 	std::vector<XMFLOAT3> m_PathPositions{};
 	int m_CurrentGoalPosition{};
 	bool m_IsReturning{ false };
+
+	GameObject* m_pTrailObject{};
+	std::vector<Trail*> m_pTrails{};
+	float m_TrailTimer{};
 
 	XMFLOAT3 m_CurrentTarget{};
 	float m_TotalYaw{};

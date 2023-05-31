@@ -33,7 +33,7 @@ void CastObject::Initialize(const SceneContext& /*sceneContext*/)
 	// Spell Mesh
 	// ----------
 	auto pObject{ AddChild(new GameObject{}) };
-	m_pSpellObject = pObject->AddComponent(new ModelComponent{L"Meshes/Props/Spell/SpellPlane.ovm"});
+	m_pSpellObject = pObject->AddComponent(new ModelComponent{L"Meshes/Plane.ovm"});
 
 	// Diffindo
 	BasicMaterial_Deferred* pMaterial{ MaterialManager::Get()->CreateMaterial<BasicMaterial_Deferred>() };
