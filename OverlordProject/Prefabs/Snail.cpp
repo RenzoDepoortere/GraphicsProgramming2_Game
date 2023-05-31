@@ -5,6 +5,9 @@
 
 #include "Components/SnailCastableComponent.h"
 
+#include "Prefabs/HarryCharacter.h"
+#include "Prefabs/Character.h"
+
 Snail::Snail(float generalScale, HarryCharacter* pHarry)
 	: m_GeneralScale{generalScale}
 	, m_pHarry{ pHarry }
@@ -25,7 +28,7 @@ void Snail::Initialize(const SceneContext& /*sceneContext*/)
 	pModel->SetMaterial(pMaterial);
 
 	// Collision
-	PxMaterial* pDefaultMaterial = PxGetPhysics().createMaterial(0.5f, 0.5f, 0.5f);
+	PxMaterial* pDefaultMaterial = PxGetPhysics().createMaterial(0.5f, 0.8f, 0.5f);
 
 	m_pRigidbody = AddComponent(new RigidBodyComponent(false));
 	PxConvexMesh* pPxConvexMesh = ContentManager::Load<PxConvexMesh>(L"Meshes/Enemies/Snail/Snail.ovpc");
@@ -44,6 +47,7 @@ void Snail::Update(const SceneContext& sceneContext)
 	HandlePathing(sceneContext);
 	HandleTransform(sceneContext);
 
+	HandleAttacking(sceneContext);
 	HandleTrail(sceneContext);
 }
 
@@ -77,7 +81,7 @@ void Snail::HandleStunned(const SceneContext& sceneContext)
 		m_pRigidbody->SetConstraint(RigidBodyConstraint::RotY, true);
 
 		// Spin
-		const float rotationStrength{ 25.f };
+		const float rotationStrength{ 15.f };
 		m_pRigidbody->AddTorque(XMFLOAT3{ 0.f, rotationStrength, 0.f }, PxForceMode::eIMPULSE);
 	}
 
@@ -100,18 +104,33 @@ void Snail::HandleStunned(const SceneContext& sceneContext)
 	// Count up
 	m_CurrentTime += sceneContext.pGameTime->GetElapsed();
 
-	// Cast again after x time
-	const float castAgainTime{ 1.5f };
-	if (castAgainTime <= m_CurrentTime)
+	// First treshold
+	float tresholdTime = 1.5f;
+	if (tresholdTime <= m_CurrentTime)
 	{
-		m_pRigidbody->SetConstraint(RigidBodyConstraint::AllRot, false);
-		m_pCastableComponent->SetCastedTo(false);
+		if (m_IsAttackStun)
+		{
+			// Go back to pathing
+			m_IsAttackStun = false;
+			m_CurrentTime = 0.f;
+
+			m_pRigidbody->SetConstraint(RigidBodyConstraint::TransY, true);
+
+			m_CurrentSnailState = Pathing;
+		}
+		else
+		{
+			// Stop spinning and enable casting to snail
+			m_pRigidbody->SetConstraint(RigidBodyConstraint::AllRot, false);
+			m_pCastableComponent->SetCastedTo(false);
+		}
 	}
 
-	// Go back to pathing after x time
-	const float pathTime{ 5.f };
-	if (pathTime <= m_CurrentTime)
+	// Second treshold
+	tresholdTime = 5.f;
+	if (tresholdTime <= m_CurrentTime)
 	{
+		// Go back to pathing after x time
 		m_CurrentTime = 0.f;
 		m_CurrentSnailState = Pathing;
 
@@ -130,7 +149,7 @@ void Snail::HandlePathing(const SceneContext& /*sceneContext*/)
 	const XMFLOAT3 desiredPos{ m_PathPositions[m_CurrentGoalPosition] };
 	const XMFLOAT3 desiredDirection{ MathHelper::DirectionTo(currentPos, desiredPos) };
 
-	const float movementSpeed{ 10.f };
+	const float movementSpeed{ 13.f };
 	const XMVECTOR desiredForce{ XMVectorScale(XMLoadFloat3(&desiredDirection), movementSpeed) };
 	XMFLOAT3 force{};
 	XMStoreFloat3(&force, desiredForce);
@@ -192,6 +211,38 @@ void Snail::HandleTransform(const SceneContext& sceneContext)
 	}
 }
 
+void Snail::HandleAttacking(const SceneContext& /*sceneContext*/)
+{
+	// If not pathing, return
+	if (m_CurrentSnailState != Pathing) return;
+
+	// If Harry is close enough
+	const float minSqrdDistanceBetwn{ 10.f };
+
+	const XMFLOAT3 harryPos{ m_pHarry->GetCharacter()->GetTransform()->GetWorldPosition() };
+	const XMFLOAT3 direction{ MathHelper::DirectionTo(GetTransform()->GetWorldPosition(), harryPos, false)};
+	const float sqrdDistance{ XMVectorGetX(XMVector3LengthSq(XMLoadFloat3(&direction))) };
+
+	if (sqrdDistance <= minSqrdDistanceBetwn)
+	{
+		// Prepare charge
+		m_CurrentTarget = harryPos;
+		m_pRigidbody->SetConstraint(RigidBodyConstraint::TransY, false);
+
+		// Charge towards him
+		const float force{ 7.5f };
+		const XMVECTOR forceVector{ XMVectorScale(XMVector3Normalize(XMLoadFloat3(&direction)), force) };
+		
+		XMFLOAT3 desiredForce{};
+		XMStoreFloat3(&desiredForce, forceVector);
+
+		m_pRigidbody->AddForce(desiredForce, PxForceMode::eIMPULSE);
+
+		// Set to attack stun
+		m_CurrentSnailState = Stunned;
+		m_IsAttackStun = true;
+	}
+}
 void Snail::HandleTrail(const SceneContext& /*sceneContext*/)
 {
 

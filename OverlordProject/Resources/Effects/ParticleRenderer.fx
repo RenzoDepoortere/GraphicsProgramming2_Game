@@ -98,10 +98,10 @@ void MainGS(point VS_DATA vertex[1], inout TriangleStream<GS_DATA> triStream)
 	float3 origin = vertex[0].Position;
 
 	//Vertices (Keep in mind that 'origin' contains the center of the quad
-	topLeft = float3(size * -0.5f, size * 0.5f, 0.0f);
-	topRight = float3(size * 0.5f, size * 0.5f, 0.0f);
-	bottomLeft = float3(size * -0.5f, size * -0.5f, 0.0f);
-	bottomRight = float3(size * 0.5f, size * -0.5f, 0.0f);
+	topLeft = float3(size / -2.f, size / 2.f, 0.0f);
+	topRight = float3(size / 2.f, size / 2.f, 0.0f);
+	bottomLeft = float3(size / -2.f, size / -2.f, 0.0f);
+	bottomRight = float3(size / 2.f, size / -2.f, 0.0f);
 
 	//Transform the vertices using the ViewInverse (Rotational Part Only!!! (~ normal transformation)), this will force them to always point towards the camera (cfr. BillBoarding)
 	topLeft = mul(topLeft, (float3x3) gViewInverse);

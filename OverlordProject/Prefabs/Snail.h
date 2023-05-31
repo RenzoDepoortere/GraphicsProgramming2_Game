@@ -53,6 +53,7 @@ private:
 	bool m_HasToPush{ false };
 	XMFLOAT3 m_PushSource{};
 	float m_CurrentTime{};
+	bool m_IsAttackStun{ false };
 
 	// Functions
 	// ---------
@@ -61,5 +62,6 @@ private:
 	void HandlePathing(const SceneContext& sceneContext);
 	void HandleTransform(const SceneContext& sceneContext);
 
+	void HandleAttacking(const SceneContext& sceneContext);
 	void HandleTrail(const SceneContext& sceneContext);
 };
