@@ -66,6 +66,7 @@ void Snail::SetStunned()
 	// Set to stunned
 	m_CurrentSnailState = Stunned;
 	m_HasToSpin = true;
+	m_IsAttackStun = false;
 }
 void Snail::Push(const XMFLOAT3& source)
 {
@@ -312,9 +313,27 @@ void Snail::HandleTrail(const SceneContext& sceneContext)
 		m_TrailTimer = trailFrequency;
 
 		// Spawn trail
-		Trail* pTrail{ m_pTrailObject->AddChild(new Trail{ m_pHarry, this }) };
+		Trail* pTrail{ m_pTrailObject->AddChild(new Trail{ m_pHarry->GetCharacter(), this})};
 		pTrail->GetTransform()->Translate(GetTransform()->GetWorldPosition());
 		m_pTrails.emplace_back(pTrail);
+	}
+}
+
+void Snail::CheckHarry()
+{
+	// If not attacking, return
+	if (m_IsAttackStun == false) return;
+
+	// If Harry is close enough
+	const float minSqrdDistanceBetwn{ 3.f };
+
+	const XMFLOAT3 harryPos{ m_pHarry->GetCharacter()->GetTransform()->GetWorldPosition() };
+	const XMFLOAT3 direction{ MathHelper::DirectionTo(GetTransform()->GetWorldPosition(), harryPos, false) };
+	const float sqrdDistance{ XMVectorGetX(XMVector3LengthSq(XMLoadFloat3(&direction))) };
+
+	if (sqrdDistance <= minSqrdDistanceBetwn)
+	{
+		DamageHarry(2);
 	}
 }
 

@@ -2,6 +2,7 @@
 class Character;
 class CastObject;
 class MovingSpell;
+class HUD;
 
 class HarryCharacter final : public GameObject
 {
@@ -17,7 +18,9 @@ public:
 
 	// Pass through functions
 	Character* GetCharacter() const { return m_pCharacter; }
+	
 	void DealDamage(int amount);
+	void AddBean();
 
 protected:
 	// Functionality
@@ -59,14 +62,17 @@ private:
 	CharacterStates m_CurrentCharacterState{ Idle };
 	ModelAnimator* m_pAnimator{};
 
-	// Casting object
+	int m_CurrentHP{};
+
+	// External objects
 	CastObject* m_pCastingObject{ nullptr };
 	MovingSpell* m_pMovingSpell{ nullptr };
+	HUD* m_pHUD{ nullptr };
 
 	// Functions
 	// ---------
 	void InitHarry(const SceneContext& sceneContext);
-	void InitCastingObject(const SceneContext& sceneContext);
+	void InitExternals();
 
 	void HandleMeshTransform();
 	void HandleAnimations(bool isForward, bool isBackward, bool isLeft, bool isRight, bool isAiming);

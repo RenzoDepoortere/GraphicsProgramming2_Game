@@ -76,6 +76,8 @@ private:
 	void HandleAttacking(const SceneContext& sceneContext);
 	void HandleTrail(const SceneContext& sceneContext);
 
+	void CheckHarry();
+
 	void InstantRotation();
 	void DamageHarry(int amount);
 };

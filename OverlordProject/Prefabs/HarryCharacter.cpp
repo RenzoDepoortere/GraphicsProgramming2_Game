@@ -8,6 +8,7 @@
 #include "Prefabs/CubePrefab.h"
 #include "Prefabs/MovingSpell.h"
 #include "Prefabs/CastObject.h"
+#include "Prefabs/HUD.h"
 
 #include "Components/DestroyCastableComponent.h"	
 #include "Components/BeansCastableComponent.h"
@@ -15,13 +16,14 @@
 
 HarryCharacter::HarryCharacter(float generalScale)
 	: m_GeneralScale{ generalScale }
+	, m_CurrentHP{ 6 }
 {
 }
 
 void HarryCharacter::Initialize(const SceneContext& sceneContext)
 {
 	InitHarry(sceneContext);
-	InitCastingObject(sceneContext);
+	InitExternals();
 }
 void HarryCharacter::Update(const SceneContext& sceneContext)
 {
@@ -38,7 +40,20 @@ void HarryCharacter::Update(const SceneContext& sceneContext)
 	HandleCastingObject(sceneContext, isAiming);
 }
 
-void HarryCharacter::DealDamage(int /*amount*/)
+void HarryCharacter::DealDamage(int amount)
+{
+	// Lower HP
+	m_CurrentHP -= amount;
+
+	// If lower then 0
+	if (m_CurrentHP <= 0)
+	{
+		// Dead
+		m_CurrentHP = 0;
+
+	}
+}
+void HarryCharacter::AddBean()
 {
 
 }
@@ -132,9 +147,13 @@ void HarryCharacter::InitHarry(const SceneContext& sceneContext)
 	inputAction = InputAction(CharacterSpellActivate, InputState::pressed, -1, VK_LBUTTON);
 	sceneContext.pInput->AddInputAction(inputAction);
 }
-void HarryCharacter::InitCastingObject(const SceneContext& /*sceneContext*/)
+void HarryCharacter::InitExternals()
 {
+	// Casting Object
 	m_pCastingObject = GetScene()->AddChild(new CastObject{ m_pCharacter });
+
+	// HUD
+	//m_pHUD = GetScene()->AddChild(new HUD{});
 }
 
 void HarryCharacter::HandleMeshTransform()

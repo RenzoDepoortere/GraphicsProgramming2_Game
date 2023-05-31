@@ -93,6 +93,7 @@
     <PostBuildEvent />
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Prefabs\HUD.cpp" />
     <ClCompile Include="Prefabs\EnemiesPrefab.cpp" />
     <ClCompile Include="Prefabs\CastObject.cpp" />
     <ClCompile Include="Materials\BasicMaterial_Deferred_Skinned.cpp" />
@@ -146,6 +147,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Prefabs\HUD.h" />
     <ClInclude Include="Prefabs\EnemiesPrefab.h" />
     <ClInclude Include="Prefabs\CastObject.h" />
     <ClInclude Include="Materials\BasicMaterial_Deferred_Skinned.h" />

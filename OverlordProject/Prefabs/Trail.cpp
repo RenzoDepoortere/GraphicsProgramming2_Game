@@ -7,7 +7,7 @@
 #include "Prefabs/Character.h"
 #include "Prefabs/Snail.h"
 
-Trail::Trail(HarryCharacter* pHarry, Snail* pSnail)
+Trail::Trail(GameObject* pHarry, Snail* pSnail)
 	: m_pHarry{ pHarry }
 	, m_pSnail{ pSnail }
 	, m_DamageCooldown{ 0.25f }
@@ -23,32 +23,38 @@ void Trail::Initialize(const SceneContext& /*sceneContext*/)
 	pMaterial->SetDiffuseMap(L"Textures/Enemies/Snail/Trail.png");
 	pModel->SetMaterial(pMaterial);
 
-	// Collision
-	PxMaterial* pDefaultMaterial = PxGetPhysics().createMaterial(0.5f, 0.5f, 0.5f);
+	//// Collision
+	//PxMaterial* pDefaultMaterial = PxGetPhysics().createMaterial(0.5f, 0.5f, 0.5f);
 
-	RigidBodyComponent* pActor = AddComponent(new RigidBodyComponent(true));
-	pActor->AddCollider(PxBoxGeometry{ 0.5f, 0.05f, 0.5f }, *pDefaultMaterial, true);
+	//RigidBodyComponent* pActor = AddComponent(new RigidBodyComponent(true));
+	//pActor->AddCollider(PxBoxGeometry{ 0.5f, 0.05f, 0.5f }, *pDefaultMaterial, true);
 
 	// Transform
 	m_Scale = 0.5f;
 	GetTransform()->Scale(0.5f);
 
-	// On trigger
-	SetOnTriggerCallBack([=](GameObject*, GameObject* pOther, PxTriggerAction action)
-	{
-		// If just spawned, return
-		if (0 < m_DamageCooldown) return;
+	//// On trigger
+	//SetOnTriggerCallBack([=](GameObject*, GameObject* pOther, PxTriggerAction action)
+	//{
+	//	// If just spawned, return
+	//	if (0 < m_DamageCooldown) return;
 
-		// If was Harry
-		if (action == PxTriggerAction::ENTER && pOther == m_pHarry->GetCharacter())
-		{
-			// Deal damage
-			m_pSnail->HarryHit();
-		}
-	});
+	//	// If was Harry
+	//	if (action == PxTriggerAction::ENTER && pOther == m_pHarry)
+	//	{
+	//		// Deal damage
+	//		m_pSnail->HarryHit();
+	//	}
+	//});
 }
 
 void Trail::Update(const SceneContext& sceneContext)
+{
+	CheckHarry();
+	ScaleDown(sceneContext);
+}
+
+void Trail::ScaleDown(const SceneContext& sceneContext)
 {
 	// Countdown
 	if (0 < m_DamageCooldown) m_DamageCooldown -= sceneContext.pGameTime->GetElapsed();
@@ -65,5 +71,20 @@ void Trail::Update(const SceneContext& sceneContext)
 	{
 		// Delete
 		m_pSnail->RemoveTrail(this);
+	}
+}
+void Trail::CheckHarry()
+{
+	// Check if Harry close enough
+	const float minSqrdDistanceBetwn{ 2.5f };
+
+	const XMFLOAT3 harryPos{ m_pHarry->GetTransform()->GetWorldPosition() };
+	const XMFLOAT3 direction{ MathHelper::DirectionTo(GetTransform()->GetWorldPosition(), harryPos, false) };
+	const float sqrdDistance{ XMVectorGetX(XMVector3LengthSq(XMLoadFloat3(&direction))) };
+
+	if (sqrdDistance <= minSqrdDistanceBetwn)
+	{
+		// Hit harry
+		m_pSnail->HarryHit();
 	}
 }

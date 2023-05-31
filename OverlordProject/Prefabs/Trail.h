@@ -1,12 +1,11 @@
 #pragma once
-class HarryCharacter;
 class Snail;
 
 class Trail final : public GameObject
 {
 public:
 	// Rule of five
-	Trail(HarryCharacter* pHarry, Snail* pSnail);
+	Trail(GameObject* pHarry, Snail* pSnail);
 	~Trail() override = default;
 
 	Trail(const Trail& other) = delete;
@@ -21,9 +20,14 @@ protected:
 private:
 	// Variables
 	// ---------
-	HarryCharacter* m_pHarry{};
+	GameObject* m_pHarry{};
 	Snail* m_pSnail{};
 
 	float m_Scale{};
 	float m_DamageCooldown{};
+
+	// Functions
+	// ---------
+	void ScaleDown(const SceneContext& sceneContext);
+	void CheckHarry();
 };

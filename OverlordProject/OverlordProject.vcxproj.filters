@@ -35,6 +35,7 @@
     <ClCompile Include="Prefabs\EnemiesPrefab.cpp" />
     <ClCompile Include="Prefabs\Snail.cpp" />
     <ClCompile Include="Prefabs\Trail.cpp" />
+    <ClCompile Include="Prefabs\HUD.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MainGame.h" />
@@ -70,5 +71,6 @@
     <ClInclude Include="Prefabs\EnemiesPrefab.h" />
     <ClInclude Include="Prefabs\Snail.h" />
     <ClInclude Include="Prefabs\Trail.h" />
+    <ClInclude Include="Prefabs\HUD.h" />
   </ItemGroup>
 </Project>
