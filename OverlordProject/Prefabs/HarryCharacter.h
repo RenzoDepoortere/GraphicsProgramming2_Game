@@ -17,6 +17,7 @@ public:
 
 	// Pass through functions
 	Character* GetCharacter() const { return m_pCharacter; }
+	void DealDamage(int amount);
 
 protected:
 	// Functionality

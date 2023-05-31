@@ -25,4 +25,5 @@ private:
 	Snail* m_pSnail{};
 
 	float m_Scale{};
+	float m_DamageCooldown{};
 };

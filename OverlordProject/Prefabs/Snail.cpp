@@ -49,10 +49,9 @@ void Snail::Initialize(const SceneContext& /*sceneContext*/)
 	// Transform
 	GetTransform()->Scale(m_GeneralScale * 2.f);
 }
-
 void Snail::Update(const SceneContext& sceneContext)
 {
-	HandleStunned(sceneContext);
+	HandleTimer(sceneContext);
 
 	HandlePathing(sceneContext);
 	HandleTransform(sceneContext);
@@ -66,13 +65,6 @@ void Snail::SetStunned()
 	// Set to stunned
 	m_CurrentSnailState = Stunned;
 	m_HasToSpin = true;
-
-	//// Clear trail (are children)
-	//for (size_t idx{}; idx < m_Trail.size(); ++idx)
-	//{
-	//	RemoveChild(m_Trail[idx], true);
-	//}
-	//m_Trail.clear();
 }
 void Snail::Push(const XMFLOAT3& source)
 {
@@ -84,6 +76,10 @@ void Snail::Push(const XMFLOAT3& source)
 	m_HasToPush = true;
 }
 
+void Snail::HarryHit()
+{
+	DamageHarry(1);
+}
 void Snail::RemoveTrail(Trail* pTrail)
 {
 	// Remove from vector
@@ -94,8 +90,17 @@ void Snail::RemoveTrail(Trail* pTrail)
 	m_pTrailObject->RemoveChild(pTrail, true);
 }
 
-void Snail::HandleStunned(const SceneContext& sceneContext)
+void Snail::HandleTimer(const SceneContext& sceneContext)
 {
+	const float deltaTime{ sceneContext.pGameTime->GetElapsed() };
+
+	// ATTACK
+	// ------
+	if (0 < m_AttackCooldown) m_AttackCooldown -= deltaTime;
+
+	// STUN
+	// ----
+	
 	// If not stunned, return
 	if (m_CurrentSnailState != Stunned) return;
 	
@@ -129,7 +134,7 @@ void Snail::HandleStunned(const SceneContext& sceneContext)
 	}
 
 	// Count up
-	m_CurrentTime += sceneContext.pGameTime->GetElapsed();
+	m_CurrentTime += deltaTime;
 
 	// First treshold
 	float tresholdTime = 1.5f;
@@ -287,4 +292,16 @@ void Snail::HandleTrail(const SceneContext& sceneContext)
 		pTrail->GetTransform()->Translate(GetTransform()->GetWorldPosition());
 		m_pTrails.emplace_back(pTrail);
 	}
+}
+
+void Snail::DamageHarry(int amount)
+{
+	// If still on cooldown, return
+	if (0 < m_AttackCooldown) return;
+
+	const float attackCooldown{ 1.f };
+	m_AttackCooldown = attackCooldown;
+
+	// Deal damage
+	m_pHarry->DealDamage(amount);
 }

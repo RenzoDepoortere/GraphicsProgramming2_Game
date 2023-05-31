@@ -21,6 +21,7 @@ public:
 	void SetStunned();
 	void Push(const XMFLOAT3& source);
 
+	void HarryHit();
 	void RemoveTrail(Trail* pTrail);
 
 protected:
@@ -33,7 +34,7 @@ private:
 	// -----
 	enum SnailState
 	{
-		Pathing, Attacking, Stunned
+		Pathing, Stunned
 	};
 
 	// Variables
@@ -53,6 +54,8 @@ private:
 	std::vector<Trail*> m_pTrails{};
 	float m_TrailTimer{};
 
+	float m_AttackCooldown{};
+
 	XMFLOAT3 m_CurrentTarget{};
 	float m_TotalYaw{};
 
@@ -64,11 +67,13 @@ private:
 
 	// Functions
 	// ---------
-	void HandleStunned(const SceneContext& sceneContext);
+	void HandleTimer(const SceneContext& sceneContext);
 
 	void HandlePathing(const SceneContext& sceneContext);
 	void HandleTransform(const SceneContext& sceneContext);
 
 	void HandleAttacking(const SceneContext& sceneContext);
 	void HandleTrail(const SceneContext& sceneContext);
+
+	void DamageHarry(int amount);
 };

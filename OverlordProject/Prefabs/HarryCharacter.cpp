@@ -23,7 +23,6 @@ void HarryCharacter::Initialize(const SceneContext& sceneContext)
 	InitHarry(sceneContext);
 	InitCastingObject(sceneContext);
 }
-
 void HarryCharacter::Update(const SceneContext& sceneContext)
 {
 	// Actions
@@ -37,6 +36,11 @@ void HarryCharacter::Update(const SceneContext& sceneContext)
 	HandleAnimations(isForward, isBackward, isLeft, isRight, isAiming);
 
 	HandleCastingObject(sceneContext, isAiming);
+}
+
+void HarryCharacter::DealDamage(int /*amount*/)
+{
+
 }
 
 // Member functions
