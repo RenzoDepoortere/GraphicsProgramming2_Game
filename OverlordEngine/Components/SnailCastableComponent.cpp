@@ -24,16 +24,16 @@ void SnailCastableComponent::SwitchSpell()
 
 void SnailCastableComponent::Activate(GameObject* pHarry)
 {
-	// Either stun or push snail
+	// If stunned
 	if (m_CurrentSpell == m_StunSpell)
 	{
+		// Set stunned and switch spell
 		m_pSnail->SetStunned();
+		SwitchSpell();
 	}
 	else
 	{
+		// Push snail
 		m_pSnail->Push(pHarry->GetTransform()->GetWorldPosition());
 	}
-
-	// Switch spell
-	SwitchSpell();
 }

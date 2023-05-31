@@ -16,11 +16,9 @@ Bean::Bean(float generalScale, GameObject* pHarry, const XMFLOAT3& spawnLocation
 
 void Bean::Initialize(const SceneContext& /*sceneContext*/)
 {
-	// Transform
-	GetTransform()->Scale(m_GeneralScale);
-
 	// Mesh
-	ModelComponent* pModel{ AddComponent(new ModelComponent{L"Meshes/Props/Beans/Bean.ovm"}) };
+	auto pObject{ AddChild(new GameObject{}) };
+	ModelComponent* pModel{ pObject->AddComponent(new ModelComponent{L"Meshes/Props/Beans/Bean.ovm"}) };
 
 	// Random texture
 	std::wstring baseTextureName{ L"Textures/Props/Beans/bean_" };
@@ -30,6 +28,9 @@ void Bean::Initialize(const SceneContext& /*sceneContext*/)
 	BasicMaterial_Deferred* pMaterial{ MaterialManager::Get()->CreateMaterial<BasicMaterial_Deferred>() };
 	pMaterial->SetDiffuseMap(baseTextureName);
 	pModel->SetMaterial(pMaterial);
+
+	// Transform
+	pObject->GetTransform()->Scale(m_GeneralScale);
 
 	// Collision
 	PxMaterial* pDefaultMaterial = PxGetPhysics().createMaterial(0.5f, 0.2f, 0.7f);
@@ -73,6 +74,8 @@ void Bean::Update(const SceneContext& sceneContext)
 		// Particle
 
 		// Delete
-		GetParent()->RemoveChild(this, true);
+		GetTransform()->Translate(XMFLOAT3{});
+		m_IsActivated = false;
+		//GetParent()->RemoveChild(this, true);
 	}
 }

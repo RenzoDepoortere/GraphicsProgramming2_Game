@@ -27,8 +27,7 @@ void CastObject::Initialize(const SceneContext& /*sceneContext*/)
 	settings.maxEmitterRadius = .5f;
 	settings.color = { 1.f, 0.f, 0.f, .6f };
 
-	AddComponent(new ParticleEmitterComponent(L"Textures/TestTennisBall.jpg", settings, 200));
-	//m_pCastingObject->SetCamera(m_pCharacter->GetCamera());
+	m_pEmitter = AddComponent(new ParticleEmitterComponent(L"Textures/TestTennisBall.jpg", settings, 200));
 
 
 	// Spell Mesh
@@ -47,6 +46,13 @@ void CastObject::Initialize(const SceneContext& /*sceneContext*/)
 	pMaterial->SetDiffuseMap(L"Textures/Spells/Rictusempra.png");
 
 	m_pMaterials[static_cast<int>(CastableComponent::Rictusempra)] = pMaterial;
+
+	// Spongify
+	pMaterial = MaterialManager::Get()->CreateMaterial<BasicMaterial_Deferred>();
+	pMaterial->SetDiffuseMap(L"Textures/Spells/Spongify.png");
+
+	m_pMaterials[static_cast<int>(CastableComponent::Spongify)] = pMaterial;
+
 
 	// Set default
 	m_CurrentSpell = CastableComponent::Diffindo;

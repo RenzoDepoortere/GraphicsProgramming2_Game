@@ -1,5 +1,6 @@
 #pragma once
 class HarryCharacter;
+class SnailCastableComponent;
 
 class Snail final : public GameObject
 {
@@ -39,6 +40,7 @@ private:
 
 	SnailState m_CurrentSnailState{ Pathing };
 	RigidBodyComponent* m_pRigidbody{};
+	SnailCastableComponent* m_pCastableComponent{};
 
 	std::vector<XMFLOAT3> m_PathPositions{};
 	int m_CurrentGoalPosition{};
@@ -47,12 +49,15 @@ private:
 	XMFLOAT3 m_CurrentTarget{};
 	float m_TotalYaw{};
 
-	float m_DegreesSpinned{};
-
-	//std::vector
+	bool m_HasToSpin{ false };
+	bool m_HasToPush{ false };
+	XMFLOAT3 m_PushSource{};
+	float m_CurrentTime{};
 
 	// Functions
 	// ---------
+	void HandleStunned(const SceneContext& sceneContext);
+
 	void HandlePathing(const SceneContext& sceneContext);
 	void HandleTransform(const SceneContext& sceneContext);
 

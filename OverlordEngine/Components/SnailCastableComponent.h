@@ -17,6 +17,7 @@ public:
 
 	// Functionality
 	virtual Spell GetSpell() const override { return m_CurrentSpell; }
+	void SwitchSpell();
 
 	virtual void Activate(GameObject* pHarry) override;
 
@@ -31,8 +32,5 @@ private:
 	Spell m_PushSpell{};
 
 	Spell m_CurrentSpell{};
-
-	// Member functions
-	void SwitchSpell();
 };
 

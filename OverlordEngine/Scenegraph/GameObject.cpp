@@ -71,7 +71,7 @@ void GameObject::RootUpdate(const SceneContext& sceneContext)
 	Update(sceneContext);
 	
 	//Component Update
-	for(BaseComponent* pComp: m_pComponents)
+	for (BaseComponent* pComp: m_pComponents)
 	{
 		pComp->Update(sceneContext);
 	}

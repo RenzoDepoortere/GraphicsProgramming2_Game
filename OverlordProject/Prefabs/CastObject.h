@@ -30,6 +30,8 @@ private:
 	Character* m_pHarry{};
 	ModelComponent* m_pSpellObject{};
 	
+	ParticleEmitterComponent* m_pEmitter{};
+
 	bool m_IsCastable{};
 	CastableComponent::Spell m_CurrentSpell{};
 	BasicMaterial_Deferred* m_pMaterials[CastableComponent::Spell::NR_SPELLS]{};

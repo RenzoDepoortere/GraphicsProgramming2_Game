@@ -15,7 +15,7 @@ Snail::Snail(float generalScale, HarryCharacter* pHarry)
 void Snail::Initialize(const SceneContext& /*sceneContext*/)
 {
 	// Castable
-	AddComponent(new SnailCastableComponent{ CastableComponent::Rictusempra, CastableComponent::Diffindo, this });
+	m_pCastableComponent = AddComponent(new SnailCastableComponent{ CastableComponent::Rictusempra, CastableComponent::Spongify, this });
 
 	// Mesh
 	ModelComponent* pModel{ AddComponent(new ModelComponent{L"Meshes/Enemies/Snail/Snail.ovm"}) };
@@ -39,6 +39,8 @@ void Snail::Initialize(const SceneContext& /*sceneContext*/)
 
 void Snail::Update(const SceneContext& sceneContext)
 {
+	HandleStunned(sceneContext);
+
 	HandlePathing(sceneContext);
 	HandleTransform(sceneContext);
 
@@ -47,12 +49,74 @@ void Snail::Update(const SceneContext& sceneContext)
 
 void Snail::SetStunned()
 {
+	// Set to stunned
 	m_CurrentSnailState = Stunned;
-	m_DegreesSpinned = 0.f;
+	m_HasToSpin = true;
 }
-void Snail::Push(const XMFLOAT3& /*source*/)
+void Snail::Push(const XMFLOAT3& source)
 {
+	// Reset timer
+	m_CurrentTime = 0.f;
 
+	// Prepare push
+	m_PushSource = source;
+	m_HasToPush = true;
+}
+
+void Snail::HandleStunned(const SceneContext& sceneContext)
+{
+	// If not stunned, return
+	if (m_CurrentSnailState != Stunned) return;
+	
+	// Spin
+	if (m_HasToSpin)
+	{
+		m_HasToSpin = false;
+
+		// Unlock constaints
+		m_pRigidbody->SetConstraint(RigidBodyConstraint::RotY, true);
+
+		// Spin
+		const float rotationStrength{ 25.f };
+		m_pRigidbody->AddTorque(XMFLOAT3{ 0.f, rotationStrength, 0.f }, PxForceMode::eIMPULSE);
+	}
+
+	// Push
+	if (m_HasToPush)
+	{
+		m_HasToPush = false;
+
+		// Add force
+		const float force{ 10.f };
+		const XMFLOAT3 direction{ MathHelper::DirectionTo(m_PushSource, GetTransform()->GetWorldPosition()) };
+		const XMVECTOR forceVector{ XMVectorScale(XMLoadFloat3(&direction), force) };
+
+		XMFLOAT3 desiredForce{};
+		XMStoreFloat3(&desiredForce, forceVector);
+
+		m_pRigidbody->AddForce(desiredForce, PxForceMode::eIMPULSE);
+	}
+
+	// Count up
+	m_CurrentTime += sceneContext.pGameTime->GetElapsed();
+
+	// Cast again after x time
+	const float castAgainTime{ 1.5f };
+	if (castAgainTime <= m_CurrentTime)
+	{
+		m_pRigidbody->SetConstraint(RigidBodyConstraint::AllRot, false);
+		m_pCastableComponent->SetCastedTo(false);
+	}
+
+	// Go back to pathing after x time
+	const float pathTime{ 5.f };
+	if (pathTime <= m_CurrentTime)
+	{
+		m_CurrentTime = 0.f;
+		m_CurrentSnailState = Pathing;
+
+		m_pCastableComponent->SwitchSpell();
+	}
 }
 
 void Snail::HandlePathing(const SceneContext& /*sceneContext*/)

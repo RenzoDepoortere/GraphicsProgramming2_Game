@@ -231,7 +231,7 @@ void HarryCharacter::HandleCastingObject(const SceneContext& sceneContext, bool 
 			{
 				// Send spell
 				const float spellMovementSpeed{ 15.f };
-				m_pMovingSpell = AddChild(new MovingSpell{ spellMovementSpeed, m_pCharacterMesh, pCastable->GetSpell(), hitPos, pCastable });
+				m_pMovingSpell = AddChild(new MovingSpell{ spellMovementSpeed, m_pCharacterMesh, pCastable->GetSpell(), pCastable });
 				m_pMovingSpell->GetTransform()->Translate(m_pCharacter->GetTransform()->GetWorldPosition());
 
 				// Set casted to

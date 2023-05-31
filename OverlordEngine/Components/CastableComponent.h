@@ -7,6 +7,7 @@ public:
 	{
 		Diffindo,
 		Rictusempra,
+		Spongify,
 		NR_SPELLS
 	};
 

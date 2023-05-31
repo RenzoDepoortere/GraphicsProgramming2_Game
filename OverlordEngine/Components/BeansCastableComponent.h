@@ -1,11 +1,12 @@
 #pragma once
 #include "CastableComponent.h"
 
+class BeansProp;
 class BeansCastableComponent final : public CastableComponent
 {
 public:
 	// Rule of five
-	BeansCastableComponent(float generalScale, GameObject* pHarry, Spell spell);
+	BeansCastableComponent(float generalScale, GameObject* pHarry, Spell spell, BeansProp* pProp);
 	virtual ~BeansCastableComponent() override = default;
 
 	BeansCastableComponent(const BeansCastableComponent& other) = delete;
@@ -38,12 +39,14 @@ private:
 	bool m_HasBeenActivated{ false };
 	float m_GeneralScale{};
 	GameObject* m_pHarry{};
+	BeansProp* m_pProp{};
 
 	// Beans
 	int m_MinNrBeans{}, m_MaxNrBeans{};
 	int m_NrBeansToSpawn{};
 
 	bool m_SpawnBeans{};
+	GameObject* m_pBeanHolder{};
 
 	// Timer
 	float m_TimeBetweenBeans{};

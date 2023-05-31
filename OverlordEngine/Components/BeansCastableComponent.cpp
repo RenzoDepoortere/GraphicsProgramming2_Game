@@ -2,11 +2,13 @@
 #include "BeansCastableComponent.h"
 
 #include "../OverlordProject/Prefabs/Bean.h"
+#include "../OverlordProject/Prefabs/BeansProp.h"
 
-BeansCastableComponent::BeansCastableComponent(float generalScale, GameObject* pHarry, Spell spell)
+BeansCastableComponent::BeansCastableComponent(float generalScale, GameObject* pHarry, Spell spell, BeansProp* pProp)
 	: m_GeneralScale{ generalScale }
 	, m_pHarry{ pHarry }
 	, CastableComponent{ spell }
+	, m_pProp{ pProp }
 {
 }
 
@@ -19,6 +21,9 @@ void BeansCastableComponent::Initialize(const SceneContext& /*sceneContext*/)
 	m_TimeBetweenBeans = 0.5f;
 
 	m_MaxRandomShootAngle = 5.f;
+
+	// Create beanHolder
+	m_pBeanHolder = GetScene()->AddChild(new GameObject{});
 }
 
 void BeansCastableComponent::Update(const SceneContext& sceneContext)
@@ -36,7 +41,12 @@ void BeansCastableComponent::Update(const SceneContext& sceneContext)
 		// Particles
 
 		// Spawn bean
-		GetGameObject()->AddChild(new Bean{ m_GeneralScale, m_pHarry, m_PreviousLocation, MathHelper::DirectionTo(m_PreviousLocation, m_pHarry->GetTransform()->GetWorldPosition()) });
+		const XMFLOAT3 direction{ MathHelper::DirectionTo(m_PreviousLocation, m_pHarry->GetTransform()->GetWorldPosition()) };
+		XMFLOAT3 spawnLocation{ m_PreviousLocation };
+		spawnLocation.y += 2.f;
+
+		auto pObject = m_pBeanHolder->AddChild(new Bean{ m_GeneralScale, m_pHarry, spawnLocation, direction });
+		pObject->GetTransform()->Translate(spawnLocation);
 
 		// One bean less
 		--m_NrBeansToSpawn;
@@ -57,4 +67,7 @@ void BeansCastableComponent::Activate(GameObject* pHarry)
 	// Get position
 	m_pHarry = pHarry;
 	m_PreviousLocation = GetGameObject()->GetTransform()->GetWorldPosition();
+
+	// Set object to jump
+	m_pProp->SetToJump();
 }

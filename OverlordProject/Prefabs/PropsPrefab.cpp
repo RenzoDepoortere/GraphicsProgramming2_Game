@@ -18,7 +18,10 @@ void PropsPrefab::Initialize(const SceneContext& /*sceneContext*/)
 	GetScene()->AddChild(new Vines(m_GeneralScale));
 
 	// Bean props
-	//AddChild(new BeansProp{m_GeneralScale, CastableComponent::Diffindo});
+	// ----------
+
+	// Chest
 	GameObject* pProp{ GetScene()->AddChild(new BeansProp{m_GeneralScale, m_pHarry, CastableComponent::Diffindo, L"Chest"})};
-	pProp->GetTransform()->Translate(7.f, -8.4f, -79.f);
+	pProp->GetTransform()->Translate(20.f, -7.6f, -83.4f);
+	pProp->GetTransform()->Rotate(0.f, 90.f, 0.f);
 }

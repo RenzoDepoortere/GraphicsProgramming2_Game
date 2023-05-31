@@ -3,11 +3,10 @@
 
 #include "Prefabs/CubePrefab.h"
 
-MovingSpell::MovingSpell(float movementSpeed, GameObject* pHarry, CastableComponent::Spell spell, const XMFLOAT3& desiredLocation, CastableComponent* pObjectToHit)
+MovingSpell::MovingSpell(float movementSpeed, GameObject* pHarry, CastableComponent::Spell spell, CastableComponent* pObjectToHit)
 	: m_MovingSpeed{ movementSpeed }
 	, m_pHarry{ pHarry }
 	, m_CurrentSpell{spell}
-	, m_DesiredLocation{desiredLocation}
 	, m_pObjectToHit{ pObjectToHit }
 {
 }
@@ -52,7 +51,7 @@ void MovingSpell::Update(const SceneContext& sceneContext)
 	// Calculate new position
 	const XMFLOAT3 currentPosition{ GetTransform()->GetPosition() };
 	const XMVECTOR currentVector{ XMLoadFloat3(&currentPosition) };
-	const XMVECTOR desiredVector{ XMLoadFloat3(&m_DesiredLocation) };
+	const XMVECTOR desiredVector{ XMLoadFloat3(&m_pObjectToHit->GetTransform()->GetWorldPosition()) };
 
 	const XMVECTOR desiredDirection{ XMVector3Normalize(XMVectorSubtract(desiredVector, currentVector)) };
 	const XMVECTOR newPos{ XMVectorAdd(currentVector, XMVectorScale(desiredDirection, m_MovingSpeed * sceneContext.pGameTime->GetElapsed())) };
