@@ -8,6 +8,7 @@ public:
 		Diffindo,
 		Rictusempra,
 		Spongify,
+		Alahomora,
 		NR_SPELLS
 	};
 

@@ -20,9 +20,12 @@ public:
 
 protected:
 	void Initialize(const SceneContext& sceneContext) override;
-		 
+	//void Draw(const SceneContext& sceneContext) override;
+
 private:
 	// Variables
+	std::vector<SpriteComponent*> m_pHealthIcons{};
+
 	int m_NrBeans{};
 	GameObject* m_pBeanHUD{ nullptr };
 };

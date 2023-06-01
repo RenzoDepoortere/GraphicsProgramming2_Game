@@ -3,11 +3,12 @@
 
 #include "Prefabs/CubePrefab.h"
 
-MovingSpell::MovingSpell(float movementSpeed, GameObject* pHarry, CastableComponent::Spell spell, CastableComponent* pObjectToHit)
+MovingSpell::MovingSpell(float movementSpeed, GameObject* pHarry, CastableComponent::Spell spell, CastableComponent* pObjectToHit, const XMFLOAT3& hitPosition)
 	: m_MovingSpeed{ movementSpeed }
 	, m_pHarry{ pHarry }
 	, m_CurrentSpell{spell}
 	, m_pObjectToHit{ pObjectToHit }
+	, m_HitPosition{ hitPosition }
 {
 }
 
@@ -38,6 +39,9 @@ void MovingSpell::Initialize(const SceneContext& /*sceneContext*/)
 		break;
 	case CastableComponent::Spongify:
 		spellColor = XMFLOAT4{ 1.f, 0.5f, 0.f, 0.6f };
+		break;
+	case CastableComponent::Alahomora:
+		spellColor = XMFLOAT4{ 0.f, 0.f, 0.9f, 0.6f };
 		break;
 	}
 	settings.color = spellColor;
@@ -74,7 +78,12 @@ void MovingSpell::Update(const SceneContext& sceneContext)
 	// Calculate new position
 	const XMFLOAT3 currentPosition{ GetTransform()->GetPosition() };
 	const XMVECTOR currentVector{ XMLoadFloat3(&currentPosition) };
-	const XMVECTOR desiredVector{ XMLoadFloat3(&m_pObjectToHit->GetTransform()->GetWorldPosition()) };
+	
+	XMVECTOR desiredVector{ XMLoadFloat3(&m_HitPosition) };
+	if (MathHelper::XMFloat3Equals(m_HitPosition, {}))
+	{
+		desiredVector = XMLoadFloat3(&m_pObjectToHit->GetTransform()->GetWorldPosition());
+	}
 
 	const XMVECTOR desiredDirection{ XMVector3Normalize(XMVectorSubtract(desiredVector, currentVector)) };
 	const XMVECTOR newPos{ XMVectorAdd(currentVector, XMVectorScale(desiredDirection, m_MovingSpeed * sceneContext.pGameTime->GetElapsed())) };

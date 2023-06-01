@@ -53,6 +53,12 @@ void CastObject::Initialize(const SceneContext& /*sceneContext*/)
 
 	m_pMaterials[static_cast<int>(CastableComponent::Spongify)] = pMaterial;
 
+	// Alahomora
+	pMaterial = MaterialManager::Get()->CreateMaterial<BasicMaterial_Deferred>();
+	pMaterial->SetDiffuseMap(L"Textures/Spells/Alahomora.png");
+
+	m_pMaterials[static_cast<int>(CastableComponent::Alahomora)] = pMaterial;
+
 
 	// Set default
 	m_CurrentSpell = CastableComponent::Diffindo;

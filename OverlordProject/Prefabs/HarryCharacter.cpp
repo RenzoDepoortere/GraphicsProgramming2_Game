@@ -236,9 +236,15 @@ void HarryCharacter::HandleCastingObject(const SceneContext& sceneContext, bool 
 			m_pCastingObject->GetTransform()->Translate(hitPos);
 
 			// Check if is castable
+			bool wasSnail{ false };
+
 			CastableComponent* pCastable{ pHitObject->GetComponent<DestroyCastableComponent>(true) };
 			if (pCastable == nullptr) pCastable = pHitObject->GetComponent<BeansCastableComponent>(true);
-			if (pCastable == nullptr) pCastable = pHitObject->GetComponent<SnailCastableComponent>(true);
+			if (pCastable == nullptr)
+			{
+				pCastable = pHitObject->GetComponent<SnailCastableComponent>(true);
+				wasSnail = true;
+			}
 			if (pCastable == nullptr)
 			{
 				m_pCastingObject->SetIsCastable(false);
@@ -260,7 +266,14 @@ void HarryCharacter::HandleCastingObject(const SceneContext& sceneContext, bool 
 			{
 				// Send spell
 				const float spellMovementSpeed{ 15.f };
-				m_pMovingSpell = AddChild(new MovingSpell{ spellMovementSpeed, m_pCharacterMesh, pCastable->GetSpell(), pCastable });
+				if (wasSnail)
+				{
+					m_pMovingSpell = AddChild(new MovingSpell{ spellMovementSpeed, m_pCharacterMesh, pCastable->GetSpell(), pCastable });
+				}
+				else
+				{
+					m_pMovingSpell = AddChild(new MovingSpell{ spellMovementSpeed, m_pCharacterMesh, pCastable->GetSpell(), pCastable, hitPos });
+				}
 				m_pMovingSpell->GetTransform()->Translate(m_pCharacter->GetTransform()->GetWorldPosition());
 
 				// Set casted to
