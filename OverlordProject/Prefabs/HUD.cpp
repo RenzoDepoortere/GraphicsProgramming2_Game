@@ -35,13 +35,6 @@ void HUD::Initialize(const SceneContext& /*sceneContext*/)
 	//m_pBeanHUD->GetTransform()->Translate(0.f, 100.f, .9f);
 	//m_pBeanHUD->GetTransform()->Scale(0.5f);
 }
-//void HUD::Draw(const SceneContext& sceneContext)
-//{
-//	for (auto& currentSprite : m_pHealthIcons)
-//	{
-//		SpriteRenderer::Get()->DrawImmediate()
-//	}
-//}
 
 void HUD::SetHP(int /*hpAmount*/)
 {

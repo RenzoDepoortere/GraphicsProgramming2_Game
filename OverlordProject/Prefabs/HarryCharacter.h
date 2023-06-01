@@ -53,14 +53,15 @@ private:
 	// ---------
 
 	// Character
-	Character* m_pCharacter{};
-	GameObject* m_pCharacterMesh{};
+	Character* m_pCharacter{ nullptr };
+	GameObject* m_pCharacterMesh{ nullptr };
 
 	float m_GeneralScale{};
 	float m_ControllerHeight{};
 
 	CharacterStates m_CurrentCharacterState{ Idle };
 	ModelAnimator* m_pAnimator{};
+	bool m_GotHit{ false };
 
 	int m_CurrentHP{};
 
@@ -75,7 +76,7 @@ private:
 	void InitExternals();
 
 	void HandleMeshTransform();
-	void HandleAnimations(bool isForward, bool isBackward, bool isLeft, bool isRight, bool isAiming);
+	void HandleAnimations(bool isForward, bool isBackward, bool isLeft, bool isRight);
 
 	void HandleCastingObject(const SceneContext& sceneContext, bool isAiming);
 };

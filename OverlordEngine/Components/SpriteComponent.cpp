@@ -18,7 +18,7 @@ void SpriteComponent::SetTexture(const std::wstring& spriteAsset)
 	m_pTexture = ContentManager::Load<TextureData>(m_SpriteAsset);
 }
 
-void SpriteComponent::Draw(const SceneContext& sceneContext)
+void SpriteComponent::Draw(const SceneContext& /*sceneContext*/)
 {
 	if (!m_pTexture)
 		return;
@@ -36,7 +36,9 @@ void SpriteComponent::Draw(const SceneContext& sceneContext)
 	const XMFLOAT3 spriteScale{ pTransform->GetScale() };
 	const XMFLOAT3 spriteRotation{ MathHelper::QuaternionToEuler(pTransform->GetRotation()) };
 
-	SpriteRenderer::Get()->DrawImmediate(sceneContext.d3dContext, m_pTexture->GetShaderResourceView(),
-										XMFLOAT2{ spritePosition.x, spritePosition.y }, m_Color,
-										m_Pivot, XMFLOAT2{ spriteScale.x,spriteScale.y }, spriteRotation.z);
+	SpriteRenderer::Get()->AppendSprite(m_pTexture, XMFLOAT2{ spritePosition.x, spritePosition.y }, m_Color, m_Pivot, XMFLOAT2{ spriteScale.x, spriteScale.y }, spriteRotation.z, spritePosition.z);
+	
+	//SpriteRenderer::Get()->DrawImmediate(sceneContext.d3dContext, m_pTexture->GetShaderResourceView(),
+	//									XMFLOAT2{ spritePosition.x, spritePosition.y }, m_Color,
+	//									m_Pivot, XMFLOAT2{ spriteScale.x,spriteScale.y }, spriteRotation.z);
 }

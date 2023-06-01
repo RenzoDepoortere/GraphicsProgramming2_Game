@@ -21,6 +21,8 @@ public:
 
 	bool IsPlaying() const { return m_IsPlaying; }
 	bool IsReversed() const { return m_Reversed; }
+	bool PlayedOnce() const { return m_PlayedOnce; }
+
 	float GetAnimationSpeed() const { return m_AnimationSpeed; }
 	const AnimationClip& GetClip(int clipId) { ASSERT_IF_(clipId >= m_pMeshFilter->m_AnimationClips.size())return m_pMeshFilter->m_AnimationClips[clipId]; }
 	UINT GetClipCount() const { return UINT(m_pMeshFilter->m_AnimationClips.size()); }
@@ -33,5 +35,7 @@ private:
 	std::vector<XMFLOAT4X4> m_Transforms{};
 	bool m_IsPlaying{}, m_Reversed{}, m_ClipSet{};
 	float m_TickCount{}, m_AnimationSpeed{1.f};
+
+	bool m_PlayedOnce{ false };
 };
 

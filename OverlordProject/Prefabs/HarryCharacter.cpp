@@ -35,7 +35,7 @@ void HarryCharacter::Update(const SceneContext& sceneContext)
 	const bool isAiming{ sceneContext.pInput->IsActionTriggered(CharacterCast) };
 
 	HandleMeshTransform();
-	HandleAnimations(isForward, isBackward, isLeft, isRight, isAiming);
+	HandleAnimations(isForward, isBackward, isLeft, isRight);
 
 	HandleCastingObject(sceneContext, isAiming);
 }
@@ -50,17 +50,10 @@ void HarryCharacter::DealDamage(int amount)
 	{
 		// Dead
 		m_CurrentHP = 0;
-
-		// Dead animation
-
-	}
-	else
-	{
-		// Hit animation
-
 	}
 
-	// Change HUD
+	// Change states
+	m_GotHit = true;
 	m_pHUD->SetHP(m_CurrentHP);
 }
 void HarryCharacter::AddBean()
@@ -178,30 +171,68 @@ void HarryCharacter::HandleMeshTransform()
 	const float currentAngle{ totalYaw + angleBuffer };
 	m_pCharacterMesh->GetTransform()->Rotate(0.f, currentAngle, 0.f);
 }
-void HarryCharacter::HandleAnimations(bool isForward, bool isBackward, bool isLeft, bool isRight, bool /*isAiming*/)
+void HarryCharacter::HandleAnimations(bool isForward, bool isBackward, bool isLeft, bool isRight)
 {
 	// Change state
 	// ------------
 	const CharacterStates initialState{ m_CurrentCharacterState };
 	const bool isMoving{ isForward || isLeft || isRight || isBackward };
 
-	// Jumping
-	if (m_pCharacter->IsJumping() && (m_pCharacter->PressedJump() || m_CurrentCharacterState == CharacterStates::Jumping))
+	// If no hit
+	if (m_GotHit == false)
 	{
-		m_CurrentCharacterState = CharacterStates::Jumping;
+		// Jumping
+		if (m_pCharacter->IsJumping() && (m_pCharacter->PressedJump() || m_CurrentCharacterState == CharacterStates::Jumping))
+		{
+			m_CurrentCharacterState = CharacterStates::Jumping;
+		}
+		// Moving
+		else if (isMoving)
+		{
+			if (isForward)       m_CurrentCharacterState = CharacterStates::RunForward;
+			else if (isBackward) m_CurrentCharacterState = CharacterStates::RunBackward;
+			else if (isLeft)     m_CurrentCharacterState = CharacterStates::RunLeft;
+			else if (isRight)    m_CurrentCharacterState = CharacterStates::RunRight;
+		}
+		// Idle
+		else
+		{
+			m_CurrentCharacterState = CharacterStates::Idle;
+		}
 	}
-	// Moving
-	else if (isMoving)
-	{
-		if (isForward)       m_CurrentCharacterState = CharacterStates::RunForward;
-		else if (isBackward) m_CurrentCharacterState = CharacterStates::RunBackward;
-		else if (isLeft)     m_CurrentCharacterState = CharacterStates::RunLeft;
-		else if (isRight)    m_CurrentCharacterState = CharacterStates::RunRight;
-	}
-	// Idle
+	// Else, if hit
 	else
 	{
-		m_CurrentCharacterState = CharacterStates::Idle;
+		bool isSameState{};
+		const bool playedOnce{ m_pAnimator->PlayedOnce() };
+
+		// If dead
+		if (m_CurrentHP == 0)
+		{
+			// If Death animation
+			isSameState = m_CurrentCharacterState == CharacterStates::Death;
+			if (isSameState && playedOnce)
+			{
+				// Reload scene
+			}
+
+			// Set death state
+			m_CurrentCharacterState = CharacterStates::Death;
+		}
+		// Else
+		else
+		{
+			// If Hit animation
+			isSameState = m_CurrentCharacterState == CharacterStates::Hit;
+			if (isSameState && playedOnce)
+			{
+				// Return to normal
+				m_GotHit = false;
+			}
+
+			// Set hit state
+			m_CurrentCharacterState = CharacterStates::Hit;
+		}
 	}
 
 	// Change animations, if necessary

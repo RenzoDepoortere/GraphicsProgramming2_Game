@@ -48,6 +48,7 @@ void ModelAnimator::Update(const SceneContext& sceneContext)
 			if (m_TickCount > m_CurrentClip.duration)
 			{
 				m_TickCount -= m_CurrentClip.duration;
+				m_PlayedOnce = true;
 			}
 		}
 
@@ -122,7 +123,7 @@ void ModelAnimator::Update(const SceneContext& sceneContext)
 void ModelAnimator::SetAnimation(const std::wstring& clipName)
 {
 	//TODO_W6_()
-	
+
 	//Set m_ClipSet to false
 	m_ClipSet = false;
 
@@ -182,7 +183,8 @@ void ModelAnimator::SetAnimation(UINT clipNumber)
 void ModelAnimator::SetAnimation(const AnimationClip& clip)
 {
 	//TODO_W6_()
-	
+	m_PlayedOnce = false;
+
 	//Set m_ClipSet to true
 	m_ClipSet = true;
 
