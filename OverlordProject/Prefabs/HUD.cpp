@@ -44,12 +44,53 @@ void HUD::Initialize(const SceneContext& /*sceneContext*/)
 	m_pBeanHUD->GetTransform()->Scale(0.5f);
 
 	// Text
-
+	m_pFont = ContentManager::Load<SpriteFont>(L"SpriteFonts/Consolas_32.fnt");
+	m_FontPosition = XMFLOAT2{ 40.f, 150.f };
 }
 void HUD::Update(const SceneContext& sceneContext)
 {
 	// If no bean gained, return
 	if (m_BeanGained == false) return;
+	
+	ChangeBeanIcon(sceneContext);
+	ChangeBeanText();
+}
+
+
+void HUD::SetHP(int hpAmount)
+{
+	// Calculate full and half hearts
+	const int remainingFullHearts{ hpAmount / 2 };
+	const bool hasHalfHeart{ static_cast<bool>(hpAmount % 2) };
+
+	// If half left, change full into half
+	const std::wstring halfHealthString{ L"Textures/HUD/HalfHealth.png" };
+	if (hasHalfHeart)
+	{
+		m_pHealthIcons[remainingFullHearts]->SetTexture(halfHealthString);
+	}
+
+	// "Delete" all hearts from start index	
+	const size_t startIdxToDelete = hasHalfHeart ? remainingFullHearts + 1 : remainingFullHearts;
+	if (startIdxToDelete < m_pHealthIcons.size())
+	{
+		for (size_t idx{ startIdxToDelete }; idx < m_pHealthIcons.size(); ++idx)
+			m_pHealthIcons[idx]->GetTransform()->Scale(0.f);
+	}
+}
+void HUD::AddBean()
+{
+	// Add bean
+	++m_NrBeans;
+
+	// Prepare opacity change
+	m_BeanGained = true;
+	m_Dissapearing = false;
+	m_HoldTime = 0.f;
+}
+
+void HUD::ChangeBeanIcon(const SceneContext& sceneContext)
+{
 	const float deltaTime{ sceneContext.pGameTime->GetElapsed() };
 
 	// If holdTime
@@ -66,7 +107,7 @@ void HUD::Update(const SceneContext& sceneContext)
 
 	float newOpacity{};
 	float changeSpeed{ 0.4f };
-	
+
 	// If dissapearing
 	if (m_Dissapearing)
 	{
@@ -104,37 +145,7 @@ void HUD::Update(const SceneContext& sceneContext)
 	currentColor.w = newOpacity;
 	m_pBeanHUD->SetColor(currentColor);
 }
-
-
-void HUD::SetHP(int hpAmount)
+void HUD::ChangeBeanText()
 {
-	// Calculate full and half hearts
-	const int remainingFullHearts{ hpAmount / 2 };
-	const bool hasHalfHeart{ static_cast<bool>(hpAmount % 2) };
-
-	// If half left, change full into half
-	const std::wstring halfHealthString{ L"Textures/HUD/HalfHealth.png" };
-	if (hasHalfHeart)
-	{
-		m_pHealthIcons[remainingFullHearts]->SetTexture(halfHealthString);
-	}
-
-	// "Delete" all hearts from start index	
-	const size_t startIdxToDelete = hasHalfHeart ? remainingFullHearts + 1 : remainingFullHearts;
-	if (startIdxToDelete < m_pHealthIcons.size())
-	{
-		for (size_t idx{ startIdxToDelete }; idx < m_pHealthIcons.size(); ++idx)
-			m_pHealthIcons[idx]->GetTransform()->Scale(0.f);
-	}
-}
-void HUD::AddBean()
-{
-	// Add bean and set text
-	++m_NrBeans;
-
-
-	// Prepare opacity change
-	m_BeanGained = true;
-	m_Dissapearing = false;
-	m_HoldTime = 0.f;
+	TextRenderer::Get()->DrawText(m_pFont, std::to_wstring(m_NrBeans), m_FontPosition, m_pBeanHUD->GetColor());
 }

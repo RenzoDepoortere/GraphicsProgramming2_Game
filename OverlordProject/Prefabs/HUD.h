@@ -29,10 +29,16 @@ private:
 
 
 	SpriteComponent* m_pBeanHUD{ nullptr };
+	SpriteFont* m_pFont{ nullptr };
 
+	XMFLOAT2 m_FontPosition{};
 
 	int m_NrBeans{};
 	float m_HoldTime{};
 	bool m_BeanGained{ false };
 	bool m_Dissapearing{ false };
+
+	// Functions
+	void ChangeBeanIcon(const SceneContext& sceneContext);
+	void ChangeBeanText();
 };
