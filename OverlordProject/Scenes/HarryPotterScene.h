@@ -12,6 +12,9 @@ public:
 	HarryPotterScene& operator=(const HarryPotterScene& other) = delete;
 	HarryPotterScene& operator=(HarryPotterScene&& other) noexcept = delete;
 
+	// Functionality
+	void RestartLevel();
+
 private:
 	// Variables
 	// ---------
@@ -22,6 +25,9 @@ private:
 
 	bool m_CenterMouse{ true };
 
+	float m_PauseTimer{};
+	bool m_HasToReset{ false };
+
 	// Functions
 	// ---------
 
@@ -30,5 +36,9 @@ private:
 	void Update() override;
 	void PostDraw() override;
 	void OnGUI() override;
+
+	// Own
+	void HandleScene();
+	void DeleteChildren();
 };
 

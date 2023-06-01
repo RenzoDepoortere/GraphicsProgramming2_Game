@@ -14,6 +14,8 @@
 #include "Components/BeansCastableComponent.h"
 #include "Components/SnailCastableComponent.h"
 
+#include "Scenes/HarryPotterScene.h"
+
 HarryCharacter::HarryCharacter(float generalScale)
 	: m_GeneralScale{ generalScale }
 	, m_CurrentHP{ 6 }
@@ -214,6 +216,7 @@ void HarryCharacter::HandleAnimations(bool isForward, bool isBackward, bool isLe
 			if (isSameState && playedOnce)
 			{
 				// Reload scene
+				dynamic_cast<HarryPotterScene*>(GetScene())->RestartLevel();
 			}
 
 			// Set death state

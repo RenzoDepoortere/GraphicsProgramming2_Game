@@ -24,7 +24,7 @@ public:
 		return pObject;
 	}
 	void AddChild_(GameObject* pObject);
-	void RemoveChild(GameObject* pObject, bool deleteObject = false);
+	void RemoveChild(GameObject* pObject, bool deleteObject = false, bool removeFromVector = true);
 
 	const SceneContext& GetSceneContext() const { return m_SceneContext; }
 	SceneSettings& GetSceneSettings() { return m_SceneContext.settings; }
@@ -36,7 +36,7 @@ public:
 	void RemovePostProcessingEffect(UINT materialId);
 
 	PhysxProxy* GetPhysxProxy() const { return m_pPhysxProxy; }
-	void SetActiveCamera(CameraComponent* pCameraComponent);
+	void SetActiveCamera(CameraComponent* pCameraComponent, bool disablePreviousCam = true);
 
 protected:
 	virtual void Initialize() = 0;
@@ -49,6 +49,8 @@ protected:
 	virtual void OnGUI(){}
 	virtual void OnSceneActivated() {}
 	virtual void OnSceneDeactivated() {}
+
+	void ClearScene();
 
 	SceneContext m_SceneContext{};
 private:

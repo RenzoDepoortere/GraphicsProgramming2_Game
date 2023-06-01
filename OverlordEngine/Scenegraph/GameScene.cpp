@@ -45,7 +45,7 @@ void GameScene::AddChild_(GameObject* pObject)
 	pObject->RootOnSceneAttach(this);
 }
 
-void GameScene::RemoveChild(GameObject* pObject, bool deleteObject)
+void GameScene::RemoveChild(GameObject* pObject, bool deleteObject, bool removeFromVector)
 {
 	const auto it = std::ranges::find(m_pChildren, pObject);
 
@@ -57,7 +57,7 @@ void GameScene::RemoveChild(GameObject* pObject, bool deleteObject)
 	}
 #endif
 
-	m_pChildren.erase(it);
+	if(removeFromVector) m_pChildren.erase(it);
 	pObject->m_pParentScene = nullptr;
 	pObject->RootOnSceneDetach(this);
 
@@ -65,6 +65,29 @@ void GameScene::RemoveChild(GameObject* pObject, bool deleteObject)
 	{
 		SafeDelete(pObject);
 	}		
+}
+void GameScene::ClearScene()
+{
+	// Set default camera active
+	SetActiveCamera(m_pDefaultCamera);
+
+	// Delete all children
+	for (auto& currentChild : m_pChildren)
+	{
+		RemoveChild(currentChild, false, false);
+		SafeDelete(currentChild);
+	}
+
+	m_pChildren.clear();
+
+	// Default camera got deleted, so re-add
+	const auto pFreeCamera = new FreeCamera();
+	pFreeCamera->SetRotation(30, 0);
+	pFreeCamera->GetTransform()->Translate(0, 50, -80);
+	AddChild(pFreeCamera);
+
+	m_pDefaultCamera = pFreeCamera->GetComponent<CameraComponent>();
+	SetActiveCamera(m_pDefaultCamera, false);
 }
 
 void GameScene::RootInitialize(const GameContext& gameContext)
@@ -402,7 +425,7 @@ void GameScene::RemovePostProcessingEffect(PostProcessingMaterial* pMaterial)
 		m_PostProcessingMaterials.erase(std::ranges::remove(m_PostProcessingMaterials, pMaterial).begin());
 }
  
-void GameScene::SetActiveCamera(CameraComponent* pCameraComponent)
+void GameScene::SetActiveCamera(CameraComponent* pCameraComponent, bool disablePreviousCam)
 {
 	//Prevent recursion!
 	if (pCameraComponent == m_pActiveCamera)
@@ -411,7 +434,7 @@ void GameScene::SetActiveCamera(CameraComponent* pCameraComponent)
 	//Disable current active camera (if set)
 	const auto currActiveCamera = m_pActiveCamera;
 	m_pActiveCamera = nullptr;
-	if (currActiveCamera)
+	if (currActiveCamera && disablePreviousCam)
 		currActiveCamera->SetActive(false);
 
 	//Set new camera

@@ -47,14 +47,8 @@ void HarryPotterScene::Initialize()
 
 void HarryPotterScene::Update()
 {
-	// Toggle hide and set mouse
-	if (m_SceneContext.pInput->IsKeyboardKey(InputState::pressed, '1'))
-	{
-		m_CenterMouse = !m_CenterMouse;
-		m_SceneContext.pInput->CursorVisible(!m_CenterMouse);
-	}
-
-	m_SceneContext.pInput->ForceMouseToCenter(m_CenterMouse);
+	HandleScene();
+	if (m_HasToReset) DeleteChildren();
 }
 
 void HarryPotterScene::PostDraw()
@@ -68,11 +62,43 @@ void HarryPotterScene::PostDraw()
 
 void HarryPotterScene::OnGUI()
 {
-	// Harry
-	m_pHarry->GetCharacter()->DrawImGui();
-	//m_pHarry->GetParticleEmitter()->DrawImGui();
+	if (m_pHarry)
+	{
+		// Harry
+		m_pHarry->GetCharacter()->DrawImGui();
+		//m_pHarry->GetParticleEmitter()->DrawImGui();
+	}
 
 	// Shadow
 	ImGui::Checkbox("Draw ShadowMap", &m_DrawShadowMap);
 	//ImGui::SliderFloat("ShadowMap Scale", &m_ShadowMapScale, 0.f, 1.f);
+}
+
+void HarryPotterScene::HandleScene()
+{
+	// Toggle hide and set mouse
+	if (m_SceneContext.pInput->IsKeyboardKey(InputState::pressed, '1'))
+	{
+		m_CenterMouse = !m_CenterMouse;
+		m_SceneContext.pInput->CursorVisible(!m_CenterMouse);
+	}
+
+	m_SceneContext.pInput->ForceMouseToCenter(m_CenterMouse);
+}
+
+void HarryPotterScene::DeleteChildren()
+{
+	// Delete children
+	ClearScene();
+
+	// Re-Initialize
+	Initialize();
+
+	// Reset bool
+	m_HasToReset = false;
+}
+
+void HarryPotterScene::RestartLevel()
+{
+	m_HasToReset = true;
 }
