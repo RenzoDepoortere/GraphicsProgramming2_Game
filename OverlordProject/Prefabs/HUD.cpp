@@ -22,7 +22,7 @@ void HUD::Initialize(const SceneContext& /*sceneContext*/)
 		pComponent = pObject->AddComponent(new SpriteComponent(fullHealthString));
 		
 		// Translate
-		pObject->GetTransform()->Translate(textureWidth * idx, 0.f, idx / 10.f);
+		pObject->GetTransform()->Translate(textureWidth / 2.f * idx, 10.f, 0.9f);
 
 		// Add to vector
 		m_pHealthIcons.emplace_back(pComponent);

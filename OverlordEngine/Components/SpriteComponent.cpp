@@ -31,7 +31,10 @@ void SpriteComponent::Draw(const SceneContext& /*sceneContext*/)
 	// You can use the MathHelper::QuaternionToEuler function to help you with the z rotation 
 	
 	const TransformComponent* pTransform{ GetTransform() };
+	
 	const XMFLOAT3 spriteWorldPosition{ pTransform->GetWorldPosition() };
+
+
 	const XMFLOAT3 spritePosition{ pTransform->GetPosition() };
 	const XMFLOAT3 spriteScale{ pTransform->GetScale() };
 	const XMFLOAT3 spriteRotation{ MathHelper::QuaternionToEuler(pTransform->GetRotation()) };
