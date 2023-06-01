@@ -11,8 +11,6 @@ void HUD::Initialize(const SceneContext& /*sceneContext*/)
 	SpriteComponent* pComponent{};
 
 	const std::wstring fullHealthString{L"Textures/HUD/Health.png"};
-	const std::wstring halfHealthString{L"Textures/HUD/HalfHealth.png"};
-
 	const float textureWidth{ 64.f };
 
 	for (int idx{}; idx < nrHealthIcons; ++idx)
@@ -36,9 +34,26 @@ void HUD::Initialize(const SceneContext& /*sceneContext*/)
 	//m_pBeanHUD->GetTransform()->Scale(0.5f);
 }
 
-void HUD::SetHP(int /*hpAmount*/)
+void HUD::SetHP(int hpAmount)
 {
-	
+	// Calculate full and half hearts
+	const int remainingFullHearts{ hpAmount / 2 };
+	const bool hasHalfHeart{ static_cast<bool>(hpAmount % 2) };
+
+	// If half left, change full into half
+	const std::wstring halfHealthString{ L"Textures/HUD/HalfHealth.png" };
+	if (hasHalfHeart)
+	{
+		m_pHealthIcons[remainingFullHearts]->SetTexture(halfHealthString);
+	}
+
+	// "Delete" all hearts from start index	
+	const size_t startIdxToDelete = hasHalfHeart ? remainingFullHearts + 1 : remainingFullHearts;
+	if (startIdxToDelete < m_pHealthIcons.size())
+	{
+		for (size_t idx{ startIdxToDelete }; idx < m_pHealthIcons.size(); ++idx)
+			m_pHealthIcons[idx]->GetTransform()->Scale(0.f);
+	}
 }
 void HUD::AddBean()
 {
