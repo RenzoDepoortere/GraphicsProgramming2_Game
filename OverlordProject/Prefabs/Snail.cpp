@@ -58,6 +58,7 @@ void Snail::Update(const SceneContext& sceneContext)
 	HandleTransform(sceneContext);
 
 	HandleAttacking(sceneContext);
+	CheckHarry();
 	HandleTrail(sceneContext);
 }
 

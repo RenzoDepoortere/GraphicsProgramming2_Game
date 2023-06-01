@@ -51,7 +51,17 @@ void HarryCharacter::DealDamage(int amount)
 		// Dead
 		m_CurrentHP = 0;
 
+		// Dead animation
+
 	}
+	else
+	{
+		// Hit animation
+
+	}
+
+	// Change HUD
+	m_pHUD->SetHP(m_CurrentHP);
 }
 void HarryCharacter::AddBean()
 {
@@ -153,7 +163,7 @@ void HarryCharacter::InitExternals()
 	m_pCastingObject = GetScene()->AddChild(new CastObject{ m_pCharacter });
 
 	// HUD
-	//m_pHUD = GetScene()->AddChild(new HUD{});
+	m_pHUD = GetScene()->AddChild(new HUD{});
 }
 
 void HarryCharacter::HandleMeshTransform()

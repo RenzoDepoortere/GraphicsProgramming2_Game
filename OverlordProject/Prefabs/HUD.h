@@ -20,10 +20,9 @@ public:
 
 protected:
 	void Initialize(const SceneContext& sceneContext) override;
-	void Draw(const SceneContext& sceneContext) override;
 		 
 private:
 	// Variables
 	int m_NrBeans{};
-	BasicMaterial_Deferred* m_pBeanMaterial{ nullptr };
+	GameObject* m_pBeanHUD{ nullptr };
 };
