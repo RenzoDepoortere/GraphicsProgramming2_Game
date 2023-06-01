@@ -7,7 +7,7 @@
 
 #include "Materials/BasicMaterial_Deferred.h"
 
-BeansProp::BeansProp(float generalScale, GameObject* pHarry, CastableComponent::Spell spell, const std::wstring& resourceName)
+BeansProp::BeansProp(float generalScale, HarryCharacter* pHarry, CastableComponent::Spell spell, const std::wstring& resourceName)
 	: m_GeneralScale{ generalScale }
 	, m_pHarry{ pHarry }
 	, m_Spell{ spell }

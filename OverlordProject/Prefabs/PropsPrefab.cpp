@@ -6,7 +6,7 @@
 
 #include "Components/CastableComponent.h"
 
-PropsPrefab::PropsPrefab(float generalScale, GameObject* pHarry)
+PropsPrefab::PropsPrefab(float generalScale, HarryCharacter* pHarry)
 	: m_GeneralScale{ generalScale }
 	, m_pHarry{ pHarry }
 {

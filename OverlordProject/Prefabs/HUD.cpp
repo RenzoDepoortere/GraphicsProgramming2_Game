@@ -3,17 +3,22 @@
 
 #include "Materials/BasicMaterial_Deferred.h"
 
+HUD::HUD(int maxHP)
+	: m_MaxHP{ maxHP }
+{
+}
+
 void HUD::Initialize(const SceneContext& /*sceneContext*/)
 {
 	// Health
-	const int nrHealthIcons{ 3 };
+	// ------
 	GameObject* pObject{};
 	SpriteComponent* pComponent{};
 
 	const std::wstring fullHealthString{L"Textures/HUD/Health.png"};
 	const float textureWidth{ 64.f };
 
-	for (int idx{}; idx < nrHealthIcons; ++idx)
+	for (int idx{}; idx < m_MaxHP / 2; ++idx)
 	{
 		// Create object
 		pObject = AddChild(new GameObject{});
@@ -26,13 +31,80 @@ void HUD::Initialize(const SceneContext& /*sceneContext*/)
 		m_pHealthIcons.emplace_back(pComponent);
 	}
 
-	//// Beans
-	//m_pBeanHUD = AddChild(new GameObject{});
-	//m_pBeanHUD->AddComponent(new SpriteComponent(L"Textures/HUD/Bean.png"));
+	// Beans
+	// -----
 
-	//m_pBeanHUD->GetTransform()->Translate(0.f, 100.f, .9f);
-	//m_pBeanHUD->GetTransform()->Scale(0.5f);
+	// Icon
+	pObject = AddChild(new GameObject{});
+	m_pBeanHUD = pObject->AddComponent(new SpriteComponent(L"Textures/HUD/Bean.png"));
+	
+	m_pBeanHUD->SetColor(XMFLOAT4{ 1.f, 1.f, 1.f, 0.f });
+
+	m_pBeanHUD->GetTransform()->Translate(0.f, 100.f, .9f);
+	m_pBeanHUD->GetTransform()->Scale(0.5f);
+
+	// Text
+
 }
+void HUD::Update(const SceneContext& sceneContext)
+{
+	// If no bean gained, return
+	if (m_BeanGained == false) return;
+	const float deltaTime{ sceneContext.pGameTime->GetElapsed() };
+
+	// If holdTime
+	if (0 < m_HoldTime)
+	{
+		// Decrease and return
+		m_HoldTime -= deltaTime;
+		return;
+	}
+
+	// Calculate new opacity
+	// ---------------------
+	XMFLOAT4 currentColor{ m_pBeanHUD->GetColor() };
+
+	float newOpacity{};
+	float changeSpeed{ 0.4f };
+	
+	// If dissapearing
+	if (m_Dissapearing)
+	{
+		// New opacity
+		newOpacity = currentColor.w - changeSpeed * deltaTime;
+
+		// If full opacity
+		if (newOpacity <= 0.f)
+		{
+			// Clamp and stop change
+			newOpacity = 0.f;
+
+			m_BeanGained = false;
+		}
+	}
+	// If appearing
+	else
+	{
+		// New opacity
+		changeSpeed *= 4.f;
+		newOpacity = currentColor.w + changeSpeed * deltaTime;
+
+		// If fully opaque
+		if (1.f <= newOpacity)
+		{
+			// Clamp and hold for a moment
+			newOpacity = 1.f;
+
+			m_HoldTime = 2.f;
+			m_Dissapearing = true;
+		}
+	}
+
+	// Set opacity
+	currentColor.w = newOpacity;
+	m_pBeanHUD->SetColor(currentColor);
+}
+
 
 void HUD::SetHP(int hpAmount)
 {
@@ -57,6 +129,12 @@ void HUD::SetHP(int hpAmount)
 }
 void HUD::AddBean()
 {
+	// Add bean and set text
 	++m_NrBeans;
 
+
+	// Prepare opacity change
+	m_BeanGained = true;
+	m_Dissapearing = false;
+	m_HoldTime = 0.f;
 }

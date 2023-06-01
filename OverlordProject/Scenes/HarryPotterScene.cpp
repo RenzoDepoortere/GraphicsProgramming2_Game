@@ -42,7 +42,7 @@ void HarryPotterScene::Initialize()
 	AddChild(new CastlePrefab(generalScale));
 
 	// Props
-	AddChild(new PropsPrefab(generalScale, m_pHarry->GetCharacter()));
+	AddChild(new PropsPrefab(generalScale, m_pHarry));
 }
 
 void HarryPotterScene::Update()

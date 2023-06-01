@@ -3,8 +3,9 @@
 
 #include "../OverlordProject/Prefabs/Bean.h"
 #include "../OverlordProject/Prefabs/BeansProp.h"
+#include "../OverlordProject/Prefabs/HarryCharacter.h"
 
-BeansCastableComponent::BeansCastableComponent(float generalScale, GameObject* pHarry, Spell spell, BeansProp* pProp)
+BeansCastableComponent::BeansCastableComponent(float generalScale, HarryCharacter* pHarry, Spell spell, BeansProp* pProp)
 	: m_GeneralScale{ generalScale }
 	, m_pHarry{ pHarry }
 	, CastableComponent{ spell }
@@ -54,7 +55,7 @@ void BeansCastableComponent::Update(const SceneContext& sceneContext)
 	}
 }
 
-void BeansCastableComponent::Activate(GameObject* pHarry)
+void BeansCastableComponent::Activate(GameObject* /*pHarry*/)
 {
 	// If already activated, return
 	if (m_HasBeenActivated) return;
@@ -65,7 +66,6 @@ void BeansCastableComponent::Activate(GameObject* pHarry)
 	m_SpawnBeans = true;
 
 	// Get position
-	m_pHarry = pHarry;
 	m_PreviousLocation = GetGameObject()->GetTransform()->GetWorldPosition();
 
 	// Set object to jump

@@ -1,11 +1,13 @@
 #pragma once
 #include "Components/CastableComponent.h"
 
+class HarryCharacter;
+
 class BeansProp final : public GameObject
 {
 public:
 	// Rule of five
-	BeansProp(float generalScale, GameObject* pHarry, CastableComponent::Spell spell, const std::wstring& resourceName = L"");
+	BeansProp(float generalScale, HarryCharacter* pHarry, CastableComponent::Spell spell, const std::wstring& resourceName = L"");
 	~BeansProp() override = default;
 
 	BeansProp(const BeansProp& other) = delete;
@@ -24,7 +26,7 @@ private:
 	// Variables
 	// ---------
 	float m_GeneralScale{};
-	GameObject* m_pHarry{};
+	HarryCharacter* m_pHarry{};
 	RigidBodyComponent* m_pRigidBody{};
 
 	CastableComponent::Spell m_Spell{};

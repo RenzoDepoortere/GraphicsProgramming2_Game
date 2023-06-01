@@ -1,4 +1,5 @@
 #pragma once
+
 class CastableComponent : public BaseComponent
 {
 public:

@@ -3,7 +3,10 @@
 
 #include "Materials/BasicMaterial_Deferred.h"
 
-Bean::Bean(float generalScale, GameObject* pHarry, const XMFLOAT3& spawnLocation, const XMFLOAT3& forceDirection)
+#include "Prefabs/HarryCharacter.h"
+#include "Prefabs/Character.h"
+
+Bean::Bean(float generalScale, HarryCharacter* pHarry, const XMFLOAT3& spawnLocation, const XMFLOAT3& forceDirection)
 	: m_GeneralScale{ generalScale }
 	, m_pHarry{ pHarry }
 	, m_SpawnLocation{ spawnLocation }
@@ -63,7 +66,7 @@ void Bean::Update(const SceneContext& sceneContext)
 	// Check if Harry close enough
 	const float minSqrdDistanceBetwn{ 2.5f };
 
-	const XMFLOAT3 harryPos{ m_pHarry->GetTransform()->GetWorldPosition() };
+	const XMFLOAT3 harryPos{ m_pHarry->GetCharacter()->GetTransform()->GetWorldPosition()};
 	const XMFLOAT3 direction{ MathHelper::DirectionTo(GetTransform()->GetWorldPosition(), harryPos, false) };
 	const float sqrdDistance{ XMVectorGetX(XMVector3LengthSq(XMLoadFloat3(&direction))) };
 
@@ -72,6 +75,9 @@ void Bean::Update(const SceneContext& sceneContext)
 		// Sound
 
 		// Particle
+
+		// Add bean
+		m_pHarry->AddBean();
 
 		// Delete
 		GetTransform()->Translate(XMFLOAT3{});

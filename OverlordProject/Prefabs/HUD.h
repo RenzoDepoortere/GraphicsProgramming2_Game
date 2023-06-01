@@ -6,7 +6,7 @@ class HUD final : public GameObject
 {
 public:
 	// Rule of five
-	HUD() = default;
+	HUD(int maxHP);
 	~HUD() override = default;
 
 	HUD(const HUD& other) = delete;
@@ -20,11 +20,19 @@ public:
 
 protected:
 	void Initialize(const SceneContext& sceneContext) override;
+	void Update(const SceneContext& sceneContext) override;
 
 private:
 	// Variables
+	int m_MaxHP{};
 	std::vector<SpriteComponent*> m_pHealthIcons{};
 
+
+	SpriteComponent* m_pBeanHUD{ nullptr };
+
+
 	int m_NrBeans{};
-	GameObject* m_pBeanHUD{ nullptr };
+	float m_HoldTime{};
+	bool m_BeanGained{ false };
+	bool m_Dissapearing{ false };
 };

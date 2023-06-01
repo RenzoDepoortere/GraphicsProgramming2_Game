@@ -2,11 +2,13 @@
 #include "CastableComponent.h"
 
 class BeansProp;
+class HarryCharacter;
+
 class BeansCastableComponent final : public CastableComponent
 {
 public:
 	// Rule of five
-	BeansCastableComponent(float generalScale, GameObject* pHarry, Spell spell, BeansProp* pProp);
+	BeansCastableComponent(float generalScale, HarryCharacter* pHarry, Spell spell, BeansProp* pProp);
 	virtual ~BeansCastableComponent() override = default;
 
 	BeansCastableComponent(const BeansCastableComponent& other) = delete;
@@ -38,7 +40,7 @@ private:
 	// ----------------
 	bool m_HasBeenActivated{ false };
 	float m_GeneralScale{};
-	GameObject* m_pHarry{};
+	HarryCharacter* m_pHarry{};
 	BeansProp* m_pProp{};
 
 	// Beans
