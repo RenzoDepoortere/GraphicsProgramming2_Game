@@ -1,28 +1,50 @@
 #include "stdafx.h"
 #include "Character.h"
 
-Character::Character(const CharacterDesc& characterDesc) :
-	m_CharacterDesc{ characterDesc },
-	m_MoveAcceleration(characterDesc.maxMoveSpeed / characterDesc.moveAccelerationTime),
-	m_FallAcceleration(characterDesc.maxFallSpeed / characterDesc.fallAccelerationTime)
+Character::Character(const CharacterDesc& characterDesc)
+	: m_CharacterDesc{ characterDesc }
+	, m_MoveAcceleration(characterDesc.maxMoveSpeed / characterDesc.moveAccelerationTime)
+	, m_FallAcceleration(characterDesc.maxFallSpeed / characterDesc.fallAccelerationTime)
+	, m_StartCooldown{ 1.f }
 {}
 
 void Character::Initialize(const SceneContext& /*sceneContext*/)
 {
-	//Controller
+	// Controller
+	// ----------
 	m_pControllerComponent = AddComponent(new ControllerComponent(m_CharacterDesc.controller));
 
-	//Camera
+	// Camera
+	// ------
 	const auto pCamera = AddChild(new FixedCamera());
 	m_pCameraComponent = pCamera->GetComponent<CameraComponent>();
 	m_pCameraComponent->SetActive(true); //Uncomment to make this camera the active camera
 
-	pCamera->GetTransform()->Translate(0.f, m_CharacterDesc.controller.height * 0.75f, -2.5f);
+	//// Collision
+	//PxMaterial* pDefaultMaterial = PxGetPhysics().createMaterial(0.5f, 0.5f, 0.5f);
+
+	//RigidBodyComponent* pActor = pCamera->AddComponent(new RigidBodyComponent(true));
+	//pActor->AddCollider(PxBoxGeometry{ 0.5f, 0.5f, 0.5f }, *pDefaultMaterial);
+
+	// Transform
+	const XMFLOAT3 translation{ 0.f, m_CharacterDesc.controller.height * 0.75f, -2.5f };
+	pCamera->GetTransform()->Translate(translation);
+
+	// Distance
+	m_DistanceFromCamera = XMVectorGetX(XMVector3Length(XMLoadFloat3(&translation)));
 }
 
 void Character::Update(const SceneContext& sceneContext)
 {
 	Input(sceneContext);
+
+	//// Cooldown
+	//if (0 < m_StartCooldown)
+	//{
+	//	m_StartCooldown -= sceneContext.pGameTime->GetElapsed();
+	//	return;
+	//}
+	//LockCamera(sceneContext);
 }
 
 void Character::DrawImGui()
@@ -67,6 +89,9 @@ void Character::DrawImGui()
 
 void Character::Input(const SceneContext& sceneContext)
 {
+	// Return if dead
+	if (m_IsDead) return;
+
 	if (m_pCameraComponent->IsActive())
 	{
 		constexpr float epsilon{ 0.01f }; //Constant that can be used to compare if a float is near zero
@@ -229,5 +254,52 @@ void Character::Input(const SceneContext& sceneContext)
 
 		//The above is a simple implementation of Movement Dynamics, adjust the code to further improve the movement logic and behaviour.
 		//Also, it can be usefull to use a seperate RayCast to check if the character is grounded (more responsive)
+	}
+}
+void Character::LockCamera(const SceneContext& /*sceneContext*/)
+{
+	// Get raycast variables
+	XMFLOAT3 rayDirection = m_pCameraComponent->GetTransform()->GetForward();
+	XMVECTOR rayDirectionVector = XMVector3Normalize(XMLoadFloat3(&rayDirection));
+	rayDirectionVector = XMVectorScale(rayDirectionVector, -1.f);
+	XMStoreFloat3(&rayDirection, rayDirectionVector);
+
+	const XMFLOAT3 cameraPos{ m_pCameraComponent->GetTransform()->GetWorldPosition() };
+	const XMFLOAT3 characterPos{ GetTransform()->GetWorldPosition() };
+
+	const PxVec3 raycastStart{ characterPos.x, characterPos.y, characterPos.z };
+	const PxVec3 raycastDir{ rayDirection.x, rayDirection.y ,rayDirection.z };
+
+	// Raycast
+	PxRaycastBuffer hit{};
+	if (GetScene()->GetPhysxProxy()->Raycast(raycastStart, raycastDir, PX_MAX_F32, hit))
+	{
+		PxRigidActor* pHitActor{ hit.block.actor };
+		GameObject* pHitGameObject{ reinterpret_cast<BaseComponent*>(pHitActor->userData)->GetGameObject() };
+
+		// If hitObject isn't camera
+		if (pHitGameObject != m_pCameraComponent->GetGameObject() && hit.block.distance <= m_DistanceFromCamera)
+		{
+			// Set cameraPos to hitPos
+			const PxVec3 hitPos{ raycastDir * hit.block.distance };
+			m_pCameraComponent->GetTransform()->Translate(hitPos.x, hitPos.y, hitPos.z);
+
+			m_ChangedCameraPos = true;
+		}
+		// Else, if changed pos
+		else if (m_ChangedCameraPos)
+		{
+			m_ChangedCameraPos = false;
+
+			// Calculate new position
+			XMFLOAT3 cameraForward = m_pCameraComponent->GetTransform()->GetForward();
+			XMVECTOR forwardVector = XMVector3Normalize(XMLoadFloat3(&cameraForward));
+			forwardVector = XMVectorScale(forwardVector, -1.f);
+
+			const XMVECTOR newPos{ XMVectorScale(forwardVector, m_DistanceFromCamera) };
+
+			// Set position
+			m_pCameraComponent->GetTransform()->Translate(newPos);
+		}
 	}
 }

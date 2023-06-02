@@ -36,6 +36,7 @@ void HarryCharacter::Update(const SceneContext& sceneContext)
 	const bool isRight{ sceneContext.pInput->IsActionTriggered(CharacterMoveRight) };
 	const bool isAiming{ sceneContext.pInput->IsActionTriggered(CharacterCast) };
 
+	// Calls
 	HandleMeshTransform();
 	HandleAnimations(isForward, isBackward, isLeft, isRight);
 
@@ -52,6 +53,7 @@ void HarryCharacter::DealDamage(int amount)
 	{
 		// Dead
 		m_CurrentHP = 0;
+		m_pCharacter->SetIsDead(true);
 	}
 
 	// Change states
@@ -163,6 +165,9 @@ void HarryCharacter::InitExternals()
 
 void HarryCharacter::HandleMeshTransform()
 {
+	// Return if dead
+	if (m_CurrentHP == 0) return;
+
 	// Rotation
 	// --------
 	if (m_pCharacter->IsJumping()) return;
@@ -215,7 +220,8 @@ void HarryCharacter::HandleAnimations(bool isForward, bool isBackward, bool isLe
 			isSameState = m_CurrentCharacterState == CharacterStates::Death;
 			if (isSameState && playedOnce)
 			{
-				// Reload scene
+				// Stop animations and reload scene
+				m_pAnimator->Pause();
 				dynamic_cast<HarryPotterScene*>(GetScene())->RestartLevel();
 			}
 
@@ -249,6 +255,9 @@ void HarryCharacter::HandleAnimations(bool isForward, bool isBackward, bool isLe
 
 void HarryCharacter::HandleCastingObject(const SceneContext& sceneContext, bool isAiming)
 {
+	// Return if dead
+	if (m_CurrentHP == 0) return;
+
 	// Lambdas
 	auto resetCastingObject = [&]()
 	{

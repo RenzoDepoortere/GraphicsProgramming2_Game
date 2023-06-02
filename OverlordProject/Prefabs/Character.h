@@ -54,6 +54,7 @@ public:
 	const XMFLOAT3& GetCurrentDirection() const { return m_CurrentDirection; }
 
 	CameraComponent* GetCamera() const { return m_pCameraComponent; }
+	void SetIsDead(bool isDead) { m_IsDead = isDead; }
 
 protected:
 	void Initialize(const SceneContext&) override;
@@ -79,7 +80,14 @@ private:
 	XMFLOAT3 m_Forward{};
 	XMFLOAT3 m_Right{};
 
+	float m_DistanceFromCamera{};
+	bool m_ChangedCameraPos{ false };
+	bool m_IsDead{ false };
+
+	float m_StartCooldown{};
+
 	// Member functions
 	void Input(const SceneContext& sceneContext);
+	void LockCamera(const SceneContext& sceneContext);
 };
 
