@@ -22,6 +22,8 @@ public:
 	void SetRenderTarget(RenderTarget* renderTarget);
 	RenderTarget* GetRenderTarget() const;
 
+	void CloseGame() { m_CloseGame = true; }
+
 protected:
 	virtual void OnGamePreparing(GameContext& /*gameContext*/){}
 	virtual LRESULT WindowProcedureHook(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
@@ -54,5 +56,8 @@ private:
 	D3D11_VIEWPORT m_Viewport{};
 
 	GameContext m_GameContext{};
+
+	// Other
+	bool m_CloseGame{ false };
 };
 

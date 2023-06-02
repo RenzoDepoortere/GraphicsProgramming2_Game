@@ -78,7 +78,7 @@ HRESULT OverlordGame::Run(HINSTANCE hInstance)
 
 	MSG msg;
 	ZeroMemory(&msg, sizeof(MSG));
-	while(msg.message != WM_QUIT)
+	while(msg.message != WM_QUIT && m_CloseGame == false)
 	{
 		while(PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
 		{

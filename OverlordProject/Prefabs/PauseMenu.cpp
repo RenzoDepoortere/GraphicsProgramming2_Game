@@ -19,9 +19,10 @@ void PauseMenu::Initialize(const SceneContext& sceneContext)
 
 	// Buttons
 	// -------
-	//const float distanceBetween{ 25.f };
 	const XMFLOAT3 buttonScale{ 0.2f, 0.1f, 1.f };
 	m_ButtonSize = {230.4f,  64.8f };
+	const float distanceBetween{ m_ButtonSize.y + 50.f };
+
 	XMFLOAT3 position{};
 
 	m_pFont = ContentManager::Load<SpriteFont>(L"SpriteFonts/Consolas_32.fnt");
@@ -36,6 +37,18 @@ void PauseMenu::Initialize(const SceneContext& sceneContext)
 	m_pRestart->GetTransform()->Scale(buttonScale);
 
 	auto pair = std::make_pair(L"Restart", XMFLOAT2{ position.x - m_ButtonSize.x / 4, position.y - m_ButtonSize.y / 4});
+	m_FontData.emplace_back(pair);
+
+	// Exit
+	pObject = AddChild(new GameObject{});
+	m_pExit = pObject->AddComponent(new SpriteComponent(L"Textures/Menu/WhiteScreen.png", XMFLOAT2{ 0.5f, 0.5f }));
+	m_pExit->SetColor(disable);
+
+	position = XMFLOAT3{ sceneContext.windowWidth / 2, sceneContext.windowHeight / 2 + distanceBetween, .8f };
+	m_pExit->GetTransform()->Translate(position);
+	m_pExit->GetTransform()->Scale(buttonScale);
+
+	pair = std::make_pair(L"Exit", XMFLOAT2{ position.x - m_ButtonSize.x / 4, position.y - m_ButtonSize.y / 4 });
 	m_FontData.emplace_back(pair);
 }
 
@@ -55,10 +68,12 @@ void PauseMenu::SetActive(bool isActive)
 	if (isActive)
 	{
 		// Show pauseMenu
+		const XMFLOAT4 red{ 0.8f, 0.f, 0.f, 0.5f };
+
 		m_pBackground->SetColor(XMFLOAT4{ 1.f, 1.f, 1.f, 0.5f });
 
-		const XMFLOAT4 red{ 0.8f, 0.f, 0.f, 0.5f };
 		m_pRestart->SetColor(red);
+		m_pExit->SetColor(red);
 	}
 	else
 	{
@@ -68,6 +83,7 @@ void PauseMenu::SetActive(bool isActive)
 		m_pBackground->SetColor(disable);
 
 		m_pRestart->SetColor(disable);
+		m_pExit->SetColor(disable);
 	}
 }
 
@@ -111,6 +127,26 @@ void PauseMenu::HandleButtons(const SceneContext& sceneContext)
 	}
 	// Else, color to normal
 	else m_pRestart->SetColor(normalColor);
+
+	// Exit
+	// ----
+
+	// If inside range
+	if (IsInsideRange(left, right, 1, mousePos))
+	{
+		// Set select color
+		m_pExit->SetColor(selectedColor);
+
+		// Close game
+		if (mousePressed)
+		{
+			GetScene()->CloseGame();
+		}
+
+		return;
+	}
+	// Else, color to normal
+	else m_pExit->SetColor(normalColor);
 }
 
 bool PauseMenu::IsInsideRange(float left, float right, int index, const POINT& mousePos)

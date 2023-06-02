@@ -173,6 +173,12 @@ void GameScene::RootUpdate()
 
 		m_pPhysxProxy->Update(m_SceneContext);
 	}
+
+	// If has to close game
+	if (m_HasToCloseGame)
+	{
+		m_pGame->CloseGame();
+	}
 }
 
 void GameScene::RootDraw()

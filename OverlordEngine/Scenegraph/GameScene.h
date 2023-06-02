@@ -38,6 +38,8 @@ public:
 	PhysxProxy* GetPhysxProxy() const { return m_pPhysxProxy; }
 	void SetActiveCamera(CameraComponent* pCameraComponent, bool disablePreviousCam = true);
 
+	void CloseGame() { m_HasToCloseGame = true; }
+
 protected:
 	virtual void Initialize() = 0;
 	virtual void PostInitialize() {};
@@ -76,4 +78,5 @@ private:
 	OverlordGame* m_pGame{};
 
 	bool m_UpdateChildren{ true };
+	bool m_HasToCloseGame{ false };
 };
