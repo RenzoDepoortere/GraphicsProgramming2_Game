@@ -32,6 +32,7 @@ void HarryPotterScene::Initialize()
 	m_SceneContext.settings.drawGrid = false;
 	m_SceneContext.settings.drawPhysXDebug = false;
 	m_SceneContext.settings.enableOnGUI = true;
+	m_SceneContext.settings.showInfoOverlay = false;
 	m_SceneContext.useDeferredRendering = true;
 
 	// Mouse settings

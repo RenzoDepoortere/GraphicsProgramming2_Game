@@ -29,6 +29,11 @@ private:
 	SpriteComponent* m_pControls{ nullptr };
 	SpriteComponent* m_pExit{ nullptr };
 
+	bool m_InControls{ false };
+	SpriteComponent* m_pControlsBG{ nullptr };
+	SpriteComponent* m_pControlButton{ nullptr };
+	XMFLOAT2 m_ControlLeftRightPos{};
+
 	SpriteFont* m_pFont{ nullptr };
 	std::vector<std::pair<std::wstring, XMFLOAT2>> m_FontData{};
 
@@ -36,5 +41,7 @@ private:
 	void HandleText();
 	void HandleButtons(const SceneContext& sceneContext);
 
-	bool IsInsideRange(float left, float right, int index, const POINT& mousePos);
+	bool IsInsideRange(float left, float right, int index, const POINT& mousePos, bool lowerWithHalf = false);
+
+	void SetControls(bool isActive);
 };

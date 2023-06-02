@@ -14,7 +14,7 @@ void PauseMenu::Initialize(const SceneContext& sceneContext)
 	m_pBackground = pObject->AddComponent(new SpriteComponent(L"Textures/Menu/BlackScreen.png", XMFLOAT2{ 0.5f, 0.5f }));
 	m_pBackground->SetColor(disable);
 	
-	m_pBackground->GetTransform()->Translate(sceneContext.windowWidth / 2, sceneContext.windowHeight / 2, .8f);
+	m_pBackground->GetTransform()->Translate(sceneContext.windowWidth / 2, sceneContext.windowHeight / 2, .5f);
 	m_pBackground->GetTransform()->Scale(100.f);
 
 	// Buttons
@@ -32,7 +32,7 @@ void PauseMenu::Initialize(const SceneContext& sceneContext)
 	m_pMainMenu = pObject->AddComponent(new SpriteComponent(L"Textures/Menu/WhiteScreen.png", XMFLOAT2{ 0.5f, 0.5f }));
 	m_pMainMenu->SetColor(disable);
 
-	position = XMFLOAT3{ sceneContext.windowWidth / 2, sceneContext.windowHeight / 2 - distanceBetween, .8f };
+	position = XMFLOAT3{ sceneContext.windowWidth / 2, sceneContext.windowHeight / 2 - distanceBetween, .5f };
 	m_pMainMenu->GetTransform()->Translate(position);
 	m_pMainMenu->GetTransform()->Scale(buttonScale);
 
@@ -44,7 +44,7 @@ void PauseMenu::Initialize(const SceneContext& sceneContext)
 	m_pRestart = pObject->AddComponent(new SpriteComponent(L"Textures/Menu/WhiteScreen.png", XMFLOAT2{ 0.5f, 0.5f }));
 	m_pRestart->SetColor(disable);
 
-	position = XMFLOAT3{ sceneContext.windowWidth / 2, sceneContext.windowHeight / 2, .8f };
+	position = XMFLOAT3{ sceneContext.windowWidth / 2, sceneContext.windowHeight / 2, .5f };
 	m_pRestart->GetTransform()->Translate(position);
 	m_pRestart->GetTransform()->Scale(buttonScale);
 
@@ -56,7 +56,7 @@ void PauseMenu::Initialize(const SceneContext& sceneContext)
 	m_pExit = pObject->AddComponent(new SpriteComponent(L"Textures/Menu/WhiteScreen.png", XMFLOAT2{ 0.5f, 0.5f }));
 	m_pExit->SetColor(disable);
 
-	position = XMFLOAT3{ sceneContext.windowWidth / 2, sceneContext.windowHeight / 2 + distanceBetween, .8f };
+	position = XMFLOAT3{ sceneContext.windowWidth / 2, sceneContext.windowHeight / 2 + distanceBetween, .5f };
 	m_pExit->GetTransform()->Translate(position);
 	m_pExit->GetTransform()->Scale(buttonScale);
 
