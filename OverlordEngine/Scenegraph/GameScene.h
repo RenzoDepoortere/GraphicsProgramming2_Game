@@ -51,6 +51,7 @@ protected:
 	virtual void OnSceneDeactivated() {}
 
 	void ClearScene();
+	void SetUpdateChildren(bool updateChildren) { m_UpdateChildren = updateChildren; }
 
 	SceneContext m_SceneContext{};
 private:
@@ -73,4 +74,6 @@ private:
 
 	std::vector<PostProcessingMaterial*> m_PostProcessingMaterials{};
 	OverlordGame* m_pGame{};
+
+	bool m_UpdateChildren{ true };
 };

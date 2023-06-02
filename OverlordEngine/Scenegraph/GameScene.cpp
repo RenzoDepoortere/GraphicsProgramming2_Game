@@ -163,10 +163,13 @@ void GameScene::RootUpdate()
 	//User-Scene Update
 	Update();
 
-	//Root-Scene Update
-	for (const auto pChild : m_pChildren)
+	if (m_UpdateChildren)
 	{
-		pChild->RootUpdate(m_SceneContext);
+		//Root-Scene Update
+		for (const auto pChild : m_pChildren)
+		{
+			pChild->RootUpdate(m_SceneContext);
+		}
 	}
 
 	m_pPhysxProxy->Update(m_SceneContext);

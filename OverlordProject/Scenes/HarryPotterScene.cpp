@@ -47,10 +47,9 @@ void HarryPotterScene::Initialize()
 
 void HarryPotterScene::Update()
 {
-	HandleScene();
+	HandleInput();
 	if (m_HasToReset) DeleteChildren();
 }
-
 void HarryPotterScene::PostDraw()
 {
 	//Draw ShadowMap (Debug Visualization)
@@ -59,7 +58,6 @@ void HarryPotterScene::PostDraw()
 		ShadowMapRenderer::Get()->Debug_DrawDepthSRV({ m_SceneContext.windowWidth - 10.f, 10.f }, { m_ShadowMapScale, m_ShadowMapScale }, { 1.f,0.f });
 	}
 }
-
 void HarryPotterScene::OnGUI()
 {
 	if (m_pHarry)
@@ -74,15 +72,43 @@ void HarryPotterScene::OnGUI()
 	//ImGui::SliderFloat("ShadowMap Scale", &m_ShadowMapScale, 0.f, 1.f);
 }
 
-void HarryPotterScene::HandleScene()
+void HarryPotterScene::HandleInput()
 {
-	// Toggle hide and set mouse
-	if (m_SceneContext.pInput->IsKeyboardKey(InputState::pressed, '1'))
+	// Toggle hide and set mouse, if not paused
+	if (m_SceneContext.pInput->IsKeyboardKey(InputState::pressed, '1') && m_IsPaused == false)
 	{
 		m_CenterMouse = !m_CenterMouse;
 		m_SceneContext.pInput->CursorVisible(!m_CenterMouse);
 	}
 
+	// If pressed ESC
+	if (m_SceneContext.pInput->IsKeyboardKey(InputState::pressed, VK_ESCAPE))
+	{
+		// If paused
+		if (m_IsPaused)
+		{
+			// Center mouse
+			m_CenterMouse = true;
+			m_SceneContext.pInput->CursorVisible(false);
+
+			// Unpause
+			m_IsPaused = false;
+			SetUpdateChildren(true);
+		}
+		// Else
+		else
+		{
+			// Free mouse
+			m_CenterMouse = false;
+			m_SceneContext.pInput->CursorVisible(true);
+
+			// Pause
+			m_IsPaused = true;
+			SetUpdateChildren(false);
+		}
+	}
+
+	// Force if mouse is centered
 	m_SceneContext.pInput->ForceMouseToCenter(m_CenterMouse);
 }
 

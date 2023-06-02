@@ -28,6 +28,8 @@ private:
 	float m_PauseTimer{};
 	bool m_HasToReset{ false };
 
+	bool m_IsPaused{ false };
+
 	// Functions
 	// ---------
 
@@ -38,7 +40,7 @@ private:
 	void OnGUI() override;
 
 	// Own
-	void HandleScene();
+	void HandleInput();
 	void DeleteChildren();
 };
 
