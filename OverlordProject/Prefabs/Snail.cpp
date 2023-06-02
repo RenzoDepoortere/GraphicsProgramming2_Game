@@ -174,6 +174,7 @@ void Snail::HandleStunEvents()
 		XMFLOAT3 desiredForce{};
 		XMStoreFloat3(&desiredForce, forceVector);
 
+		desiredForce.y += 3.f;
 		m_pRigidbody->AddForce(desiredForce, PxForceMode::eIMPULSE);
 	}
 }

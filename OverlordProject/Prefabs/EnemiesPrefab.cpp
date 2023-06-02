@@ -21,9 +21,22 @@ void EnemiesPrefab::Initialize(const SceneContext& /*sceneContext*/)
 
 	XMFLOAT3 snailPosition = XMFLOAT3{ -3.1f, -8.8f, -48.2f };
 	pSnail->GetTransform()->Translate(snailPosition);
-	
 	pSnail->AddPathPosition(snailPosition);
+	
 	snailPosition = XMFLOAT3{ 15.8f, -8.8f, -47.9f };
+	pSnail->AddPathPosition(snailPosition);
+
+	pSnails.emplace_back(pSnail);
+
+	// Third snail
+	pSnail = AddChild(new Snail{ m_GeneralScale, m_pHarry });
+
+	snailPosition = XMFLOAT3{ 23.2f, -8.8f, -43.5f };
+	pSnail->GetTransform()->Translate(snailPosition);
+	pSnail->AddPathPosition(snailPosition);
+
+	snailPosition = XMFLOAT3{ 23.1f, -8.8f, -23.4f };
+	pSnail->GetTransform()->Translate(snailPosition);
 	pSnail->AddPathPosition(snailPosition);
 
 	pSnails.emplace_back(pSnail);

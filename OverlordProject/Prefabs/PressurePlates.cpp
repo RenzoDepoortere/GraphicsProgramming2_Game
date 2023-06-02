@@ -91,6 +91,8 @@ void PressurePlates::Initialize(const SceneContext& /*sceneContext*/)
 		{
 			// Activate plate
 			m_SecondActivated = true;
+
+			// Play sound
 		}
 	});
 }
