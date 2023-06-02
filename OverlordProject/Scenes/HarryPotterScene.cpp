@@ -48,7 +48,7 @@ void HarryPotterScene::Initialize()
 	const float generalScale{ 0.025f };
 
 	// Character
-	m_pHarry = AddChild(new HarryCharacter(generalScale));
+	m_pHarry = AddChild(new HarryCharacter(generalScale, m_InStartMenu));
 
 	// Enemies
 	AddChild(new EnemiesPrefab(generalScale, m_pHarry));
@@ -120,6 +120,9 @@ void HarryPotterScene::HandleInput()
 			m_IsPaused = false;
 			m_pPauseMenu->SetActive(false);
 
+			// Let children know
+			m_pHarry->InPauseMenu(false);
+
 			// Continue updating
 			SetUpdateChildren(true);
 		}
@@ -133,6 +136,9 @@ void HarryPotterScene::HandleInput()
 			// Pause
 			m_IsPaused = true;
 			m_pPauseMenu->SetActive(true);
+
+			// Let children know
+			m_pHarry->InPauseMenu(true);
 
 			// Stop updating
 			SetUpdateChildren(false);
@@ -180,6 +186,9 @@ void HarryPotterScene::SetMainMenu(bool goToMenu)
 	// If going to menu
 	if (goToMenu)
 	{
+		// Let children know
+		m_pHarry->InMainMenu();
+
 		// Disable pauseMenu
 		m_IsPaused = false;
 		m_pPauseMenu->SetActive(false);
@@ -201,7 +210,7 @@ void HarryPotterScene::SetMainMenu(bool goToMenu)
 		m_pMainMenu->SetActive(false);
 		m_CenterMouse = true;
 
-		// Restart level if asked
+		// Restart level
 		RestartLevel();
 	}
 }

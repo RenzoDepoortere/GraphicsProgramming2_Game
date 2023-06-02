@@ -7,6 +7,14 @@ void PauseMenu::Initialize(const SceneContext& sceneContext)
 {
 	const XMFLOAT4 disable{ 1.f, 1.f, 1.f, 0.f };
 
+	// Sound
+	// -----
+	m_pFmod = SoundManager::Get()->GetSystem();
+
+	// Effects
+	m_pFmod->createSound("Resources/Sounds/UI/UI_Hoover.wav", FMOD_DEFAULT, nullptr, &m_pSelectSound);
+	m_pFmod->createSound("Resources/Sounds/UI/UI_Pause.wav", FMOD_DEFAULT, nullptr, &m_pPauseSound);
+
 	// Background
 	// ----------
 	
@@ -87,6 +95,9 @@ void PauseMenu::SetActive(bool isActive)
 		m_pMainMenu->SetColor(red);
 		m_pRestart->SetColor(red);
 		m_pExit->SetColor(red);
+
+		// Play sound
+		m_pFmod->playSound(m_pPauseSound, nullptr, false, &m_pPauseSoundEffectChannel);
 	}
 	else
 	{
@@ -98,6 +109,10 @@ void PauseMenu::SetActive(bool isActive)
 		m_pMainMenu->SetColor(disable);
 		m_pRestart->SetColor(disable);
 		m_pExit->SetColor(disable);
+
+		// Stop music
+		m_pPauseSoundEffectChannel->setPaused(true);
+		m_pSoundEffectChannel->setPaused(true);
 	}
 }
 
@@ -180,6 +195,9 @@ void PauseMenu::HandleButtons(const SceneContext& sceneContext)
 	}
 	// Else, color to normal
 	else m_pExit->SetColor(normalColor);
+
+	// No button selected
+	m_PlayedSound = false;
 }
 
 bool PauseMenu::IsInsideRange(float left, float right, int index, const POINT& mousePos)
@@ -191,5 +209,17 @@ bool PauseMenu::IsInsideRange(float left, float right, int index, const POINT& m
 	const bool isInsideX{ left <= mousePos.x && mousePos.x <= right };
 	const bool isInsideY{ bottom <= mousePos.y && mousePos.y <= top };
 
-	return isInsideX && isInsideY;
+	if (isInsideX && isInsideY)
+	{
+		// Play sound
+		if (m_PlayedSound == false)
+		{
+			m_PlayedSound = true;
+			m_pFmod->playSound(m_pSelectSound, nullptr, false, &m_pSoundEffectChannel);
+		}
+
+		return true;
+	}
+
+	return false;
 }

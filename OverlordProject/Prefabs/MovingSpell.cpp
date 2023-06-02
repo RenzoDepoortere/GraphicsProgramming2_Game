@@ -1,9 +1,11 @@
 #include "stdafx.h"
 #include "MovingSpell.h"
 
+#include "Prefabs/HarryCharacter.h"
 #include "Prefabs/CubePrefab.h"
+#include "Prefabs/Character.h"
 
-MovingSpell::MovingSpell(float movementSpeed, GameObject* pHarry, CastableComponent::Spell spell, CastableComponent* pObjectToHit, const XMFLOAT3& hitPosition)
+MovingSpell::MovingSpell(float movementSpeed, HarryCharacter* pHarry, CastableComponent::Spell spell, CastableComponent* pObjectToHit, const XMFLOAT3& hitPosition)
 	: m_MovingSpeed{ movementSpeed }
 	, m_pHarry{ pHarry }
 	, m_CurrentSpell{spell}
@@ -64,8 +66,14 @@ void MovingSpell::Initialize(const SceneContext& /*sceneContext*/)
 		// If was desiredObject
 		if (action == PxTriggerAction::ENTER && pOther == m_pObjectToHit->GetGameObject())
 		{
+			// Sound
+			FMOD::System* pFmod{ SoundManager::Get()->GetSystem() };
+			FMOD::Sound* pSound{ nullptr };
+			pFmod->createSound("Resources/Sounds/Spell/Hit/Spell_Hit.wav", FMOD_DEFAULT, nullptr, &pSound);
+			m_pHarry->SetSpellHitSoundToPlay(pSound);
+
 			// Activate object
-			m_pObjectToHit->Activate(m_pHarry);
+			m_pObjectToHit->Activate(m_pHarry->GetCharacter());
 
 			// Set for deletion
 			m_HasToBeDeleted = true;

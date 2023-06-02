@@ -37,6 +37,14 @@ private:
 	SpriteFont* m_pFont{ nullptr };
 	std::vector<std::pair<std::wstring, XMFLOAT2>> m_FontData{};
 
+	FMOD::System* m_pFmod{ nullptr };
+	FMOD::Channel* m_pBackgroundChannel{ nullptr };
+	FMOD::Channel* m_pSoundEffectChannel{ nullptr };
+
+	FMOD::Sound* m_pSelectSound{ nullptr };
+
+	bool m_PlayedSound{ false };
+
 	// Functions
 	void HandleText();
 	void HandleButtons(const SceneContext& sceneContext);

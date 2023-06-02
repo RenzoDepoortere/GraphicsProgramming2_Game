@@ -1,4 +1,6 @@
 #pragma once
+#include <array>
+
 class Character;
 class CastObject;
 class MovingSpell;
@@ -8,7 +10,7 @@ class HarryCharacter final : public GameObject
 {
 public:
 	// Rule of five
-	HarryCharacter(float generalScale);
+	HarryCharacter(float generalScale, bool isInMainMenu);
 	~HarryCharacter() override = default;
 
 	HarryCharacter(const HarryCharacter& other) = delete;
@@ -18,9 +20,14 @@ public:
 
 	// Pass through functions
 	Character* GetCharacter() const { return m_pCharacter; }
-	
+
 	void DealDamage(int amount);
 	void AddBean();
+
+	void InMainMenu();
+	void InPauseMenu(bool isIn);
+
+	void SetSpellHitSoundToPlay(FMOD::Sound* pSound);
 
 protected:
 	// Functionality
@@ -57,6 +64,7 @@ private:
 	GameObject* m_pCharacterMesh{ nullptr };
 
 	float m_GeneralScale{};
+	bool m_InMainMenu{ false };
 	float m_ControllerHeight{};
 
 	CharacterStates m_CurrentCharacterState{ Idle };
@@ -69,6 +77,32 @@ private:
 	CastObject* m_pCastingObject{ nullptr };
 	MovingSpell* m_pMovingSpell{ nullptr };
 	HUD* m_pHUD{ nullptr };
+
+	FMOD::System* m_pFmod{ nullptr };
+
+	std::array<FMOD::Sound*, 3> m_pFootStepSounds{};
+	FMOD::Channel* m_pWalkingChannel{ nullptr };
+
+	std::array<FMOD::Sound*, 3> m_pJumpSounds{};
+	FMOD::Channel* m_pJumpChannel{ nullptr };
+	bool m_PlayedJumpSound{ false };
+
+	std::array<FMOD::Sound*, 4> m_pCastCallSounds{};
+	FMOD::Channel* m_pCastCallChannel{ nullptr };
+
+	std::array<FMOD::Sound*, 4> m_pSmallHitSounds{};
+	std::array<FMOD::Sound*, 4> m_pBigHitSounds{};
+	FMOD::Sound* m_pDeathSound{};
+	FMOD::Channel* m_pHitChannel{};
+	bool m_PlayedDeathSound{ false };
+
+	FMOD::Channel* m_pBackgroundChannel{ nullptr };
+	FMOD::Channel* m_pAmbianceChannel{ nullptr };
+
+	FMOD::Channel* m_pSpellAimChannel{ nullptr };
+	FMOD::Channel* m_pSpellTargetChannel{ nullptr };
+
+	FMOD::Channel* m_pSpellHitChannel{ nullptr };
 
 	// Functions
 	// ---------

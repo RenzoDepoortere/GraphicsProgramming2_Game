@@ -1,11 +1,12 @@
 #pragma once
+class HarryCharacter;
 #include "Components/CastableComponent.h"
 
 class MovingSpell final : public GameObject
 {
 public:
 	// Rule of five
-	MovingSpell(float movementSpeed, GameObject* pHarry, CastableComponent::Spell spell, CastableComponent* pObjectToHit, const XMFLOAT3& hitPosition = {});
+	MovingSpell(float movementSpeed, HarryCharacter* pHarry, CastableComponent::Spell spell, CastableComponent* pObjectToHit, const XMFLOAT3& hitPosition = {});
 	~MovingSpell() override = default;
 
 	MovingSpell(const MovingSpell& other) = delete;
@@ -28,5 +29,5 @@ private:
 	CastableComponent* m_pObjectToHit{ nullptr };
 	XMFLOAT3 m_HitPosition{};
 
-	GameObject* m_pHarry{ nullptr };
+	HarryCharacter* m_pHarry{ nullptr };
 };

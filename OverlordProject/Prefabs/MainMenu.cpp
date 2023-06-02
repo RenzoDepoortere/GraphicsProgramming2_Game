@@ -10,6 +10,20 @@ MainMenu::MainMenu(bool isActive)
 
 void MainMenu::Initialize(const SceneContext& sceneContext)
 {
+	// Sound
+	// -----
+	m_pFmod = SoundManager::Get()->GetSystem();
+
+	// Music
+	FMOD::Sound* pSound{ nullptr };
+	m_pFmod->createStream("Resources/Sounds/Music/MainMenu_Music.mp3", FMOD_DEFAULT | FMOD_LOOP_NORMAL, nullptr, &pSound);
+	m_pFmod->playSound(pSound, nullptr, true, &m_pBackgroundChannel);
+
+	if (m_IsActive) m_pBackgroundChannel->setPaused(false);
+
+	// Effects
+	m_pFmod->createSound("Resources/Sounds/UI/UI_Hoover.wav", FMOD_DEFAULT, nullptr, &m_pSelectSound);
+
 	// Background
 	// ----------
 
@@ -119,6 +133,10 @@ void MainMenu::SetActive(bool isActive)
 		m_pStart->SetColor(defaultColor);
 		m_pControls->SetColor(defaultColor);
 		m_pExit->SetColor(defaultColor);
+
+		// Play music
+		m_pBackgroundChannel->setPaused(false);
+		m_pSoundEffectChannel->setPaused(false);
 	}
 	else
 	{
@@ -128,6 +146,10 @@ void MainMenu::SetActive(bool isActive)
 		m_pStart->SetColor(disable);
 		m_pControls->SetColor(disable);
 		m_pExit->SetColor(disable);
+
+		// Stop music
+		m_pBackgroundChannel->setPaused(true);
+		m_pSoundEffectChannel->setPaused(true);
 	}
 	m_IsActive = isActive;
 
@@ -188,7 +210,11 @@ void MainMenu::HandleButtons(const SceneContext& /*sceneContext*/)
 			return;
 		}
 		// Else, color to normal
-		else m_pControlButton->SetColor(normalColor);
+		else
+		{
+			m_PlayedSound = false;
+			m_pControlButton->SetColor(normalColor);
+		}
 
 		// Return
 		return;
@@ -256,6 +282,9 @@ void MainMenu::HandleButtons(const SceneContext& /*sceneContext*/)
 	}
 	// Else, color to normal
 	else m_pExit->SetColor(normalColor);
+
+	// Nothing selected
+	m_PlayedSound = false;
 }
 
 bool MainMenu::IsInsideRange(float left, float right, int index, const POINT& mousePos, bool lowerWithHalf)
@@ -276,7 +305,19 @@ bool MainMenu::IsInsideRange(float left, float right, int index, const POINT& mo
 	const bool isInsideX{ left <= mousePos.x && mousePos.x <= right };
 	const bool isInsideY{ bottom <= mousePos.y && mousePos.y <= top };
 
-	return isInsideX && isInsideY;
+	if (isInsideX && isInsideY)
+	{
+		// Play sound
+		if (m_PlayedSound == false)
+		{
+			m_PlayedSound = true;
+			m_pFmod->playSound(m_pSelectSound, nullptr, false, &m_pSoundEffectChannel);
+		}
+
+		return true;
+	}
+
+	return false;
 }
 
 void MainMenu::SetControls(bool isActive)
