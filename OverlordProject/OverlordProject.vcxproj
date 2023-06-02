@@ -108,6 +108,7 @@
     <ClCompile Include="Materials\Shadow\DiffuseMaterial_Shadow.cpp" />
     <ClCompile Include="Materials\Shadow\DiffuseMaterial_Shadow_Skinned.cpp" />
     <ClCompile Include="Prefabs\PropsPrefab.cpp" />
+    <ClCompile Include="Prefabs\PressurePlates.cpp" />
     <ClCompile Include="Scenes\HarryPotterScene.cpp" />
     <ClCompile Include="Materials\DiffuseMaterial_Skinned.cpp" />
     <ClCompile Include="Prefabs\BoneObject.cpp" />
@@ -122,6 +123,7 @@
     <ClCompile Include="Prefabs\SkyBox.cpp" />
     <ClCompile Include="Scenes\ParticleScene.cpp" />
     <ClCompile Include="Prefabs\Snail.cpp" />
+    <ClCompile Include="Prefabs\Star.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">stdafx.h</PrecompiledHeaderFile>
@@ -162,6 +164,7 @@
     <ClInclude Include="Materials\Shadow\DiffuseMaterial_Shadow.h" />
     <ClInclude Include="Materials\Shadow\DiffuseMaterial_Shadow_Skinned.h" />
     <ClInclude Include="Prefabs\PropsPrefab.h" />
+    <ClInclude Include="Prefabs\PressurePlates.h" />
     <ClInclude Include="Scenes\HarryPotterScene.h" />
     <ClInclude Include="Materials\DiffuseMaterial_Skinned.h" />
     <ClInclude Include="Prefabs\BoneObject.h" />
@@ -176,6 +179,7 @@
     <ClInclude Include="Prefabs\SkyBox.h" />
     <ClInclude Include="Scenes\ParticleScene.h" />
     <ClInclude Include="Prefabs\Snail.h" />
+    <ClInclude Include="Prefabs\Star.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="MainGame.h" />
     <ClInclude Include="Materials\UberMaterial.h" />
