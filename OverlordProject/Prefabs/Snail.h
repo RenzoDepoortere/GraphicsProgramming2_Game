@@ -54,6 +54,8 @@ private:
 	std::vector<Trail*> m_pTrails{};
 	float m_TrailTimer{};
 
+	std::vector<Trail*> m_pTrailsToDelete{};
+
 	float m_AttackCooldown{};
 
 	XMFLOAT3 m_CurrentTarget{};
@@ -67,6 +69,8 @@ private:
 
 	// Functions
 	// ---------
+	void DeleteMarkedTrails();
+
 	void HandleTimer(const SceneContext& sceneContext);
 	void HandleStunEvents();
 

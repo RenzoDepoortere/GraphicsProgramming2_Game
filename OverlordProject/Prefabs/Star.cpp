@@ -6,6 +6,8 @@
 #include "Prefabs/HarryCharacter.h"
 #include "Prefabs/Character.h"
 
+#include "Scenes/HarryPotterScene.h"
+
 Star::Star(float generalScale, HarryCharacter* pHarry)
 	: m_GeneralScale{ generalScale }
 	, m_pHarry{ pHarry }
@@ -38,10 +40,8 @@ void Star::Initialize(const SceneContext& /*sceneContext*/)
 
 void Star::Update(const SceneContext& sceneContext)
 {
-	//if (m_IsActivated == false) return;
-
 	HandleRotation(sceneContext);
-	//CheckHarry();
+	CheckHarry();
 }
 
 void Star::HandleRotation(const SceneContext& sceneContext)
@@ -68,5 +68,6 @@ void Star::CheckHarry()
 		// Particle
 
 		// Go back to menu
+		dynamic_cast<HarryPotterScene*>(GetScene())->SetMainMenu(true);
 	}
 }

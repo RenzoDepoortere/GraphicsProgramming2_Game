@@ -46,6 +46,7 @@ private:
 	void OnGUI() override;
 
 	// Own
+	void HandleMouse();
 	void HandleInput();
 	void HandlePauseMenu();
 	void HandleMainMenu();

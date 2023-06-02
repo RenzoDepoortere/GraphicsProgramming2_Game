@@ -51,6 +51,8 @@ void Snail::Initialize(const SceneContext& /*sceneContext*/)
 }
 void Snail::Update(const SceneContext& sceneContext)
 {
+	DeleteMarkedTrails();
+
 	HandleTimer(sceneContext);
 	HandleStunEvents();
 
@@ -85,12 +87,21 @@ void Snail::HarryHit()
 }
 void Snail::RemoveTrail(Trail* pTrail)
 {
-	// Remove from vector
+	// Set for deletion
+	m_pTrailsToDelete.emplace_back(pTrail);
+
+	// Remove from normal vector
 	const auto it = std::ranges::find(m_pTrails, pTrail);
 	m_pTrails.erase(it);
+}
 
-	// Delete
-	m_pTrailObject->RemoveChild(pTrail, true);
+void Snail::DeleteMarkedTrails()
+{
+	for (auto& currentTrail : m_pTrailsToDelete)
+	{
+		m_pTrailObject->RemoveChild(currentTrail, true);
+	}
+	m_pTrailsToDelete.clear();
 }
 
 void Snail::HandleTimer(const SceneContext& sceneContext)

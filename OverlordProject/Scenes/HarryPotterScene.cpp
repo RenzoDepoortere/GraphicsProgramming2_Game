@@ -183,7 +183,9 @@ void HarryPotterScene::SetMainMenu(bool goToMenu)
 		// Disable pauseMenu
 		m_IsPaused = false;
 		m_pPauseMenu->SetActive(false);
+		
 		m_CenterMouse = false;
+		m_SceneContext.pInput->CursorVisible(true);
 
 		// Pause game and enable menu
 		SetUpdateChildren(false);
