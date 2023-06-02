@@ -38,6 +38,7 @@
     <ClCompile Include="Prefabs\HUD.cpp" />
     <ClCompile Include="Prefabs\Star.cpp" />
     <ClCompile Include="Prefabs\PressurePlates.cpp" />
+    <ClCompile Include="Prefabs\PauseMenu.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MainGame.h" />
@@ -76,5 +77,6 @@
     <ClInclude Include="Prefabs\HUD.h" />
     <ClInclude Include="Prefabs\Star.h" />
     <ClInclude Include="Prefabs\PressurePlates.h" />
+    <ClInclude Include="Prefabs\PauseMenu.h" />
   </ItemGroup>
 </Project>

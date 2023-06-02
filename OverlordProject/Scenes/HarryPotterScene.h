@@ -1,5 +1,6 @@
 #pragma once
 class HarryCharacter;
+class PauseMenu;
 
 class HarryPotterScene final : public GameScene
 {
@@ -19,6 +20,7 @@ private:
 	// Variables
 	// ---------
 	HarryCharacter* m_pHarry{ nullptr };
+	PauseMenu* m_pPauseMenu{ nullptr };
 
 	bool m_DrawShadowMap{ false };
 	float m_ShadowMapScale{};
@@ -41,6 +43,7 @@ private:
 
 	// Own
 	void HandleInput();
+	void HandlePauseMenu();
 	void DeleteChildren();
 };
 

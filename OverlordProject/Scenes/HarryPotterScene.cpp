@@ -14,6 +14,9 @@
 // Props
 #include "Prefabs/PropsPrefab.h"
 
+// Menu
+#include "Prefabs/PauseMenu.h"
+
 void HarryPotterScene::Initialize()
 {
 	// SceneSettings
@@ -43,11 +46,16 @@ void HarryPotterScene::Initialize()
 
 	// Props
 	AddChild(new PropsPrefab(generalScale, m_pHarry));
+
+	// Menu
+	m_pPauseMenu = AddChild(new PauseMenu{});
 }
 
 void HarryPotterScene::Update()
 {
 	HandleInput();
+	HandlePauseMenu();
+
 	if (m_HasToReset) DeleteChildren();
 }
 void HarryPotterScene::PostDraw()
@@ -82,7 +90,7 @@ void HarryPotterScene::HandleInput()
 	}
 
 	// If pressed ESC
-	if (m_SceneContext.pInput->IsKeyboardKey(InputState::pressed, VK_ESCAPE))
+	if (m_SceneContext.pInput->IsKeyboardKey(InputState::pressed, VK_ESCAPE) && m_pPauseMenu)
 	{
 		// If paused
 		if (m_IsPaused)
@@ -93,6 +101,9 @@ void HarryPotterScene::HandleInput()
 
 			// Unpause
 			m_IsPaused = false;
+			m_pPauseMenu->SetActive(false);
+
+			// Continue updating
 			SetUpdateChildren(true);
 		}
 		// Else
@@ -104,6 +115,9 @@ void HarryPotterScene::HandleInput()
 
 			// Pause
 			m_IsPaused = true;
+			m_pPauseMenu->SetActive(true);
+
+			// Stop updating
 			SetUpdateChildren(false);
 		}
 	}
@@ -112,10 +126,21 @@ void HarryPotterScene::HandleInput()
 	m_SceneContext.pInput->ForceMouseToCenter(m_CenterMouse);
 }
 
+void HarryPotterScene::HandlePauseMenu()
+{
+	if (m_IsPaused == false) return;
+	if (m_pPauseMenu == nullptr) return;
+
+	// Manually update when game is paused
+	m_pPauseMenu->Update(m_SceneContext);
+}
+
 void HarryPotterScene::DeleteChildren()
 {
 	// Delete children
 	ClearScene();
+	m_pHarry = nullptr;
+	m_pPauseMenu = nullptr;
 
 	// Re-Initialize
 	Initialize();
@@ -127,4 +152,7 @@ void HarryPotterScene::DeleteChildren()
 void HarryPotterScene::RestartLevel()
 {
 	m_HasToReset = true;
+
+	m_IsPaused = false;
+	SetUpdateChildren(true);
 }

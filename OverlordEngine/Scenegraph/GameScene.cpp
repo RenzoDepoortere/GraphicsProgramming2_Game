@@ -170,9 +170,9 @@ void GameScene::RootUpdate()
 		{
 			pChild->RootUpdate(m_SceneContext);
 		}
-	}
 
-	m_pPhysxProxy->Update(m_SceneContext);
+		m_pPhysxProxy->Update(m_SceneContext);
+	}
 }
 
 void GameScene::RootDraw()
