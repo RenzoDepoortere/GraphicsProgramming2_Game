@@ -15,7 +15,15 @@
 #include "Prefabs/PropsPrefab.h"
 
 // Menu
+#include "Prefabs/MainMenu.h"
 #include "Prefabs/PauseMenu.h"
+
+HarryPotterScene::HarryPotterScene()
+	: GameScene(L"HarryPotterScene")
+{
+	// Main menu
+	SetUpdateChildren(false);
+}
 
 void HarryPotterScene::Initialize()
 {
@@ -28,8 +36,11 @@ void HarryPotterScene::Initialize()
 
 	// Mouse settings
 	// --------------
-	m_SceneContext.pInput->ForceMouseToCenter(true);
-	m_SceneContext.pInput->CursorVisible(false);
+	if (m_InStartMenu == false)
+	{
+		m_SceneContext.pInput->ForceMouseToCenter(true);
+		m_SceneContext.pInput->CursorVisible(false);
+	}
 
 	// Spawn Prefabs
 	// -------------
@@ -48,6 +59,7 @@ void HarryPotterScene::Initialize()
 	AddChild(new PropsPrefab(generalScale, m_pHarry));
 
 	// Menu
+	m_pMainMenu = AddChild(new MainMenu{ m_InStartMenu });
 	m_pPauseMenu = AddChild(new PauseMenu{});
 }
 
@@ -55,6 +67,7 @@ void HarryPotterScene::Update()
 {
 	HandleInput();
 	HandlePauseMenu();
+	HandleMainMenu();
 
 	if (m_HasToReset) DeleteChildren();
 }
@@ -82,6 +95,9 @@ void HarryPotterScene::OnGUI()
 
 void HarryPotterScene::HandleInput()
 {
+	// No input when in start menu
+	if (m_InStartMenu) return;
+
 	// Toggle hide and set mouse, if not paused
 	if (m_SceneContext.pInput->IsKeyboardKey(InputState::pressed, '1') && m_IsPaused == false)
 	{
@@ -134,12 +150,21 @@ void HarryPotterScene::HandlePauseMenu()
 	// Manually update when game is paused
 	m_pPauseMenu->Update(m_SceneContext);
 }
+void HarryPotterScene::HandleMainMenu()
+{
+	if (m_InStartMenu == false) return;
+	if (m_pMainMenu == nullptr) return;
+
+	// Manually update when game is paused
+	m_pMainMenu->Update(m_SceneContext);
+}
 
 void HarryPotterScene::DeleteChildren()
 {
 	// Delete children
 	ClearScene();
 	m_pHarry = nullptr;
+	m_pMainMenu = nullptr;
 	m_pPauseMenu = nullptr;
 
 	// Re-Initialize
@@ -149,6 +174,34 @@ void HarryPotterScene::DeleteChildren()
 	m_HasToReset = false;
 }
 
+void HarryPotterScene::SetMainMenu(bool goToMenu)
+{
+	// If going to menu
+	if (goToMenu)
+	{
+		// Disable pauseMenu
+		m_IsPaused = false;
+		m_pPauseMenu->SetActive(false);
+		m_CenterMouse = false;
+
+		// Pause game and enable menu
+		SetUpdateChildren(false);
+
+		m_InStartMenu = true;
+		m_pMainMenu->SetActive(true);
+	}
+	// Else
+	else
+	{
+		// Start game and disable menu
+		m_InStartMenu = false;
+		m_pMainMenu->SetActive(false);
+		m_CenterMouse = true;
+
+		// Restart level if asked
+		RestartLevel();
+	}
+}
 void HarryPotterScene::RestartLevel()
 {
 	m_HasToReset = true;

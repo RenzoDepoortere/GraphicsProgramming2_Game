@@ -25,7 +25,7 @@ void HUD::Initialize(const SceneContext& /*sceneContext*/)
 		pComponent = pObject->AddComponent(new SpriteComponent(fullHealthString));
 		
 		// Translate
-		pObject->GetTransform()->Translate(textureWidth / 2.f * idx, 10.f, 0.9f);
+		pObject->GetTransform()->Translate(textureWidth / 2.f * idx, 10.f, 0.7f);
 
 		// Add to vector
 		m_pHealthIcons.emplace_back(pComponent);
@@ -40,7 +40,7 @@ void HUD::Initialize(const SceneContext& /*sceneContext*/)
 	
 	m_pBeanHUD->SetColor(XMFLOAT4{ 1.f, 1.f, 1.f, 0.f });
 
-	m_pBeanHUD->GetTransform()->Translate(0.f, 100.f, .9f);
+	m_pBeanHUD->GetTransform()->Translate(0.f, 100.f, .7f);
 	m_pBeanHUD->GetTransform()->Scale(0.5f);
 
 	// Text

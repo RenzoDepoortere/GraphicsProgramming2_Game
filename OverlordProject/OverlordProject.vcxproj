@@ -93,6 +93,7 @@
     <PostBuildEvent />
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Prefabs\MainMenu.cpp" />
     <ClCompile Include="Prefabs\PauseMenu.cpp" />
     <ClCompile Include="Prefabs\HUD.cpp" />
     <ClCompile Include="Prefabs\EnemiesPrefab.cpp" />
@@ -150,6 +151,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Prefabs\MainMenu.h" />
     <ClInclude Include="Prefabs\PauseMenu.h" />
     <ClInclude Include="Prefabs\HUD.h" />
     <ClInclude Include="Prefabs\EnemiesPrefab.h" />

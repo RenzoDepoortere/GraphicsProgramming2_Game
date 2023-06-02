@@ -14,7 +14,7 @@ void PauseMenu::Initialize(const SceneContext& sceneContext)
 	m_pBackground = pObject->AddComponent(new SpriteComponent(L"Textures/Menu/BlackScreen.png", XMFLOAT2{ 0.5f, 0.5f }));
 	m_pBackground->SetColor(disable);
 	
-	m_pBackground->GetTransform()->Translate(sceneContext.windowWidth / 2, sceneContext.windowHeight / 2, .9f);
+	m_pBackground->GetTransform()->Translate(sceneContext.windowWidth / 2, sceneContext.windowHeight / 2, .8f);
 	m_pBackground->GetTransform()->Scale(100.f);
 
 	// Buttons
@@ -133,7 +133,7 @@ void PauseMenu::HandleButtons(const SceneContext& sceneContext)
 		// Go to main menu
 		if (mousePressed)
 		{
-			
+			dynamic_cast<HarryPotterScene*>(GetScene())->SetMainMenu(true);
 		}
 
 		return;
