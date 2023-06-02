@@ -27,6 +27,18 @@ void PauseMenu::Initialize(const SceneContext& sceneContext)
 
 	m_pFont = ContentManager::Load<SpriteFont>(L"SpriteFonts/Consolas_32.fnt");
 
+	// Main Menu
+	pObject = AddChild(new GameObject{});
+	m_pMainMenu = pObject->AddComponent(new SpriteComponent(L"Textures/Menu/WhiteScreen.png", XMFLOAT2{ 0.5f, 0.5f }));
+	m_pMainMenu->SetColor(disable);
+
+	position = XMFLOAT3{ sceneContext.windowWidth / 2, sceneContext.windowHeight / 2 - distanceBetween, .8f };
+	m_pMainMenu->GetTransform()->Translate(position);
+	m_pMainMenu->GetTransform()->Scale(buttonScale);
+
+	auto pair = std::make_pair(L"Main Menu", XMFLOAT2{ position.x - m_ButtonSize.x / 4, position.y - m_ButtonSize.y / 4 });
+	m_FontData.emplace_back(pair);
+
 	// Restart
 	pObject = AddChild(new GameObject{});
 	m_pRestart = pObject->AddComponent(new SpriteComponent(L"Textures/Menu/WhiteScreen.png", XMFLOAT2{ 0.5f, 0.5f }));
@@ -36,7 +48,7 @@ void PauseMenu::Initialize(const SceneContext& sceneContext)
 	m_pRestart->GetTransform()->Translate(position);
 	m_pRestart->GetTransform()->Scale(buttonScale);
 
-	auto pair = std::make_pair(L"Restart", XMFLOAT2{ position.x - m_ButtonSize.x / 4, position.y - m_ButtonSize.y / 4});
+	pair = std::make_pair(L"Restart", XMFLOAT2{ position.x - m_ButtonSize.x / 4, position.y - m_ButtonSize.y / 4});
 	m_FontData.emplace_back(pair);
 
 	// Exit
@@ -72,6 +84,7 @@ void PauseMenu::SetActive(bool isActive)
 
 		m_pBackground->SetColor(XMFLOAT4{ 1.f, 1.f, 1.f, 0.5f });
 
+		m_pMainMenu->SetColor(red);
 		m_pRestart->SetColor(red);
 		m_pExit->SetColor(red);
 	}
@@ -82,6 +95,7 @@ void PauseMenu::SetActive(bool isActive)
 
 		m_pBackground->SetColor(disable);
 
+		m_pMainMenu->SetColor(disable);
 		m_pRestart->SetColor(disable);
 		m_pExit->SetColor(disable);
 	}
@@ -108,11 +122,30 @@ void PauseMenu::HandleButtons(const SceneContext& sceneContext)
 	const XMFLOAT4 normalColor{ 0.8f, 0.f, 0.f, 0.5f };
 	const XMFLOAT4 selectedColor{ 0.8f, 0.f, 0.f, 0.8f };
 
+	// Main Menu
+	// ---------
+		// If inside range
+	if (IsInsideRange(left, right, 0, mousePos))
+	{
+		// Set select color
+		m_pMainMenu->SetColor(selectedColor);
+
+		// Go to main menu
+		if (mousePressed)
+		{
+			
+		}
+
+		return;
+	}
+	// Else, color to normal
+	else m_pMainMenu->SetColor(normalColor);
+
 	// Restart
 	// -------
 
 	// If inside range
-	if (IsInsideRange(left, right, 0, mousePos))
+	if (IsInsideRange(left, right, 1, mousePos))
 	{
 		// Set select color
 		m_pRestart->SetColor(selectedColor);
@@ -132,7 +165,7 @@ void PauseMenu::HandleButtons(const SceneContext& sceneContext)
 	// ----
 
 	// If inside range
-	if (IsInsideRange(left, right, 1, mousePos))
+	if (IsInsideRange(left, right, 2, mousePos))
 	{
 		// Set select color
 		m_pExit->SetColor(selectedColor);
