@@ -15,6 +15,7 @@ void CastlePrefab::Initialize(const SceneContext& sceneContext)
 {
 	// Light
 	sceneContext.pLights->SetDirectionalLight({ 7.5, 40.f, -40.f}, { 0.2f, -0.8f, 0.f });
+	//sceneContext.pLights->GetDirectionalLight().isEnabled = false;
 
 	// Physics
 	PxMaterial* pDefaultMaterial = PxGetPhysics().createMaterial(0.5f, 0.5f, 0.5f);

@@ -42,6 +42,7 @@
     <ClCompile Include="Prefabs\MainMenu.cpp" />
     <ClCompile Include="Materials\Post\EyeAdaptation.cpp" />
     <ClCompile Include="Materials\Post\PostBlur.cpp" />
+    <ClCompile Include="Prefabs\Torch.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MainGame.h" />
@@ -84,5 +85,6 @@
     <ClInclude Include="Prefabs\MainMenu.h" />
     <ClInclude Include="Materials\Post\EyeAdaptation.h" />
     <ClInclude Include="Materials\Post\PostBlur.h" />
+    <ClInclude Include="Prefabs\Torch.h" />
   </ItemGroup>
 </Project>

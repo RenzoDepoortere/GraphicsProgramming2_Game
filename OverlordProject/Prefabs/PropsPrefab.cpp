@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "PropsPrefab.h"
 
+#include "Prefabs/Torch.h"
 #include "Prefabs/Vines.h"
 #include "Prefabs/BeansProp.h"
 
@@ -14,6 +15,29 @@ PropsPrefab::PropsPrefab(float generalScale, HarryCharacter* pHarry)
 
 void PropsPrefab::Initialize(const SceneContext& /*sceneContext*/)
 {
+	// Lights
+	// ------
+	XMFLOAT3 translation{};
+
+	// Torch 1
+	GameObject* pLight = GetScene()->AddChild(new Torch{ m_GeneralScale });
+	translation = XMFLOAT3{ 23.5f, -5.f, -67.2f };
+	pLight->GetTransform()->Translate(translation);
+
+	//Light light = {};
+	//light.isEnabled = true;
+	//light.position = XMFLOAT4{ translation.x, translation.y, translation.z, 0.2f };
+	//light.color = { 1.f, 140 / 255.f, 0.f, 1.f };
+	//light.intensity = 0.5f;
+	//light.range = 10.f;
+	//light.type = LightType::Point;
+
+	//sceneContext.pLights->AddLight(light);
+
+	// Torch 2
+	pLight = GetScene()->AddChild(new Torch{ m_GeneralScale });
+	pLight->GetTransform()->Translate(17.4f, -5.f, -67.2f);
+
 	// Vines
 	// -----
 	

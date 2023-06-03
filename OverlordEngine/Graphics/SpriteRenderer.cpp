@@ -53,15 +53,12 @@ void SpriteRenderer::UpdateBuffer(const SceneContext& sceneContext)
 		SafeRelease(m_pVertexBuffer);
 
 		//		update the buffer size (if needed)
-		if (m_Sprites.size() > m_BufferSize)
-		{
-			m_BufferSize = static_cast<UINT>(m_Sprites.size());
-		}
+		m_BufferSize = std::max(m_BufferSize, static_cast<UINT>(m_Sprites.size()));
 
 		//		Create a new buffer. Make sure the Usage flag is set to Dynamic, bound as vertex buffer
 		//		and set the cpu access flags to access_write
 		D3D11_BUFFER_DESC bufferDesc{};
-		bufferDesc.ByteWidth = static_cast<UINT>(sizeof(VertexSprite) * m_Sprites.size());
+		bufferDesc.ByteWidth = sizeof(VertexSprite) * m_BufferSize;
 		bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 		bufferDesc.Usage = D3D11_USAGE_DYNAMIC;
 		bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
@@ -104,7 +101,7 @@ void SpriteRenderer::UpdateBuffer(const SceneContext& sceneContext)
 		sceneContext.d3dContext.pDeviceContext->Map(m_pVertexBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &mappedResource);
 		
 		// use memcpy to copy all our sprite vertices (m_Sprites) to the mapped resource (D3D11_MAPPED_SUBRESOURCE::pData)
-		memcpy(mappedResource.pData, m_Sprites.data(), sizeof(VertexSprite) * m_Sprites.size());
+		memcpy(mappedResource.pData, &m_Sprites[0], sizeof(VertexSprite) * m_Sprites.size());
 		
 		// unmap the vertex buffer
 		sceneContext.d3dContext.pDeviceContext->Unmap(m_pVertexBuffer, 0);
