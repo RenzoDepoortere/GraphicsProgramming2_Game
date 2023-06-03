@@ -20,6 +20,8 @@
 
 // Post Processing
 #include "Materials/Post/EyeAdaptation.h"
+#include "Materials/Post/ChromaticAberration.h"
+#include "Materials/Post/PostGrayscale.h"
 
 HarryPotterScene::HarryPotterScene()
 	: GameScene(L"HarryPotterScene")
@@ -49,12 +51,12 @@ void HarryPotterScene::Initialize()
 
 	// Post processing
 	// ---------------
-	//if (m_AddedPostProcessing == false)
+	//if (m_AddedPostProcessing == false && m_InStartMenu == false)
 	//{
 	//	m_AddedPostProcessing = true;
 
-	//	EyeAdaptation* pEyeAdaptation{ MaterialManager::Get()->CreateMaterial<EyeAdaptation>() };
-	//	AddPostProcessingEffect(pEyeAdaptation);
+	//	ChromaticAberration* pPostProcessEffect{ MaterialManager::Get()->CreateMaterial<ChromaticAberration>() };
+	//	AddPostProcessingEffect(pPostProcessEffect);
 	//}
 
 

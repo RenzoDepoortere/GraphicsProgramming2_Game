@@ -19,7 +19,7 @@ void PauseMenu::Initialize(const SceneContext& sceneContext)
 	// ----------
 	
 	auto pObject = AddChild(new GameObject{});
-	m_pBackground = pObject->AddComponent(new SpriteComponent(L"Textures/Menu/BlackScreen.png", XMFLOAT2{ 0.5f, 0.5f }));
+	m_pBackground = pObject->AddComponent(new SpriteComponent(L"Textures/Menu/WhiteScreen.png", XMFLOAT2{ 0.5f, 0.5f }));
 	m_pBackground->SetColor(disable);
 	
 	m_pBackground->GetTransform()->Translate(sceneContext.windowWidth / 2, sceneContext.windowHeight / 2, .5f);
@@ -90,7 +90,7 @@ void PauseMenu::SetActive(bool isActive)
 		// Show pauseMenu
 		const XMFLOAT4 red{ 0.8f, 0.f, 0.f, 0.5f };
 
-		m_pBackground->SetColor(XMFLOAT4{ 1.f, 1.f, 1.f, 0.5f });
+		m_pBackground->SetColor(XMFLOAT4{ 140 / 255.f, 115 / 255.f, 42 / 255.f, 0.5f });
 
 		m_pMainMenu->SetColor(red);
 		m_pRestart->SetColor(red);

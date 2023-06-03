@@ -49,9 +49,6 @@ void GameScene::RemoveChild(GameObject* pObject, bool deleteObject)
 {
 	auto pair{ std::make_pair(pObject, deleteObject) };
 	m_pChildrenToDelete.push_back(pair);
-
-	pObject->m_pParentScene = nullptr;
-	pObject->RootOnSceneDetach(this);	
 }
 void GameScene::ClearScene()
 {
@@ -139,6 +136,8 @@ void GameScene::RootPostInitialize()
 
 void GameScene::RootUpdate()
 {
+	ActuallyRemoveChild();
+
 	m_SceneContext.pGameTime->Update();
 	m_SceneContext.pInput->Update();
 	m_SceneContext.pCamera = m_pActiveCamera;
@@ -162,8 +161,6 @@ void GameScene::RootUpdate()
 
 		m_pPhysxProxy->Update(m_SceneContext);
 	}
-
-	ActuallyRemoveChild();
 
 	// If has to close game
 	if (m_HasToCloseGame)
@@ -448,6 +445,9 @@ void GameScene::ActuallyRemoveChild()
 	// Handle all children to delete
 	for (auto& currentChild : m_pChildrenToDelete)
 	{
+		// Detach
+		currentChild.first->m_pParentScene = nullptr;
+		currentChild.first->RootOnSceneDetach(this);
 
 		// Find in children list
 		const auto it = std::ranges::find(m_pChildren, currentChild.first);

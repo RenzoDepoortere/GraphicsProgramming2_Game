@@ -42,7 +42,7 @@ void DeferredLightRenderer::DirectionalLightPass(const SceneContext& sceneContex
 	//Retrieve Directional light
 	const auto& light = sceneContext.pLights->GetDirectionalLight();
 
-	if(light.isEnabled)
+	if (light.isEnabled)
 	{
 		//Prepare Effect
 
@@ -79,7 +79,7 @@ void DeferredLightRenderer::VolumetricLightPass(const SceneContext& sceneContext
 	m_pVolumetricLightMaterial->SetVariable_Matrix(L"gMatrixViewProjInv", sceneContext.pCamera->GetViewProjectionInverse());
 	m_pVolumetricLightMaterial->SetVariable_Vector(L"gEyePos", sceneContext.pCamera->GetTransform()->GetWorldPosition());
 
-	m_pDirectionalLightMaterial->SetVariable_Texture(L"gTextureShadow", gbufferSRVs[static_cast<int>(DeferredRenderer::eGBufferId::Shadow)]);
+	m_pVolumetricLightMaterial->SetVariable_Texture(L"gTextureShadow", gbufferSRVs[static_cast<int>(DeferredRenderer::eGBufferId::Shadow)]);
 
 	//Iterate Lights & Render Volumes
 	for (auto& light : sceneContext.pLights->GetLights())

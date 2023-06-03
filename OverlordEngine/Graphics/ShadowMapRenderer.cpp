@@ -68,7 +68,7 @@ void ShadowMapRenderer::Begin(const SceneContext& sceneContext)
 	//1. Making sure that the ShadowMap is unbound from the pipeline as ShaderResourceView (SRV) is important, because we cannot use the same resource as a ShaderResourceView (texture resource inside a shader) and a RenderTargetView (target everything is rendered too) at the same time. In case this happens, you'll see an error in the output of visual studio - warning you that a resource is still bound as a SRV and cannot be used as an RTV.
 	//	-> Unbinding an SRV can be achieved using DeviceContext::PSSetShaderResource [I'll give you the implementation for free] - double check your output because depending on your usage of ShaderResources, the actual slot the ShadowMap is using can be different, but you'll see a warning pop-up with the correct slot ID in that case.
 	constexpr ID3D11ShaderResourceView* const pSRV[] = { nullptr };
-	sceneContext.d3dContext.pDeviceContext->PSSetShaderResources(1, 1, pSRV);
+	sceneContext.d3dContext.pDeviceContext->PSSetShaderResources(3, 1, pSRV);
 
 	//2. Calculate the Light ViewProjection and store in m_LightVP
 	// - Use XMMatrixOrtographicLH to create Projection Matrix (constants used for the demo below - feel free to change)

@@ -3,7 +3,7 @@ class MomentarilyParticlePrefab final : public GameObject
 {
 public:
 	// Rule of five
-	MomentarilyParticlePrefab(const std::wstring& particleTexturePath, float stayDuration);
+	MomentarilyParticlePrefab(GameObject* pPropsPrefab, const std::wstring& particleTexturePath, float stayDuration);
 	~MomentarilyParticlePrefab() override = default;
 
 	MomentarilyParticlePrefab(const MomentarilyParticlePrefab& other) = delete;
@@ -18,6 +18,8 @@ protected:
 private:
 	// Variables
 	// ---------
+	GameObject* m_pPropsPrefab{ nullptr };
+
 	std::wstring m_ParticleTexturePath{};
 	float m_StayDuration{};
 	float m_ElapsedTime{};

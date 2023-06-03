@@ -8,7 +8,7 @@ class DestroyCastableComponent final : public CastableComponent
 {
 public:
 	// Rule of five
-	DestroyCastableComponent(Spell spell, HarryCharacter* pHarry);
+	DestroyCastableComponent(Spell spell, HarryCharacter* pHarry, GameObject* pPropsPrefab);
 	virtual ~DestroyCastableComponent() override = default;
 
 	DestroyCastableComponent(const DestroyCastableComponent& other) = delete;
@@ -26,6 +26,7 @@ protected:
 private:
 	// Member variables
 	HarryCharacter* m_pHarry{ nullptr };
+	GameObject* m_pPropsPrefab{ nullptr };
 
 	bool m_HasToDelete{ false };
 	RigidBodyComponent* m_pRigidBodyComponent{ nullptr };

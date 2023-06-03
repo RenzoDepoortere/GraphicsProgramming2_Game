@@ -93,6 +93,7 @@
     <PostBuildEvent />
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Materials\Post\ChromaticAberration.cpp" />
     <ClCompile Include="Materials\Post\EyeAdaptation.cpp" />
     <ClCompile Include="Materials\Post\PostBlur.cpp" />
     <ClCompile Include="Prefabs\MomentarilyParticlePrefab.cpp" />
@@ -155,6 +156,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Materials\Post\ChromaticAberration.h" />
     <ClInclude Include="Materials\Post\EyeAdaptation.h" />
     <ClInclude Include="Materials\Post\PostBlur.h" />
     <ClInclude Include="Prefabs\MomentarilyParticlePrefab.h" />

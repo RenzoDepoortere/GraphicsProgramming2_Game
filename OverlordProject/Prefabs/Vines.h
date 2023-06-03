@@ -5,7 +5,7 @@ class Vines final : public GameObject
 {
 public:
 	// Rule of five
-	Vines(float generalScale, HarryCharacter* m_pHarry);
+	Vines(float generalScale, HarryCharacter* pHarry, GameObject* pPropsPrefab);
 	~Vines() override = default;
 
 	Vines(const Vines& other) = delete;
@@ -21,4 +21,5 @@ private:
 	// ---------
 	float m_GeneralScale{};
 	HarryCharacter* m_pHarry{ nullptr };
+	GameObject* m_pPropsPrefab{ nullptr };
 };

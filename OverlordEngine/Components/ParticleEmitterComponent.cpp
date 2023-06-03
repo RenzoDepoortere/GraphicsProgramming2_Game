@@ -17,8 +17,9 @@ ParticleEmitterComponent::ParticleEmitterComponent(const std::wstring& assetFile
 ParticleEmitterComponent::~ParticleEmitterComponent()
 {
 	//TODO_W9(L"Implement Destructor")
-	delete[] m_ParticlesArray;
-	m_ParticlesArray = nullptr;
+	SafeDelete(m_ParticlesArray);
+	/*delete[] m_ParticlesArray;
+	m_ParticlesArray = nullptr;*/
 
 	m_pVertexBuffer->Release();
 }

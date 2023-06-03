@@ -26,33 +26,44 @@ void PropsPrefab::Initialize(const SceneContext& /*sceneContext*/)
 
 	//Light light = {};
 	//light.isEnabled = true;
-	//light.position = XMFLOAT4{ translation.x, translation.y, translation.z, 0.2f };
+	//light.position = XMFLOAT4{ translation.x, translation.y, translation.z, 1.f };
 	//light.color = { 1.f, 140 / 255.f, 0.f, 1.f };
-	//light.intensity = 0.5f;
-	//light.range = 10.f;
+	//light.intensity = 0.25f;
+	//light.range = 5.f;
 	//light.type = LightType::Point;
 
 	//sceneContext.pLights->AddLight(light);
 
 	// Torch 2
 	pLight = GetScene()->AddChild(new Torch{ m_GeneralScale });
-	pLight->GetTransform()->Translate(17.4f, -5.f, -67.2f);
+	translation = XMFLOAT3{ 17.4f, -5.f, -67.2f };
+	pLight->GetTransform()->Translate(translation);
+
+	//light = {};
+	//light.isEnabled = true;
+	//light.position = XMFLOAT4{ translation.x, translation.y, translation.z, 1.f };
+	//light.color = { 1.f, 140 / 255.f, 0.f, 1.f };
+	//light.intensity = 0.25f;
+	//light.range = 5.f;
+	//light.type = LightType::Point;
+
+	//sceneContext.pLights->AddLight(light);
 
 	// Vines
 	// -----
 	
 	// Vine 1
-	Vines* pVine = GetScene()->AddChild(new Vines(m_GeneralScale, m_pHarry));
+	Vines* pVine = GetScene()->AddChild(new Vines(m_GeneralScale, m_pHarry, this));
 	pVine->GetTransform()->Translate(XMFLOAT3{ 16.5f, -9.f, -79.f });
 	pVine->GetTransform()->Rotate(0.f, 90.f, 0.f);
 
 	// Vine 2
-	pVine = GetScene()->AddChild(new Vines(m_GeneralScale, m_pHarry));
+	pVine = GetScene()->AddChild(new Vines(m_GeneralScale, m_pHarry, this));
 	pVine->GetTransform()->Translate(XMFLOAT3{ -5.8f, -8.5f, -48.2f });
 	pVine->GetTransform()->Rotate(0.f, 90.f, 0.f);
 
 	// Vine 3
-	pVine = GetScene()->AddChild(new Vines(m_GeneralScale, m_pHarry));
+	pVine = GetScene()->AddChild(new Vines(m_GeneralScale, m_pHarry, this));
 	pVine->GetTransform()->Translate(XMFLOAT3{ 23.1f, -8.5f, -18.f });
 
 	// Bean props

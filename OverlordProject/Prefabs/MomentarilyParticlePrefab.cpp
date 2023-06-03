@@ -1,8 +1,9 @@
 #include "stdafx.h"
 #include "MomentarilyParticlePrefab.h"
 
-MomentarilyParticlePrefab::MomentarilyParticlePrefab(const std::wstring& particleTexturePath, float stayDuration)
-	: m_ParticleTexturePath{ particleTexturePath }
+MomentarilyParticlePrefab::MomentarilyParticlePrefab(GameObject* pPropsPrefab, const std::wstring& particleTexturePath, float stayDuration)
+	: m_pPropsPrefab{ pPropsPrefab }
+	, m_ParticleTexturePath{ particleTexturePath }
 	, m_StayDuration{ stayDuration }
 {
 }
@@ -39,6 +40,6 @@ void MomentarilyParticlePrefab::Update(const SceneContext& sceneContext)
 	// Remove self
 	if (m_StayDuration <= m_ElapsedTime)
 	{
-		GetScene()->RemoveChild(this, true);
+		m_pPropsPrefab->RemoveChild(this, true);
 	}
 }

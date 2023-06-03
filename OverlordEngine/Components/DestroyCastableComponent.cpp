@@ -4,9 +4,10 @@
 #include "../OverlordProject/Prefabs/HarryCharacter.h"
 #include "../OverlordProject/Prefabs/MomentarilyParticlePrefab.h"
 
-DestroyCastableComponent::DestroyCastableComponent(Spell spell, HarryCharacter* pHarry)
+DestroyCastableComponent::DestroyCastableComponent(Spell spell, HarryCharacter* pHarry, GameObject* pPropsPrefab)
 	: CastableComponent{ spell }
 	, m_pHarry{ pHarry }
+	, m_pPropsPrefab{ pPropsPrefab }
 {
 }
 
@@ -33,7 +34,7 @@ void DestroyCastableComponent::Activate(GameObject* /*pHarry*/)
 	m_HasToDelete = true;
 
 	// Spawn particles
-	GameObject* pobject = GetScene()->AddChild(new MomentarilyParticlePrefab{ L"Textures/Particles/Leaf/Leaf.png", 1.f });
+	GameObject* pobject = m_pPropsPrefab->AddChild(new MomentarilyParticlePrefab{m_pPropsPrefab, L"Textures/Particles/Leaf/Leaf.png", 1.f });
 	
 	XMFLOAT3 spawnPos{ GetTransform()->GetWorldPosition() };
 	spawnPos.y += 2.f;
