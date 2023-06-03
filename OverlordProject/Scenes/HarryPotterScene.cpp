@@ -18,6 +18,9 @@
 #include "Prefabs/MainMenu.h"
 #include "Prefabs/PauseMenu.h"
 
+// Post Processing
+#include "Materials/Post/EyeAdaptation.h"
+
 HarryPotterScene::HarryPotterScene()
 	: GameScene(L"HarryPotterScene")
 {
@@ -42,6 +45,17 @@ void HarryPotterScene::Initialize()
 		m_SceneContext.pInput->ForceMouseToCenter(true);
 		m_SceneContext.pInput->CursorVisible(false);
 	}
+
+	// Post processing
+	// ---------------
+	//if (m_AddedPostProcessing == false)
+	//{
+	//	m_AddedPostProcessing = true;
+
+	//	EyeAdaptation* pEyeAdaptation{ MaterialManager::Get()->CreateMaterial<EyeAdaptation>() };
+	//	AddPostProcessingEffect(pEyeAdaptation);
+	//}
+
 
 	// Spawn Prefabs
 	// -------------

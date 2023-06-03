@@ -36,6 +36,8 @@ private:
 	bool m_InStartMenu{ true };
 	bool m_IsPaused{ false };
 
+	bool m_AddedPostProcessing{ false };
+
 	// Functions
 	// ---------
 
