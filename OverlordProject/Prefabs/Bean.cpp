@@ -15,13 +15,14 @@ Bean::Bean(float generalScale, HarryCharacter* pHarry, const XMFLOAT3& spawnLoca
 	, m_PlaySpawnSound{ playSpawnSound }
 	, m_Force{ 5.f }
 	, m_RotationSpeed{ 50.f }
+	, m_NrBounceSounds{ 3 }
 {
 }
 
 void Bean::Initialize(const SceneContext& /*sceneContext*/)
 {
 	// Sound
-	FMOD::System* pFmod{ SoundManager::Get()->GetSystem() };
+	FMOD::System* pFmod = SoundManager::Get()->GetSystem();
 
 	pFmod->createSound("Resources/Sounds/Props/Beans/Bean_Spawn_1.wav", FMOD_DEFAULT, nullptr, &m_pSpawnSound[0]);
 	pFmod->createSound("Resources/Sounds/Props/Beans/Bean_Spawn_2.wav", FMOD_DEFAULT, nullptr, &m_pSpawnSound[1]);
@@ -34,6 +35,8 @@ void Bean::Initialize(const SceneContext& /*sceneContext*/)
 	}
 
 	pFmod->createSound("Resources/Sounds/Props/Beans/Bean_PickUp.wav", FMOD_DEFAULT, nullptr, &m_pPickUpSound);
+
+	pFmod->createSound("Resources/Sounds/Props/Beans/Bean_Bounce.wav", FMOD_DEFAULT, nullptr, &m_pBounceSound);
 
 	// Mesh
 	auto pObject{ AddChild(new GameObject{}) };
@@ -69,6 +72,21 @@ void Bean::Initialize(const SceneContext& /*sceneContext*/)
 	XMStoreFloat3(&calculatedForce, force);
 
 	pActor->AddForce(calculatedForce, PxForceMode::eIMPULSE);
+
+	//// Bounce sound
+	//pObject = AddChild(new GameObject{});
+	//pActor = pObject->AddComponent(new RigidBodyComponent(true));
+	//pPxConvexMesh = ContentManager::Load<PxConvexMesh>(L"Meshes/Props/Beans/Bean.ovpc");
+	//pActor->AddCollider(PxConvexMeshGeometry{ pPxConvexMesh, PxMeshScale{m_GeneralScale} }, *pDefaultMaterial, true);
+
+	//// On collision
+	//pObject->SetOnTriggerCallBack([=](GameObject*, GameObject* /*pOther*/, PxTriggerAction /*action*/)
+	//{
+	//	if (m_NrBounceSounds == 0) return;
+	//	--m_NrBounceSounds;
+
+	//	m_pHarry->SetSpellHitSoundToPlay(m_pBounceSound);
+	//});
 }
 
 void Bean::Update(const SceneContext& sceneContext)

@@ -39,4 +39,7 @@ private:
 
 	std::array<FMOD::Sound*, 3> m_pSpawnSound{};
 	FMOD::Sound* m_pPickUpSound{ nullptr };
+	
+	FMOD::Sound* m_pBounceSound{ nullptr };
+	int m_NrBounceSounds{};
 };
