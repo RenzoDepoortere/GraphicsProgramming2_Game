@@ -91,6 +91,8 @@ void HarryCharacter::AddBean()
 
 void HarryCharacter::InMainMenu()
 {
+	m_InMainMenu = true;
+
 	// Stop channels
 	m_pWalkingChannel->setPaused(true);
 	m_pJumpChannel->setPaused(true);
@@ -127,6 +129,8 @@ void HarryCharacter::InPauseMenu(bool isIn)
 		m_pBackgroundChannel->setVolume(0.5f);
 		m_pAmbianceChannel->setVolume(0.25f);
 	}
+
+	m_InPauseMenu = isIn;
 }
 
 void HarryCharacter::SetSpellHitSoundToPlay(FMOD::Sound* pSound)

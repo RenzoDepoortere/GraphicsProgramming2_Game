@@ -20,6 +20,38 @@ Snail::Snail(float generalScale, HarryCharacter* pHarry)
 
 void Snail::Initialize(const SceneContext& /*sceneContext*/)
 {
+	// Sound
+	// -----
+	m_pFmod = SoundManager::Get()->GetSystem();
+
+	// Slither
+	const int randomIdx{ rand() % 2 };
+	FMOD::Sound* pSound{};
+
+	if (randomIdx == 0)	m_pFmod->createSound("Resources/Sounds/Enemies/Snail/Snail_Slither_1.wav", FMOD_3D | FMOD_3D_LINEARROLLOFF, nullptr, &pSound);
+	else  				m_pFmod->createSound("Resources/Sounds/Enemies/Snail/Snail_Slither_2.wav", FMOD_3D | FMOD_3D_LINEARROLLOFF, nullptr, &pSound);
+
+	m_pFmod->playSound(pSound, nullptr, true, &m_pSlitherChannel);
+	m_pSlitherChannel->setMode(FMOD_LOOP_NORMAL);
+	m_pSlitherChannel->set3DMinMaxDistance(0.f, 10.f);
+
+	// Attack
+	m_pFmod->createSound("Resources/Sounds/Enemies/Snail/Snail_Attack_1.wav", FMOD_DEFAULT, nullptr, &m_pAttackSounds[0]);
+	m_pFmod->createSound("Resources/Sounds/Enemies/Snail/Snail_Attack_2.wav", FMOD_DEFAULT, nullptr, &m_pAttackSounds[1]);
+	m_pFmod->createSound("Resources/Sounds/Enemies/Snail/Snail_Attack_3.wav", FMOD_DEFAULT, nullptr, &m_pAttackSounds[2]);
+	m_pFmod->createSound("Resources/Sounds/Enemies/Snail/Snail_Attack_4.wav", FMOD_DEFAULT, nullptr, &m_pAttackSounds[3]);
+
+	// Stun
+	m_pFmod->createSound("Resources/Sounds/Enemies/Snail/Snail_Stun_1.wav", FMOD_DEFAULT, nullptr, &m_pStunSounds[0]);
+	m_pFmod->createSound("Resources/Sounds/Enemies/Snail/Snail_Stun_2.wav", FMOD_DEFAULT, nullptr, &m_pStunSounds[1]);
+	m_pFmod->createSound("Resources/Sounds/Enemies/Snail/Snail_Stun_3.wav", FMOD_DEFAULT, nullptr, &m_pStunSounds[2]);
+	m_pFmod->createSound("Resources/Sounds/Enemies/Snail/Snail_Stun_4.wav", FMOD_DEFAULT, nullptr, &m_pStunSounds[3]);
+	m_pFmod->createSound("Resources/Sounds/Enemies/Snail/Snail_Stun_5.wav", FMOD_DEFAULT, nullptr, &m_pStunSounds[4]);
+	m_pFmod->createSound("Resources/Sounds/Enemies/Snail/Snail_Stun_6.wav", FMOD_DEFAULT, nullptr, &m_pStunSounds[5]);
+
+	// Hit
+	m_pFmod->createSound("Resources/Sounds/Enemies/Snail/Snail_Hit.wav", FMOD_DEFAULT, nullptr, &m_pHitSound);
+
 	// Trail
 	// -----
 	m_pTrailObject = GetScene()->AddChild(new GameObject{});
@@ -62,6 +94,8 @@ void Snail::Update(const SceneContext& sceneContext)
 	HandleAttacking(sceneContext);
 	CheckHarry();
 	HandleTrail(sceneContext);
+
+	HandleSlitherSound(sceneContext);
 }
 
 void Snail::SetStunned()
@@ -70,6 +104,10 @@ void Snail::SetStunned()
 	m_CurrentSnailState = Stunned;
 	m_HasToSpin = true;
 	m_IsAttackStun = false;
+
+	// Sound
+	const int randomIdx{ rand() % static_cast<int>(m_pStunSounds.size()) };
+	m_pHarry->SetSpellHitSoundToPlay(m_pStunSounds[randomIdx]);
 }
 void Snail::Push(const XMFLOAT3& source)
 {
@@ -79,6 +117,9 @@ void Snail::Push(const XMFLOAT3& source)
 	// Prepare push
 	m_PushSource = source;
 	m_HasToPush = true;
+
+	// Sound
+	m_pHarry->SetSpellHitSoundToPlay(m_pHitSound);
 }
 
 void Snail::HarryHit()
@@ -309,6 +350,10 @@ void Snail::HandleAttacking(const SceneContext& /*sceneContext*/)
 		m_CurrentSnailState = Stunned;
 		m_IsAttackStun = true;
 
+		// Sound
+		const int randomIdx{ rand() % static_cast<int>(m_pAttackSounds.size()) };
+		m_pHarry->SetSpellHitSoundToPlay(m_pAttackSounds[randomIdx]);
+
 		// Rotate
 		InstantRotation();
 	}
@@ -331,6 +376,67 @@ void Snail::HandleTrail(const SceneContext& sceneContext)
 		m_pTrails.emplace_back(pTrail);
 	}
 }
+
+void Snail::HandleSlitherSound(const SceneContext& sceneContext)
+{
+	// Pause conditions
+	// ----------------
+
+	bool isPaused{};
+	m_pSlitherChannel->getPaused(&isPaused);
+
+	// Pause if stunned
+	if (m_CurrentSnailState == Stunned)
+	{
+		if (isPaused == false) m_pSlitherChannel->setPaused(true);
+		return;
+	}
+
+	// If in pause- or main-menu
+	if (m_pHarry->GetInPauseMenu() || m_pHarry->GetInMainMenu())
+	{
+		// Pause
+		if (isPaused == false) m_pSlitherChannel->setPaused(true);
+		return;
+	}
+
+	// Else, play 3D sound
+	// -------------------
+
+	if(isPaused) m_pSlitherChannel->setPaused(false);
+
+	// Listener
+	const float deltaTime{ sceneContext.pGameTime->GetElapsed() };
+	CameraComponent* pCamera{ m_pHarry->GetCharacter()->GetCamera() };
+
+	const FMOD_VECTOR cameraPos{ MathHelper::ToFMod(pCamera->GetTransform()->GetWorldPosition()) };
+	const FMOD_VECTOR cameraForward{ MathHelper::ToFMod(pCamera->GetTransform()->GetForward()) };
+	const FMOD_VECTOR cameraUp{ MathHelper::ToFMod(pCamera->GetTransform()->GetUp()) };
+
+	FMOD_VECTOR cameraVelocity{};
+	cameraVelocity.x = (cameraPos.x - m_PreviousListenerPos.x) / deltaTime;
+	cameraVelocity.y = (cameraPos.y - m_PreviousListenerPos.y) / deltaTime;
+	cameraVelocity.z = (cameraPos.z - m_PreviousListenerPos.z) / deltaTime;
+
+	m_PreviousListenerPos = cameraPos;
+
+	m_pFmod->set3DListenerAttributes(0, &cameraPos, &cameraVelocity, &cameraForward, &cameraUp);
+
+	// Source
+	const FMOD_VECTOR currentPos{ MathHelper::ToFMod(GetTransform()->GetWorldPosition()) };
+	
+	FMOD_VECTOR currentVelocity{};
+	currentVelocity.x = (currentPos.x - m_PreviousPos.x) / deltaTime;
+	currentVelocity.y = (currentPos.y - m_PreviousPos.y) / deltaTime;
+	currentVelocity.z = (currentPos.z - m_PreviousPos.z) / deltaTime;
+
+	m_PreviousPos = currentPos;
+
+	m_pSlitherChannel->set3DAttributes(&currentPos, &currentVelocity);
+}
+
+// MEMBER FUNCTIONS
+// ----------------
 
 void Snail::CheckHarry()
 {

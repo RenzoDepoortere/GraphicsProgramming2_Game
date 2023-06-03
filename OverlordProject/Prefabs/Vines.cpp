@@ -4,8 +4,9 @@
 #include "Materials/BasicMaterial_Deferred.h"
 #include "Components/DestroyCastableComponent.h"
 
-Vines::Vines(float generalScale)
+Vines::Vines(float generalScale, HarryCharacter* pHarry)
 	: m_GeneralScale{ generalScale }
+	, m_pHarry{ pHarry }
 {
 }
 
@@ -29,7 +30,7 @@ void Vines::Initialize(const SceneContext& /*sceneContext*/)
 	pActor->AddCollider(PxConvexMeshGeometry{ pPxConvexMesh, PxMeshScale{m_GeneralScale} }, *pDefaultMaterial);
 
 	// Castable
-	AddComponent(new DestroyCastableComponent(CastableComponent::Diffindo));
+	AddComponent(new DestroyCastableComponent(CastableComponent::Diffindo, m_pHarry));
 
 	// Transform
 	GetTransform()->Translate(translation);

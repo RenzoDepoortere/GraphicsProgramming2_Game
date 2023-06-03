@@ -1,11 +1,12 @@
 #pragma once
+#include <array>
 class HarryCharacter;
 
 class Bean final : public GameObject
 {
 public:
 	// Rule of five
-	Bean(float generalScale, HarryCharacter* pHarry, const XMFLOAT3& spawnLocation, const XMFLOAT3& forceDirection);
+	Bean(float generalScale, HarryCharacter* pHarry, const XMFLOAT3& spawnLocation, const XMFLOAT3& forceDirection, bool playSpawnSound = true);
 	~Bean() override = default;
 
 	Bean(const Bean& other) = delete;
@@ -33,4 +34,9 @@ private:
 
 	float m_TotalYaw{};
 	float m_RotationSpeed{};
+
+	bool m_PlaySpawnSound{};
+
+	std::array<FMOD::Sound*, 3> m_pSpawnSound{};
+	FMOD::Sound* m_pPickUpSound{ nullptr };
 };

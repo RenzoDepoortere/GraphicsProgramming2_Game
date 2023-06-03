@@ -1,4 +1,6 @@
 #pragma once
+#include <array>
+
 class HarryCharacter;
 class SnailCastableComponent;
 class Trail;
@@ -67,6 +69,17 @@ private:
 	float m_CurrentTime{};
 	bool m_IsAttackStun{ false };
 
+	FMOD::System* m_pFmod{ nullptr };
+
+	FMOD::Channel* m_pSlitherChannel{ nullptr };
+
+	std::array<FMOD::Sound*, 4> m_pAttackSounds{};
+	std::array<FMOD::Sound*, 6> m_pStunSounds{};
+	FMOD::Sound* m_pHitSound{ nullptr };
+
+	FMOD_VECTOR m_PreviousListenerPos{};
+	FMOD_VECTOR m_PreviousPos{};
+
 	// Functions
 	// ---------
 	void DeleteMarkedTrails();
@@ -79,6 +92,8 @@ private:
 
 	void HandleAttacking(const SceneContext& sceneContext);
 	void HandleTrail(const SceneContext& sceneContext);
+
+	void HandleSlitherSound(const SceneContext& sceneContext);
 
 	void CheckHarry();
 

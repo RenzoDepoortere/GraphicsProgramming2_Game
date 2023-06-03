@@ -81,4 +81,13 @@ namespace MathHelper
 		if (value < lo)
 			value = lo;
 	}
+
+	inline FMOD_VECTOR ToFMod(XMFLOAT3 v)
+	{
+		return FMOD_VECTOR{ v.x,v.y,v.z };
+	}
+	inline FMOD_VECTOR ToFMod(PxVec3 v)
+	{
+		return FMOD_VECTOR{ v.x,v.y,v.z };
+	}
 }

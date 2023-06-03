@@ -6,12 +6,13 @@
 #include "Prefabs/HarryCharacter.h"
 #include "Prefabs/Character.h"
 
-Bean::Bean(float generalScale, HarryCharacter* pHarry, const XMFLOAT3& spawnLocation, const XMFLOAT3& forceDirection)
+Bean::Bean(float generalScale, HarryCharacter* pHarry, const XMFLOAT3& spawnLocation, const XMFLOAT3& forceDirection, bool playSpawnSound)
 	: m_GeneralScale{ generalScale }
 	, m_pHarry{ pHarry }
 	, m_SpawnLocation{ spawnLocation }
 	, m_NrBeans{ 16 }
 	, m_ForceDirection{ forceDirection }
+	, m_PlaySpawnSound{ playSpawnSound }
 	, m_Force{ 5.f }
 	, m_RotationSpeed{ 50.f }
 {
@@ -19,6 +20,21 @@ Bean::Bean(float generalScale, HarryCharacter* pHarry, const XMFLOAT3& spawnLoca
 
 void Bean::Initialize(const SceneContext& /*sceneContext*/)
 {
+	// Sound
+	FMOD::System* pFmod{ SoundManager::Get()->GetSystem() };
+
+	pFmod->createSound("Resources/Sounds/Props/Beans/Bean_Spawn_1.wav", FMOD_DEFAULT, nullptr, &m_pSpawnSound[0]);
+	pFmod->createSound("Resources/Sounds/Props/Beans/Bean_Spawn_2.wav", FMOD_DEFAULT, nullptr, &m_pSpawnSound[1]);
+	pFmod->createSound("Resources/Sounds/Props/Beans/Bean_Spawn_3.wav", FMOD_DEFAULT, nullptr, &m_pSpawnSound[2]);
+
+	if (m_PlaySpawnSound)
+	{
+		const int randomIdx{ rand() % static_cast<int>(m_pSpawnSound.size()) };
+		m_pHarry->SetSpellHitSoundToPlay(m_pSpawnSound[randomIdx]);
+	}
+
+	pFmod->createSound("Resources/Sounds/Props/Beans/Bean_PickUp.wav", FMOD_DEFAULT, nullptr, &m_pPickUpSound);
+
 	// Mesh
 	auto pObject{ AddChild(new GameObject{}) };
 	ModelComponent* pModel{ pObject->AddComponent(new ModelComponent{L"Meshes/Props/Beans/Bean.ovm"}) };
@@ -73,6 +89,7 @@ void Bean::Update(const SceneContext& sceneContext)
 	if (sqrdDistance <= minSqrdDistanceBetwn)
 	{
 		// Sound
+		m_pHarry->SetSpellHitSoundToPlay(m_pPickUpSound);
 
 		// Particle
 

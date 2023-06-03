@@ -1,10 +1,11 @@
 #pragma once
+class HarryCharacter;
 
 class Vines final : public GameObject
 {
 public:
 	// Rule of five
-	Vines(float generalScale);
+	Vines(float generalScale, HarryCharacter* m_pHarry);
 	~Vines() override = default;
 
 	Vines(const Vines& other) = delete;
@@ -19,4 +20,5 @@ private:
 	// Variables
 	// ---------
 	float m_GeneralScale{};
+	HarryCharacter* m_pHarry{ nullptr };
 };

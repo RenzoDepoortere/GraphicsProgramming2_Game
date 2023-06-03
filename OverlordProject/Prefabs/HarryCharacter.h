@@ -24,6 +24,9 @@ public:
 	void DealDamage(int amount);
 	void AddBean();
 
+	bool GetInMainMenu() const { return m_InMainMenu; }
+	bool GetInPauseMenu() const { return m_InPauseMenu; }
+
 	void InMainMenu();
 	void InPauseMenu(bool isIn);
 
@@ -65,6 +68,7 @@ private:
 
 	float m_GeneralScale{};
 	bool m_InMainMenu{ false };
+	bool m_InPauseMenu{ false };
 	float m_ControllerHeight{};
 
 	CharacterStates m_CurrentCharacterState{ Idle };

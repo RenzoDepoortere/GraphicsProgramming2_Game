@@ -4,13 +4,15 @@
 #include "Components/BeansCastableComponent.h"
 
 #include "Prefabs/CubePrefab.h"
+#include "Prefabs/HarryCharacter.h"
 
 #include "Materials/BasicMaterial_Deferred.h"
 
-BeansProp::BeansProp(float generalScale, HarryCharacter* pHarry, CastableComponent::Spell spell, const std::wstring& resourceName)
+BeansProp::BeansProp(float generalScale, HarryCharacter* pHarry, CastableComponent::Spell spell, const std::vector<FMOD::Sound*>& pHitSounds, const std::wstring& resourceName)
 	: m_GeneralScale{ generalScale }
 	, m_pHarry{ pHarry }
 	, m_Spell{ spell }
+	, m_pHitSounds{ pHitSounds }
 	, m_ResourceName{ resourceName }
 {
 }
@@ -63,6 +65,7 @@ void BeansProp::Update(const SceneContext& /*sceneContext*/)
 	{
 		m_HasToJump = false;
 
+		// Force
 		const float force{ 5.f };
 		const XMFLOAT3 direction{ 0.f, 1.f, 0.f };
 		const XMVECTOR forceVector{ XMVectorScale(XMLoadFloat3(&direction), force) };
@@ -71,5 +74,9 @@ void BeansProp::Update(const SceneContext& /*sceneContext*/)
 		XMStoreFloat3(&desiredForce, forceVector);
 
 		m_pRigidBody->AddForce(desiredForce, PxForceMode::eIMPULSE);
+
+		// Play sound
+		const int randomIdx{ rand() % static_cast<int>(m_pHitSounds.size()) };
+		m_pHarry->SetSpellHitSoundToPlay(m_pHitSounds[randomIdx]);
 	}
 }
