@@ -42,8 +42,9 @@ void BeansCastableComponent::Update(const SceneContext& sceneContext)
 		// Particles
 
 		// Spawn bean
-		const XMFLOAT3 direction{ MathHelper::DirectionTo(m_PreviousLocation, m_pHarry->GetTransform()->GetWorldPosition()) };
-		XMFLOAT3 spawnLocation{ m_PreviousLocation };
+		const XMFLOAT3 currentPos{ GetTransform()->GetWorldPosition() };
+		const XMFLOAT3 direction{ MathHelper::DirectionTo(currentPos, m_pHarry->GetTransform()->GetWorldPosition())};
+		XMFLOAT3 spawnLocation{ currentPos };
 		spawnLocation.y += 2.f;
 
 		auto pObject = m_pBeanHolder->AddChild(new Bean{ m_GeneralScale, m_pHarry, spawnLocation, direction });

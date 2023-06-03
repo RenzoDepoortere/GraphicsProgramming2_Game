@@ -7,7 +7,8 @@ class BeansProp final : public GameObject
 {
 public:
 	// Rule of five
-	BeansProp(float generalScale, HarryCharacter* pHarry, CastableComponent::Spell spell, const std::vector<FMOD::Sound*>& pHitSounds, const std::wstring& resourceName = L"");
+	BeansProp(float generalScale, HarryCharacter* pHarry, CastableComponent::Spell spell, float jumpForce,
+			  float scaleMultiplier, const std::vector<FMOD::Sound*>& pHitSounds, const std::wstring& resourceName = L"");
 	~BeansProp() override = default;
 
 	BeansProp(const BeansProp& other) = delete;
@@ -29,10 +30,13 @@ private:
 	HarryCharacter* m_pHarry{};
 	RigidBodyComponent* m_pRigidBody{};
 
+	float m_ScaleMultiplier{};
+
 	std::vector<FMOD::Sound*> m_pHitSounds{};
 
 	CastableComponent::Spell m_Spell{};
 	std::wstring m_ResourceName{};
 
+	float m_JumpForce{};
 	bool m_HasToJump{ false };
 };
