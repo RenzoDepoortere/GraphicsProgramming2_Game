@@ -8,12 +8,13 @@
 
 #include "Materials/BasicMaterial_Deferred.h"
 
-BeansProp::BeansProp(float generalScale, HarryCharacter* pHarry, CastableComponent::Spell spell, float jumpForce,
+BeansProp::BeansProp(float generalScale, HarryCharacter* pHarry, CastableComponent::Spell spell, float jumpForce, float torqueForce,
 					float scaleMultiplier, const std::vector<FMOD::Sound*>& pHitSounds, const std::wstring& resourceName)
 	: m_GeneralScale{ generalScale }
 	, m_pHarry{ pHarry }
 	, m_Spell{ spell }
 	, m_JumpForce{ jumpForce }
+	, m_TorqueForce{ torqueForce }
 	, m_ScaleMultiplier{ scaleMultiplier }
 	, m_pHitSounds{ pHitSounds }
 	, m_ResourceName{ resourceName }
@@ -69,13 +70,20 @@ void BeansProp::Update(const SceneContext& /*sceneContext*/)
 		m_HasToJump = false;
 
 		// Force
-		const XMFLOAT3 direction{ 0.f, 1.f, 0.f };
-		const XMVECTOR forceVector{ XMVectorScale(XMLoadFloat3(&direction), m_JumpForce) };
+		XMFLOAT3 direction{ 0.f, 1.f, 0.f };
+		XMVECTOR forceVector{ XMVectorScale(XMLoadFloat3(&direction), m_JumpForce) };
 
 		XMFLOAT3 desiredForce{};
 		XMStoreFloat3(&desiredForce, forceVector);
 
 		m_pRigidBody->AddForce(desiredForce, PxForceMode::eIMPULSE);
+
+		// Torque
+		direction = { 0.f, 0.f, 1.f };
+		forceVector = XMVectorScale(XMLoadFloat3(&direction), m_TorqueForce);
+
+		XMStoreFloat3(&desiredForce, forceVector);
+		m_pRigidBody->AddTorque(desiredForce, PxForceMode::eIMPULSE);
 
 		// Play sound
 		const int randomIdx{ rand() % static_cast<int>(m_pHitSounds.size()) };

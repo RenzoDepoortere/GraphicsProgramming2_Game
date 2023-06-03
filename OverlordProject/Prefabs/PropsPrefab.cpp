@@ -13,7 +13,7 @@ PropsPrefab::PropsPrefab(float generalScale, HarryCharacter* pHarry)
 {
 }
 
-void PropsPrefab::Initialize(const SceneContext& /*sceneContext*/)
+void PropsPrefab::Initialize(const SceneContext& sceneContext)
 {
 	// Lights
 	// ------
@@ -24,30 +24,56 @@ void PropsPrefab::Initialize(const SceneContext& /*sceneContext*/)
 	translation = XMFLOAT3{ 23.5f, -5.f, -67.2f };
 	pLight->GetTransform()->Translate(translation);
 
-	//Light light = {};
-	//light.isEnabled = true;
-	//light.position = XMFLOAT4{ translation.x, translation.y, translation.z, 1.f };
-	//light.color = { 1.f, 140 / 255.f, 0.f, 1.f };
-	//light.intensity = 0.25f;
-	//light.range = 5.f;
-	//light.type = LightType::Point;
+	Light light = {};
+	light.isEnabled = true;
+	light.position = XMFLOAT4{ translation.x, translation.y, translation.z, 1.f };
+	light.color = { 1.f, 140 / 255.f, 0.f, 1.f };
+	light.intensity = 0.25f;
+	light.range = 5.f;
+	light.type = LightType::Point;
 
-	//sceneContext.pLights->AddLight(light);
+	sceneContext.pLights->AddLight(light);
 
 	// Torch 2
 	pLight = GetScene()->AddChild(new Torch{ m_GeneralScale });
 	translation = XMFLOAT3{ 17.4f, -5.f, -67.2f };
 	pLight->GetTransform()->Translate(translation);
 
-	//light = {};
-	//light.isEnabled = true;
-	//light.position = XMFLOAT4{ translation.x, translation.y, translation.z, 1.f };
-	//light.color = { 1.f, 140 / 255.f, 0.f, 1.f };
-	//light.intensity = 0.25f;
-	//light.range = 5.f;
-	//light.type = LightType::Point;
+	light = {};
+	light.isEnabled = true;
+	light.position = XMFLOAT4{ translation.x, translation.y, translation.z, 1.f };
+	light.color = { 1.f, 140 / 255.f, 0.f, 1.f };
+	light.intensity = 0.25f;
+	light.range = 5.f;
+	light.type = LightType::Point;
 
-	//sceneContext.pLights->AddLight(light);
+	sceneContext.pLights->AddLight(light);
+
+	// Chandelier
+	translation = XMFLOAT3{ 14.3f, -4.f, -56.6f };
+
+	light = {};
+	light.isEnabled = true;
+	light.position = XMFLOAT4{ translation.x, translation.y, translation.z, 1.f };
+	light.color = { 0.6f, 0.6f, 0.6f, 1.f };
+	light.intensity = 0.4f;
+	light.range = 7.5f;
+	light.type = LightType::Point;
+
+	sceneContext.pLights->AddLight(light);
+
+	// Back lights
+	translation = XMFLOAT3{ 23.3f, -4.5f, -54.f };
+
+	light = {};
+	light.isEnabled = true;
+	light.position = XMFLOAT4{ translation.x, translation.y, translation.z, 1.f };
+	light.color = { 0.6f, 0.6f, 0.6f, 1.f };
+	light.intensity = 0.2f;
+	light.range = 2.5f;
+	light.type = LightType::Point;
+
+	sceneContext.pLights->AddLight(light);
 
 	// Vines
 	// -----
@@ -79,12 +105,12 @@ void PropsPrefab::Initialize(const SceneContext& /*sceneContext*/)
 	pSounds.emplace_back(pSound);
 
 	// Chest 1
-	GameObject* pProp{ GetScene()->AddChild(new BeansProp{m_GeneralScale, m_pHarry, CastableComponent::Alahomora, 5.f, 2.f, pSounds, L"Chest"})};
+	GameObject* pProp{ GetScene()->AddChild(new BeansProp{m_GeneralScale, m_pHarry, CastableComponent::Alahomora, 5.f, 0.5f, 2.f, pSounds, L"Chest"})};
 	pProp->GetTransform()->Translate(20.f, -7.6f, -83.4f);
 	pProp->GetTransform()->Rotate(0.f, 90.f, 0.f);
 
 	// Chests 2
-	pProp = GetScene()->AddChild(new BeansProp{m_GeneralScale, m_pHarry, CastableComponent::Alahomora, 5.f, 2.f, pSounds, L"Chest"});
+	pProp = GetScene()->AddChild(new BeansProp{m_GeneralScale, m_pHarry, CastableComponent::Alahomora, 5.f, 0.5f, 2.f, pSounds, L"Chest"});
 	pProp->GetTransform()->Translate(11.f, -7.6f, -62.5f);
 	pProp->GetTransform()->Rotate(0.f, 180.f, 0.f);
 
@@ -96,11 +122,11 @@ void PropsPrefab::Initialize(const SceneContext& /*sceneContext*/)
 	pSounds.emplace_back(pSound);
 
 	// Pot 1
-	pProp = GetScene()->AddChild(new BeansProp{ m_GeneralScale, m_pHarry, CastableComponent::Diffindo, 2.5f, 4.f, pSounds, L"Pot" });
+	pProp = GetScene()->AddChild(new BeansProp{ m_GeneralScale, m_pHarry, CastableComponent::Diffindo, 2.5f, 0.5f, 4.f, pSounds, L"Pot" });
 	pProp->GetTransform()->Translate(21.9f, -6.2f, -55.f);
 
 	// Pot 2
-	pProp = GetScene()->AddChild(new BeansProp{ m_GeneralScale, m_pHarry, CastableComponent::Diffindo, 2.5f, 4.f, pSounds, L"Pot" });
+	pProp = GetScene()->AddChild(new BeansProp{ m_GeneralScale, m_pHarry, CastableComponent::Diffindo, 2.5f, 0.5f, 4.f, pSounds, L"Pot" });
 	pProp->GetTransform()->Translate(-2.2f, -8.f, -22.8f);
 
 	pSounds.clear();
@@ -109,7 +135,7 @@ void PropsPrefab::Initialize(const SceneContext& /*sceneContext*/)
 	pFmod->createSound("Resources/Sounds/Props/Cauldron/Cauldron.wav", FMOD_DEFAULT, nullptr, &pSound);
 	pSounds.emplace_back(pSound);
 
-	pProp = GetScene()->AddChild(new BeansProp{ m_GeneralScale, m_pHarry, CastableComponent::Diffindo, 2.5f, 1.f, pSounds, L"Cauldron" });
+	pProp = GetScene()->AddChild(new BeansProp{ m_GeneralScale, m_pHarry, CastableComponent::Diffindo, 2.5f, 0.5f, 1.f, pSounds, L"Cauldron" });
 	pProp->GetTransform()->Translate(3.9f, -7.6f, -56.7f);
 
 	pSounds.clear();

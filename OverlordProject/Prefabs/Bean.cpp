@@ -66,7 +66,12 @@ void Bean::Initialize(const SceneContext& /*sceneContext*/)
 	pActor->SetConstraint(RigidBodyConstraint::RotZ, false);
 
 	// Shoot in direction
-	m_ForceDirection.y += 0.5f;
+	const float minForce{ 0.3f };
+	const float maxForce{ 0.7f };
+
+	const float randomForce{ MathHelper::randF(minForce, maxForce) };
+	m_ForceDirection.y += randomForce;
+
 	const XMVECTOR force{ XMVectorScale(XMVector3Normalize(XMLoadFloat3(&m_ForceDirection)), m_Force) };
 	XMFLOAT3 calculatedForce{};
 	XMStoreFloat3(&calculatedForce, force);

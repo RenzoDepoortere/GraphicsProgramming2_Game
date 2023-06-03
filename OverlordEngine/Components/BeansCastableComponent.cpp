@@ -4,6 +4,7 @@
 #include "../OverlordProject/Prefabs/Bean.h"
 #include "../OverlordProject/Prefabs/BeansProp.h"
 #include "../OverlordProject/Prefabs/HarryCharacter.h"
+#include "../OverlordProject/Prefabs/Character.h"
 
 BeansCastableComponent::BeansCastableComponent(float generalScale, HarryCharacter* pHarry, Spell spell, BeansProp* pProp)
 	: m_GeneralScale{ generalScale }
@@ -43,7 +44,7 @@ void BeansCastableComponent::Update(const SceneContext& sceneContext)
 
 		// Spawn bean
 		const XMFLOAT3 currentPos{ GetTransform()->GetWorldPosition() };
-		const XMFLOAT3 direction{ MathHelper::DirectionTo(currentPos, m_pHarry->GetTransform()->GetWorldPosition())};
+		const XMFLOAT3 direction{ MathHelper::DirectionTo(currentPos, m_pHarry->GetCharacter()->GetTransform()->GetWorldPosition())};
 		XMFLOAT3 spawnLocation{ currentPos };
 		spawnLocation.y += 2.f;
 
