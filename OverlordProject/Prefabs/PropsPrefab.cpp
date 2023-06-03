@@ -15,7 +15,21 @@ PropsPrefab::PropsPrefab(float generalScale, HarryCharacter* pHarry)
 void PropsPrefab::Initialize(const SceneContext& /*sceneContext*/)
 {
 	// Vines
-	GetScene()->AddChild(new Vines(m_GeneralScale, m_pHarry));
+	// -----
+	
+	// Vine 1
+	Vines* pVine = GetScene()->AddChild(new Vines(m_GeneralScale, m_pHarry));
+	pVine->GetTransform()->Translate(XMFLOAT3{ 16.5f, -9.f, -79.f });
+	pVine->GetTransform()->Rotate(0.f, 90.f, 0.f);
+
+	// Vine 2
+	pVine = GetScene()->AddChild(new Vines(m_GeneralScale, m_pHarry));
+	pVine->GetTransform()->Translate(XMFLOAT3{ -5.8f, -8.5f, -48.2f });
+	pVine->GetTransform()->Rotate(0.f, 90.f, 0.f);
+
+	// Vine 3
+	pVine = GetScene()->AddChild(new Vines(m_GeneralScale, m_pHarry));
+	pVine->GetTransform()->Translate(XMFLOAT3{ 23.1f, -8.5f, -18.f });
 
 	// Bean props
 	// ==========
