@@ -95,6 +95,7 @@
   <ItemGroup>
     <ClCompile Include="Materials\Post\EyeAdaptation.cpp" />
     <ClCompile Include="Materials\Post\PostBlur.cpp" />
+    <ClCompile Include="Prefabs\MomentarilyParticlePrefab.cpp" />
     <ClCompile Include="Prefabs\MainMenu.cpp" />
     <ClCompile Include="Prefabs\PauseMenu.cpp" />
     <ClCompile Include="Prefabs\HUD.cpp" />
@@ -156,6 +157,7 @@
   <ItemGroup>
     <ClInclude Include="Materials\Post\EyeAdaptation.h" />
     <ClInclude Include="Materials\Post\PostBlur.h" />
+    <ClInclude Include="Prefabs\MomentarilyParticlePrefab.h" />
     <ClInclude Include="Prefabs\MainMenu.h" />
     <ClInclude Include="Prefabs\PauseMenu.h" />
     <ClInclude Include="Prefabs\HUD.h" />

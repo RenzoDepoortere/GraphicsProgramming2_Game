@@ -24,7 +24,7 @@ public:
 		return pObject;
 	}
 	void AddChild_(GameObject* pObject);
-	void RemoveChild(GameObject* pObject, bool deleteObject = false, bool removeFromVector = true);
+	void RemoveChild(GameObject* pObject, bool deleteObject = false);
 
 	const SceneContext& GetSceneContext() const { return m_SceneContext; }
 	SceneSettings& GetSceneSettings() { return m_SceneContext.settings; }
@@ -69,6 +69,8 @@ private:
 	void RootWindowStateChanged(int state, bool active) const;
 
 	std::vector<GameObject*> m_pChildren{};
+	std::vector<std::pair<GameObject*, bool>> m_pChildrenToDelete{};
+
 	bool m_IsInitialized{};
 	std::wstring m_SceneName{};
 	CameraComponent* m_pDefaultCamera{}, * m_pActiveCamera{};
@@ -79,4 +81,6 @@ private:
 
 	bool m_UpdateChildren{ true };
 	bool m_HasToCloseGame{ false };
+
+	void ActuallyRemoveChild();
 };

@@ -45,26 +45,13 @@ void GameScene::AddChild_(GameObject* pObject)
 	pObject->RootOnSceneAttach(this);
 }
 
-void GameScene::RemoveChild(GameObject* pObject, bool deleteObject, bool removeFromVector)
+void GameScene::RemoveChild(GameObject* pObject, bool deleteObject)
 {
-	const auto it = std::ranges::find(m_pChildren, pObject);
+	auto pair{ std::make_pair(pObject, deleteObject) };
+	m_pChildrenToDelete.push_back(pair);
 
-#if _DEBUG
-	if (it == m_pChildren.end())
-	{
-		Logger::LogWarning(L"GameObject to remove is not attached to this GameScene!");
-		return;
-	}
-#endif
-
-	if(removeFromVector) m_pChildren.erase(it);
 	pObject->m_pParentScene = nullptr;
-	pObject->RootOnSceneDetach(this);
-
-	if (deleteObject)
-	{
-		SafeDelete(pObject);
-	}		
+	pObject->RootOnSceneDetach(this);	
 }
 void GameScene::ClearScene()
 {
@@ -74,7 +61,9 @@ void GameScene::ClearScene()
 	// Delete all children
 	for (auto& currentChild : m_pChildren)
 	{
-		RemoveChild(currentChild, false, false);
+		currentChild->m_pParentScene = nullptr;
+		currentChild->RootOnSceneDetach(this);
+
 		SafeDelete(currentChild);
 	}
 
@@ -173,6 +162,8 @@ void GameScene::RootUpdate()
 
 		m_pPhysxProxy->Update(m_SceneContext);
 	}
+
+	ActuallyRemoveChild();
 
 	// If has to close game
 	if (m_HasToCloseGame)
@@ -450,4 +441,33 @@ void GameScene::SetActiveCamera(CameraComponent* pCameraComponent, bool disableP
 	m_pActiveCamera = (pCameraComponent) ? pCameraComponent : m_pDefaultCamera;
 	m_pActiveCamera->SetActive(true);
 	m_SceneContext.pCamera = m_pActiveCamera; //Change SceneContext
+}
+
+void GameScene::ActuallyRemoveChild()
+{
+	// Handle all children to delete
+	for (auto& currentChild : m_pChildrenToDelete)
+	{
+
+		// Find in children list
+		const auto it = std::ranges::find(m_pChildren, currentChild.first);
+
+#if _DEBUG
+		if (it == m_pChildren.end())
+		{
+			Logger::LogWarning(L"GameObject to remove is not attached to this GameScene!");
+			return;
+		}
+#endif
+		m_pChildren.erase(it);
+
+		// Delete if asked
+		if (currentChild.second)
+		{
+			SafeDelete(currentChild.first);
+		}
+	}
+
+	// Clear vector
+	m_pChildrenToDelete.clear();
 }

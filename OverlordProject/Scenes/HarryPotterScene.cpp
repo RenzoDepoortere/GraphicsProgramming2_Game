@@ -42,6 +42,7 @@ void HarryPotterScene::Initialize()
 	// --------------
 	if (m_InStartMenu == false)
 	{
+		m_CenterMouse = true;
 		m_SceneContext.pInput->ForceMouseToCenter(true);
 		m_SceneContext.pInput->CursorVisible(false);
 	}
@@ -60,22 +61,19 @@ void HarryPotterScene::Initialize()
 	// Spawn Prefabs
 	// -------------
 	
-	if (m_InStartMenu == false)
-	{
-		const float generalScale{ 0.025f };
+	const float generalScale{ 0.025f };
 
-		// Character
-		m_pHarry = AddChild(new HarryCharacter(generalScale, m_InStartMenu));
+	// Character
+	m_pHarry = AddChild(new HarryCharacter(generalScale, m_InStartMenu));
 
-		// Enemies
-		AddChild(new EnemiesPrefab(generalScale, m_pHarry));
+	// Enemies
+	AddChild(new EnemiesPrefab(generalScale, m_pHarry));
 
-		// Map
-		AddChild(new CastlePrefab(generalScale));
+	// Map
+	AddChild(new CastlePrefab(generalScale));
 
-		// Props
-		AddChild(new PropsPrefab(generalScale, m_pHarry));
-	}
+	// Props
+	AddChild(new PropsPrefab(generalScale, m_pHarry));
 
 	// Menu
 	m_pMainMenu = AddChild(new MainMenu{ m_InStartMenu });

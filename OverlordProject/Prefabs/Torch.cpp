@@ -22,5 +22,5 @@ void Torch::Initialize(const SceneContext& /*sceneContext*/)
 	settings.maxEmitterRadius = 0.1f;
 	settings.color = { 1.f, 1.f, 1.f, .6f };
 
-	m_pEmitter = AddComponent(new ParticleEmitterComponent(L"Textures/Props/Fire/Fire.png", settings, 100));
+	m_pEmitter = AddComponent(new ParticleEmitterComponent(L"Textures/Particles/Fire/Fire.png", settings, 100));
 }

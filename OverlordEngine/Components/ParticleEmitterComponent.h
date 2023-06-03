@@ -42,6 +42,8 @@ public:
 	ParticleEmitterComponent& operator=(const ParticleEmitterComponent& other) = delete;
 	ParticleEmitterComponent& operator=(ParticleEmitterComponent&& other) noexcept = delete;
 
+	UINT GetParticleCount() const { return m_ParticleCount; }
+	void SetParticleCount(UINT count) { m_ParticleCount = count; }
 	ParticleEmitterSettings& GetSettings() { return m_EmitterSettings; }; //EmitterSettings Getter (by reference) > allows settings changes
 	void DrawImGui();
 
