@@ -70,12 +70,11 @@ float4 PS(PS_INPUT input): SV_Target
 	gTexture.GetDimensions(textureWidth, textureHeight);
     
 	// Calculate color offsets
-	float2 offset = float2(0.002, -0.002);
-	offset *= float2(textureWidth, textureHeight);
+	float2 offset = float2(0.002, 0.002);
 
     // Get red and blue with offset
     float red = gTexture.Sample(samPoint, input.TexCoord + offset).r;
-    float blue = gTexture.Sample(samPoint, input.TexCoord - offset).b;
+    float blue = gTexture.Sample(samPoint, input.TexCoord + offset).b;
 
     // Combine all colors
     float4 finalColor = float4(red, sampledColor.g, blue, sampledColor.a);

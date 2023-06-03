@@ -25,6 +25,8 @@ private:
 	MainMenu* m_pMainMenu{ nullptr };
 	PauseMenu* m_pPauseMenu{ nullptr };
 
+	PostProcessingMaterial* m_pPostProcessMaterial{ nullptr };
+
 	bool m_DrawShadowMap{ false };
 	float m_ShadowMapScale{};
 
@@ -36,7 +38,8 @@ private:
 	bool m_InStartMenu{ true };
 	bool m_IsPaused{ false };
 
-	bool m_AddedPostProcessing{ false };
+	bool m_CreatedPostProcess{ false };
+	bool m_PostProcessActive{ false };
 
 	// Functions
 	// ---------

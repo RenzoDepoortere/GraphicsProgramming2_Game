@@ -51,13 +51,16 @@ void HarryPotterScene::Initialize()
 
 	// Post processing
 	// ---------------
-	//if (m_AddedPostProcessing == false && m_InStartMenu == false)
-	//{
-	//	m_AddedPostProcessing = true;
-
-	//	ChromaticAberration* pPostProcessEffect{ MaterialManager::Get()->CreateMaterial<ChromaticAberration>() };
-	//	AddPostProcessingEffect(pPostProcessEffect);
-	//}
+	if (m_CreatedPostProcess == false)
+	{
+		m_CreatedPostProcess = true;
+		m_pPostProcessMaterial = MaterialManager::Get()->CreateMaterial<ChromaticAberration>();
+	}
+	if (m_InStartMenu == false)
+	{
+		m_PostProcessActive = true;
+		AddPostProcessingEffect(m_pPostProcessMaterial);
+	}
 
 
 	// Spawn Prefabs
@@ -124,6 +127,20 @@ void HarryPotterScene::HandleInput()
 		m_SceneContext.pInput->CursorVisible(!m_CenterMouse);
 	}
 
+	// Toggle postProcess
+	if (m_SceneContext.pInput->IsKeyboardKey(InputState::pressed, '2'))
+	{
+		m_PostProcessActive = !m_PostProcessActive;
+		if (m_PostProcessActive)
+		{
+			AddPostProcessingEffect(m_pPostProcessMaterial);
+		}
+		else
+		{
+			RemovePostProcessingEffect(m_pPostProcessMaterial);
+		}
+	}
+
 	// If pressed ESC
 	if (m_SceneContext.pInput->IsKeyboardKey(InputState::pressed, VK_ESCAPE) && m_pPauseMenu)
 	{
@@ -137,6 +154,10 @@ void HarryPotterScene::HandleInput()
 			// Unpause
 			m_IsPaused = false;
 			m_pPauseMenu->SetActive(false);
+
+			// Add postProcess again
+			m_PostProcessActive = true;
+			AddPostProcessingEffect(m_pPostProcessMaterial);
 
 			// Let children know
 			m_pHarry->InPauseMenu(false);
@@ -154,6 +175,10 @@ void HarryPotterScene::HandleInput()
 			// Pause
 			m_IsPaused = true;
 			m_pPauseMenu->SetActive(true);
+
+			// Remove postProcess
+			m_PostProcessActive = false;
+			RemovePostProcessingEffect(m_pPostProcessMaterial);
 
 			// Let children know
 			m_pHarry->InPauseMenu(true);
@@ -213,6 +238,10 @@ void HarryPotterScene::SetMainMenu(bool goToMenu)
 		
 		m_CenterMouse = false;
 		m_SceneContext.pInput->CursorVisible(true);
+
+		// Remove postProcess
+		m_PostProcessActive = false;
+		RemovePostProcessingEffect(m_pPostProcessMaterial);
 
 		// Pause game and enable menu
 		SetUpdateChildren(false);
