@@ -1,4 +1,6 @@
 #pragma once
+#include <array>
+
 class Snail;
 class HarryCharacter;
 
@@ -29,4 +31,8 @@ private:
 	bool m_SecondActivated{ false };
 
 	bool m_StarSpawned{ false };
+
+	FMOD::System* m_pFmod{ nullptr };
+	FMOD::Channel* m_pSoundChannel{ nullptr };
+	std::array<FMOD::Sound*, 4> m_pGearSounds{};
 };

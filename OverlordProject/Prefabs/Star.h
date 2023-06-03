@@ -25,6 +25,8 @@ private:
 
 	float m_TotalYaw{};
 
+	FMOD::Channel* m_pSoundChannel{ nullptr };
+
 	// Functions
 	// ---------
 	void HandleRotation(const SceneContext& sceneContext);

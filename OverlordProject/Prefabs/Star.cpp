@@ -16,6 +16,14 @@ Star::Star(float generalScale, HarryCharacter* pHarry)
 
 void Star::Initialize(const SceneContext& /*sceneContext*/)
 {
+	// Sound
+	FMOD::System* pSystem{ SoundManager::Get()->GetSystem() };
+	FMOD::Sound* pSound{};
+	
+	pSystem->createSound("Resources/Sounds/Props/Star/Star_Appear.wav", FMOD_DEFAULT, nullptr, &pSound);
+	pSystem->playSound(pSound, nullptr, false, &m_pSoundChannel);
+
+
 	// Mesh
 	ModelComponent* pModel{ AddComponent(new ModelComponent{L"Meshes/Props/Star/Star.ovm"}) };
 

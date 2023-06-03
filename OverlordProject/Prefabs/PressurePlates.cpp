@@ -14,6 +14,15 @@ PressurePlates::PressurePlates(float generalScale, HarryCharacter* pHarry, const
 
 void PressurePlates::Initialize(const SceneContext& /*sceneContext*/)
 {
+	// Sounds
+	// ------
+	m_pFmod = SoundManager::Get()->GetSystem();
+
+	m_pFmod->createSound("Resources/Sounds/Props/PressurePlates/Gear_1.wav", FMOD_DEFAULT, nullptr, &m_pGearSounds[0]);
+	m_pFmod->createSound("Resources/Sounds/Props/PressurePlates/Gear_2.wav", FMOD_DEFAULT, nullptr, &m_pGearSounds[1]);
+	m_pFmod->createSound("Resources/Sounds/Props/PressurePlates/Gear_3.wav", FMOD_DEFAULT, nullptr, &m_pGearSounds[2]);
+	m_pFmod->createSound("Resources/Sounds/Props/PressurePlates/Gear_4.wav", FMOD_DEFAULT, nullptr, &m_pGearSounds[3]);
+
 	// First Collider
 	// --------------
 
@@ -52,6 +61,10 @@ void PressurePlates::Initialize(const SceneContext& /*sceneContext*/)
 		{
 			// Activate plate
 			m_FirstActivated = true;
+
+			// Play sound
+			const int randomIdx{ rand() % static_cast<int>(m_pGearSounds.size()) };
+			m_pFmod->playSound(m_pGearSounds[randomIdx], nullptr, false, &m_pSoundChannel);
 		}
 	});
 
@@ -93,6 +106,8 @@ void PressurePlates::Initialize(const SceneContext& /*sceneContext*/)
 			m_SecondActivated = true;
 
 			// Play sound
+			const int randomIdx{ rand() % static_cast<int>(m_pGearSounds.size()) };
+			m_pFmod->playSound(m_pGearSounds[randomIdx], nullptr, false, &m_pSoundChannel);
 		}
 	});
 }
@@ -108,6 +123,4 @@ void PressurePlates::Update(const SceneContext& /*sceneContext*/)
 	// Spawn star
 	m_StarSpawned = true;
 	GetScene()->AddChild(new Star{ m_GeneralScale, m_pHarry });
-
-	std::cout << "star spawned" << std::endl;
 }
