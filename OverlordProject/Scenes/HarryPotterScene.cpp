@@ -216,8 +216,16 @@ void HarryPotterScene::SetMainMenu(bool goToMenu)
 }
 void HarryPotterScene::RestartLevel()
 {
+	// Set appropiate bools
 	m_HasToReset = true;
-
 	m_IsPaused = false;
+
+	// Stop updating children
 	SetUpdateChildren(true);
+
+	// Release all sound
+	FMOD::ChannelGroup* pMasterChannelGroup{};
+	SoundManager::Get()->GetSystem()->getMasterChannelGroup(&pMasterChannelGroup);
+
+	pMasterChannelGroup->stop();
 }
