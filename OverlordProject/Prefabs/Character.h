@@ -80,11 +80,10 @@ private:
 	XMFLOAT3 m_Forward{};
 	XMFLOAT3 m_Right{};
 
+	XMFLOAT3 m_CameraStartPos{};
 	float m_DistanceFromCamera{};
 	bool m_ChangedCameraPos{ false };
 	bool m_IsDead{ false };
-
-	float m_StartCooldown{};
 
 	// Member functions
 	void Input(const SceneContext& sceneContext);

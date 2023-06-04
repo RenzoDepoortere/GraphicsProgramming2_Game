@@ -267,6 +267,10 @@ void HarryPotterScene::RestartLevel()
 	m_HasToReset = true;
 	m_IsPaused = false;
 
+	// Remove postProcess
+	m_PostProcessActive = false;
+	RemovePostProcessingEffect(m_pPostProcessMaterial);
+
 	// Stop updating children
 	SetUpdateChildren(true);
 

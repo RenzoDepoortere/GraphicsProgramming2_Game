@@ -29,7 +29,7 @@ float4x4 gWorldViewProj_Light;
 RasterizerState gRasterizerState
 {
 	FillMode = SOLID;
-	CullMode = FRONT;
+	CullMode = NONE;
 };
 
 BlendState gBlendState

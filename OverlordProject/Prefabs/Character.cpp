@@ -5,7 +5,6 @@ Character::Character(const CharacterDesc& characterDesc)
 	: m_CharacterDesc{ characterDesc }
 	, m_MoveAcceleration(characterDesc.maxMoveSpeed / characterDesc.moveAccelerationTime)
 	, m_FallAcceleration(characterDesc.maxFallSpeed / characterDesc.fallAccelerationTime)
-	, m_StartCooldown{ 1.f }
 {}
 
 void Character::Initialize(const SceneContext& /*sceneContext*/)
@@ -20,31 +19,18 @@ void Character::Initialize(const SceneContext& /*sceneContext*/)
 	m_pCameraComponent = pCamera->GetComponent<CameraComponent>();
 	m_pCameraComponent->SetActive(true); //Uncomment to make this camera the active camera
 
-	//// Collision
-	//PxMaterial* pDefaultMaterial = PxGetPhysics().createMaterial(0.5f, 0.5f, 0.5f);
-
-	//RigidBodyComponent* pActor = pCamera->AddComponent(new RigidBodyComponent(true));
-	//pActor->AddCollider(PxBoxGeometry{ 0.5f, 0.5f, 0.5f }, *pDefaultMaterial);
-
 	// Transform
-	const XMFLOAT3 translation{ 0.f, m_CharacterDesc.controller.height * 0.75f, -2.5f };
-	pCamera->GetTransform()->Translate(translation);
+	m_CameraStartPos = XMFLOAT3{ 0.f, m_CharacterDesc.controller.height * 0.75f, -2.5f };
+	pCamera->GetTransform()->Translate(m_CameraStartPos);
 
 	// Distance
-	m_DistanceFromCamera = XMVectorGetX(XMVector3Length(XMLoadFloat3(&translation)));
+	m_DistanceFromCamera = XMVectorGetX(XMVector3Length(XMLoadFloat3(&m_CameraStartPos)));
 }
 
 void Character::Update(const SceneContext& sceneContext)
 {
 	Input(sceneContext);
-
-	//// Cooldown
-	//if (0 < m_StartCooldown)
-	//{
-	//	m_StartCooldown -= sceneContext.pGameTime->GetElapsed();
-	//	return;
-	//}
-	//LockCamera(sceneContext);
+	LockCamera(sceneContext);
 }
 
 void Character::DrawImGui()
@@ -259,47 +245,45 @@ void Character::Input(const SceneContext& sceneContext)
 void Character::LockCamera(const SceneContext& /*sceneContext*/)
 {
 	// Get raycast variables
-	XMFLOAT3 rayDirection = m_pCameraComponent->GetTransform()->GetForward();
-	XMVECTOR rayDirectionVector = XMVector3Normalize(XMLoadFloat3(&rayDirection));
-	rayDirectionVector = XMVectorScale(rayDirectionVector, -1.f);
+	// ---------------------
+	const XMFLOAT3 cameraForward{ m_pCameraComponent->GetTransform()->GetForward() };
+
+	// Direction
+	XMFLOAT3 rayDirection = cameraForward;
+	XMVECTOR rayDirectionVector = XMVectorScale(XMLoadFloat3(&rayDirection), -1.f);
 	XMStoreFloat3(&rayDirection, rayDirectionVector);
-
-	const XMFLOAT3 cameraPos{ m_pCameraComponent->GetTransform()->GetWorldPosition() };
-	const XMFLOAT3 characterPos{ GetTransform()->GetWorldPosition() };
-
-	const PxVec3 raycastStart{ characterPos.x, characterPos.y, characterPos.z };
 	const PxVec3 raycastDir{ rayDirection.x, rayDirection.y ,rayDirection.z };
+
+	// Start
+	XMFLOAT3 currentPos{ GetTransform()->GetWorldPosition() };
+	const XMVECTOR startPos{ XMVectorAdd(XMLoadFloat3(&currentPos), XMVectorScale(rayDirectionVector, 0.5f)) };
+	XMStoreFloat3(&currentPos, startPos);
+
+	const PxVec3 raycastStart {currentPos.x, currentPos.y, currentPos.z};
 
 	// Raycast
 	PxRaycastBuffer hit{};
-	if (GetScene()->GetPhysxProxy()->Raycast(raycastStart, raycastDir, PX_MAX_F32, hit))
+	if (GetScene()->GetPhysxProxy()->Raycast(raycastStart, raycastDir, m_DistanceFromCamera - 0.5f, hit))
 	{
 		PxRigidActor* pHitActor{ hit.block.actor };
 		GameObject* pHitGameObject{ reinterpret_cast<BaseComponent*>(pHitActor->userData)->GetGameObject() };
 
-		// If hitObject isn't camera
-		if (pHitGameObject != m_pCameraComponent->GetGameObject() && hit.block.distance <= m_DistanceFromCamera)
+		// If hitObject isn't player
+		if (pHitGameObject != this)
 		{
 			// Set cameraPos to hitPos
-			const PxVec3 hitPos{ raycastDir * hit.block.distance };
+			const PxVec3 hitPos{ raycastDir * hit.block.distance * -1.f};
 			m_pCameraComponent->GetTransform()->Translate(hitPos.x, hitPos.y, hitPos.z);
 
 			m_ChangedCameraPos = true;
 		}
-		// Else, if changed pos
-		else if (m_ChangedCameraPos)
-		{
-			m_ChangedCameraPos = false;
+	}
+	// Else, if changed pos
+	else if (m_ChangedCameraPos)
+	{
+		m_ChangedCameraPos = false;
 
-			// Calculate new position
-			XMFLOAT3 cameraForward = m_pCameraComponent->GetTransform()->GetForward();
-			XMVECTOR forwardVector = XMVector3Normalize(XMLoadFloat3(&cameraForward));
-			forwardVector = XMVectorScale(forwardVector, -1.f);
-
-			const XMVECTOR newPos{ XMVectorScale(forwardVector, m_DistanceFromCamera) };
-
-			// Set position
-			m_pCameraComponent->GetTransform()->Translate(newPos);
-		}
+		// Set position
+		m_pCameraComponent->GetTransform()->Translate(m_CameraStartPos);
 	}
 }

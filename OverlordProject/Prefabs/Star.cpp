@@ -63,7 +63,7 @@ void Star::HandleRotation(const SceneContext& sceneContext)
 void Star::CheckHarry()
 {
 	// Check if Harry close enough
-	const float minSqrdDistanceBetwn{ 2.5f };
+	const float minSqrdDistanceBetwn{ 3.5f };
 
 	const XMFLOAT3 harryPos{ m_pHarry->GetCharacter()->GetTransform()->GetWorldPosition() };
 	const XMFLOAT3 direction{ MathHelper::DirectionTo(GetTransform()->GetWorldPosition(), harryPos, false) };
