@@ -30,7 +30,8 @@ void Character::Initialize(const SceneContext& /*sceneContext*/)
 void Character::Update(const SceneContext& sceneContext)
 {
 	Input(sceneContext);
-	LockCamera(sceneContext);
+
+	if (m_LockCamera) LockCamera(sceneContext);
 }
 
 void Character::DrawImGui()
@@ -240,6 +241,20 @@ void Character::Input(const SceneContext& sceneContext)
 
 		//The above is a simple implementation of Movement Dynamics, adjust the code to further improve the movement logic and behaviour.
 		//Also, it can be usefull to use a seperate RayCast to check if the character is grounded (more responsive)
+
+
+		// ******************
+		// Toggle Camera lock
+		if (sceneContext.pInput->IsKeyboardKey(InputState::pressed, '3'))
+		{
+			m_LockCamera = !m_LockCamera;
+			if (m_LockCamera == false)
+			{
+				// Reset position
+				m_ChangedCameraPos = false;
+				m_pCameraComponent->GetTransform()->Translate(m_CameraStartPos);
+			}
+		}
 	}
 }
 void Character::LockCamera(const SceneContext& /*sceneContext*/)

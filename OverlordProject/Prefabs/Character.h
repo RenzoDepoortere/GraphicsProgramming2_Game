@@ -85,6 +85,8 @@ private:
 	bool m_ChangedCameraPos{ false };
 	bool m_IsDead{ false };
 
+	bool m_LockCamera{ true };
+
 	// Member functions
 	void Input(const SceneContext& sceneContext);
 	void LockCamera(const SceneContext& sceneContext);
