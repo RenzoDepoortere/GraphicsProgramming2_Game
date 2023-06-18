@@ -24,7 +24,7 @@ void DestroyCastableComponent::Initialize(const SceneContext& /*sceneContext*/)
 
 void DestroyCastableComponent::Update(const SceneContext& /*sceneContext*/)
 {
-	if (m_HasToDelete) GetScene()->RemoveChild(GetGameObject(), true);
+	if (m_HasToDelete) GetTransform()->Translate(0.f, 0.f, 0.f);
 }
 
 void DestroyCastableComponent::Activate(GameObject* /*pHarry*/)
