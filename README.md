@@ -14,10 +14,13 @@ to be able to get to the first star of the level (which also is the only star in
 ![ScreenShot_3](https://github.com/RenzoDepoortere/GraphicsProgramming2_Game/assets/95619804/b7d92bc1-c62c-4b10-8ce8-dc843c2cf61f)
 
 # Experience
-I've learned quite a lot from creating my own game engine.
-From implementing patterns to keeping my code maintainable, I've seen it all.
-I've also noticed that I still have a lot to learn to be able to come a better programmer.
+I never realized that the rendering pipeline could be so broad, and I only scratched the surface as well.
+It left me really intrigued though, I found it very fun to learn about a certain concept and try to implement it.
+I might even jump further in this graphics-hole and see which other concepts are still left to explore.
 
 # Final thoughts
-While the engine is nowhere near perfect and the game itself isn't as polished as I wanted it to be,
-I'm still happy with the final result I've gotten.
+While everything is rendered like it supposed to be, there's still some rough edges here and there.
+The gameplay itself isn't quite as good as I hoped it to be as.
+But due to time constraints for the exam and general exhaustion I had to leave the game as is.
+
+Nonetheless I learned quite a lot, and I would like to learn more about rendering techniques.
