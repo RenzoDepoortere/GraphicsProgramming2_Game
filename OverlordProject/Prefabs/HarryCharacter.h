@@ -77,6 +77,9 @@ private:
 
 	int m_CurrentHP{};
 
+	UINT m_LightID{};
+	XMFLOAT3 m_LightOffset{};
+
 	// External objects
 	CastObject* m_pCastingObject{ nullptr };
 	MovingSpell* m_pMovingSpell{ nullptr };

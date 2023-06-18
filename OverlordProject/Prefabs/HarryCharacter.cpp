@@ -226,6 +226,22 @@ void HarryCharacter::InitHarry(const SceneContext& sceneContext)
 
 	inputAction = InputAction(CharacterSpellActivate, InputState::pressed, -1, VK_LBUTTON);
 	sceneContext.pInput->AddInputAction(inputAction);
+
+	//// LIGHTS
+	//// ------
+
+	//const XMFLOAT4 lightColor{ 0.f, 0.f, 0.7f, 0.6f };
+
+	//// Create light
+	//Light light = {};
+	//light.isEnabled = true;
+	//light.position = XMFLOAT4{ 0.f, 0.f, 0.f, 1.f };
+	//light.color = lightColor;
+	//light.intensity = 0.25f;
+	//light.range = 3.f;
+	//light.type = LightType::Point;
+
+	//m_LightID = sceneContext.pLights->AddLight(light);
 }
 void HarryCharacter::InitExternals()
 {
@@ -443,6 +459,11 @@ void HarryCharacter::HandleCastingObject(const SceneContext& sceneContext, bool 
 		// Play sound
 		if (isAimPaused) m_pSpellAimChannel->setPaused(false);
 
+		//// Set light to offset
+		//const auto& worldPos{ m_pCharacterMesh->GetTransform()->GetWorldPosition() };
+		//const XMFLOAT4 lightPos{ worldPos.x, worldPos.y, worldPos.z, 1.f };
+		//sceneContext.pLights->GetLight(m_LightID).position = lightPos;
+
 		// Check raycast
 		XMFLOAT3 hitPos{};
 		GameObject* pHitObject{ sceneContext.pCamera->Pick(hitPos, CollisionGroup::Group1) };
@@ -524,6 +545,10 @@ void HarryCharacter::HandleCastingObject(const SceneContext& sceneContext, bool 
 		if (isAimPaused == false) m_pSpellAimChannel->setPaused(true);
 		if (isTargetPaused == false) m_pSpellTargetChannel->setPaused(true);
 
+		//// Set light to origin
+		//sceneContext.pLights->GetLight(m_LightID).position = XMFLOAT4{ 0.f, 0.f, 0.f, 1.f };
+
+		// Reset cast object
 		resetCastingObject();
 	}
 }
