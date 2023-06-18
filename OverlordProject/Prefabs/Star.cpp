@@ -14,7 +14,7 @@ Star::Star(float generalScale, HarryCharacter* pHarry)
 {
 }
 
-void Star::Initialize(const SceneContext& /*sceneContext*/)
+void Star::Initialize(const SceneContext& sceneContext)
 {
 	// Sound
 	FMOD::System* pSystem{ SoundManager::Get()->GetSystem() };
@@ -44,6 +44,19 @@ void Star::Initialize(const SceneContext& /*sceneContext*/)
 	GetTransform()->Scale(m_GeneralScale);
 
 	pActor->Translate(translation);
+
+	// Light
+	const XMFLOAT4 lightColor{ 1.f, 1.f, 0.f, 1.f };
+
+	Light light = {};
+	light.isEnabled = true;
+	light.position = XMFLOAT4{ translation.x, translation.y, translation.z, 1.f };
+	light.color = lightColor;
+	light.intensity = 0.35f;
+	light.range = 3.f;
+	light.type = LightType::Point;
+
+	sceneContext.pLights->AddLight(light);
 }
 
 void Star::Update(const SceneContext& sceneContext)
