@@ -25,6 +25,7 @@ private:
 	bool m_HasToBeDeleted{ false };
 
 	CastableComponent::Spell m_CurrentSpell{};
+	UINT m_LightID{};
 	
 	CastableComponent* m_pObjectToHit{ nullptr };
 	XMFLOAT3 m_HitPosition{};

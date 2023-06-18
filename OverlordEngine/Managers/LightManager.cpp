@@ -12,6 +12,12 @@ LightManager::~LightManager()
 	m_Lights.clear();
 }
 
+void LightManager::RemoveLight(int id)
+{
+	const Light lightToRemove{ GetLight(id) };
+	std::erase(m_Lights, lightToRemove);
+}
+
 void LightManager::SetDirectionalLight(const XMFLOAT3& position, const XMFLOAT3& direction)
 {
 	m_DirectionalLight.direction = { direction.x, direction.y, direction.z , 1.0f };

@@ -29,6 +29,32 @@ struct Light
 		spotLightAngle(45.f),
 		type(LightType::Point),
 		isEnabled(true) {}
+
+	bool operator==(const Light& other)
+	{
+		const auto sameFloat4 = [](const XMFLOAT4& first, const XMFLOAT4& second)
+		{
+			if (first.x == second.x && first.y == second.y && first.z == second.z && first.w == second.w)
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		};
+
+		if (sameFloat4(this->direction, other.direction) && sameFloat4(this->position, other.position) && sameFloat4(this->color, other.color)
+			&& this->intensity == other.intensity && this->range == other.range && this->spotLightAngle == other.spotLightAngle
+			&& this->type == other.type && this->isEnabled == other.isEnabled)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
 };
 
 class LightManager
@@ -43,6 +69,8 @@ public:
 
 	//For Deferred Rendering
 	UINT AddLight(const Light& l) { m_Lights.push_back(l); return static_cast<UINT>(m_Lights.size() - 1); }
+	void RemoveLight(int id);
+
 	Light& GetLight(int id) { return m_Lights[id]; }
 	const std::vector<Light>& GetLights() const { return m_Lights; }
 

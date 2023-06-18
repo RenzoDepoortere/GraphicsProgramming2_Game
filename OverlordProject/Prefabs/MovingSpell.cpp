@@ -14,11 +14,12 @@ MovingSpell::MovingSpell(float movementSpeed, HarryCharacter* pHarry, CastableCo
 {
 }
 
-void MovingSpell::Initialize(const SceneContext& /*sceneContext*/)
+void MovingSpell::Initialize(const SceneContext& sceneContext)
 {
 	const XMFLOAT3 boxDimension{ 0.3f, 0.3f, 0.3f };
 
 	// Particles
+	// ---------
 	ParticleEmitterSettings settings{};
 	settings.velocity = { 0.f, -0.25f, 0.f };
 	settings.minSize = 0.5;
@@ -51,6 +52,7 @@ void MovingSpell::Initialize(const SceneContext& /*sceneContext*/)
 	AddComponent(new ParticleEmitterComponent(L"Textures/CastingObject/Casting.png", settings, 100));
 
 	// Rigidbody
+	// ---------
 	PxMaterial* pDefaultMaterial = PxGetPhysics().createMaterial(0.5f, 0.5f, 0.5f);
 
 	auto pRigidbody = AddComponent(new RigidBodyComponent{});
@@ -79,10 +81,28 @@ void MovingSpell::Initialize(const SceneContext& /*sceneContext*/)
 			m_HasToBeDeleted = true;
 		}
 	});
+
+	// Lights
+	// ------
+	Light light = {};
+	const auto& worldPos{ GetTransform()->GetWorldPosition() };
+	const XMFLOAT4 lightPos{ worldPos.x, worldPos.y, worldPos.z, 1.f };
+
+	light.isEnabled = true;
+	light.position = lightPos;
+	light.color = spellColor;
+	light.intensity = 0.25f;
+	light.range = 2.5f;
+	light.type = LightType::Point;
+
+	m_LightID = sceneContext.pLights->AddLight(light);
 }
 
 void MovingSpell::Update(const SceneContext& sceneContext)
 {
+	// SpellPos
+	// --------
+
 	// Calculate new position
 	const XMFLOAT3 currentPosition{ GetTransform()->GetPosition() };
 	const XMVECTOR currentVector{ XMLoadFloat3(&currentPosition) };
@@ -99,9 +119,21 @@ void MovingSpell::Update(const SceneContext& sceneContext)
 	// Set new position
 	GetTransform()->Translate(newPos);
 
+	// LightPos
+	// --------
+	const auto& worldPos{ GetTransform()->GetWorldPosition() };
+	const XMFLOAT4 lightPos{ worldPos.x, worldPos.y, worldPos.z, 1.f };
+
+	sceneContext.pLights->GetLight(m_LightID).position = lightPos;
+
 	// Delete, if necessary
+	// --------------------
 	if (m_HasToBeDeleted)
 	{
+		// Light
+		sceneContext.pLights->RemoveLight(m_LightID);
+
+		// Spell
 		GetParent()->RemoveChild(this, true);
 	}
 }
