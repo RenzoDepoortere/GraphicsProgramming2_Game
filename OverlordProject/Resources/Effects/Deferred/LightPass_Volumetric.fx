@@ -122,6 +122,7 @@ float4 PS(VS_OUTPUT input) :SV_TARGET
 	float3 N = gTextureNormal.Load(loadCoord).xyz;          // Normal
 
 	float shadow = gTextureShadow.Load(loadCoord);			// Shadow
+	shadow = 1.0f;											// Currently disable it
 
 	// Material
 	Material mat = (Material)0;

@@ -62,19 +62,6 @@ void PropsPrefab::Initialize(const SceneContext& sceneContext)
 
 	sceneContext.pLights->AddLight(light);
 
-	// Back lights
-	translation = XMFLOAT3{ 23.3f, -4.5f, -54.f };
-
-	light = {};
-	light.isEnabled = true;
-	light.position = XMFLOAT4{ translation.x, translation.y, translation.z, 1.f };
-	light.color = { 0.6f, 0.6f, 0.6f, 1.f };
-	light.intensity = 0.2f;
-	light.range = 2.5f;
-	light.type = LightType::Point;
-
-	sceneContext.pLights->AddLight(light);
-
 	// Vines
 	// -----
 	
